@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькулятор программ обучения</title>
+  <style>
+    /* Глобальный сброс и фон */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f2ede4; /* чуть теплее бежевого для воздуха */
+      font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 1.5rem;
+    }
+
+    /* Карточка — премиальный бежевый */
+    .card {
+      max-width: 600px;
+      width: 100%;
+      background: #FDFBF7;
+      border-radius: 2.5rem;
+      padding: 2.8rem 2.5rem 2.5rem;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08), 0 8px 24px -6px rgba(0, 0, 0, 0.02);
+      transition: box-shadow 0.2s ease;
+      text-align: center;
+    }
+
+    /* Заголовок */
+    .card h1 {
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: #2a2722;
+      margin-bottom: 2.2rem;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding-bottom: 0.6rem;
+      display: inline-block;
+    }
+
+    /* Контейнер ползунка */
+    .slider-wrapper {
+      padding: 0.25rem 0 1.2rem;
+    }
+
+    /* Стилизация range input */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: #ddd8ce;
+      border-radius: 12px;
+      outline: none;
+      transition: background 0.2s ease;
+      margin: 1.2rem 0 0.8rem;
+      cursor: pointer;
+    }
+
+    /* дорожка (трек) */
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #ddd8ce;
+      border-radius: 12px;
+      transition: background 0.1s;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      background: #ddd8ce;
+      border-radius: 12px;
+      border: none;
+    }
+
+    /* ползунок (кружок) — золотой, современный */
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      background: #D4AF37;
+      border-radius: 50%;
+      margin-top: -9px; /* центрируем относительно трека */
+      box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25), 0 2px 4px rgba(0,0,0,0.05);
+      transition: box-shadow 0.15s, transform 0.1s;
+      border: 2px solid #faf6ed; /* воздушный ободок */
+      cursor: grab;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 14px rgba(212, 175, 55, 0.35);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      background: #D4AF37;
+      border-radius: 50%;
+      border: 2px solid #faf6ed;
+      box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25);
+      cursor: grab;
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.06);
+    }
+
+    /* значение часов под ползунком */
+    .hours-value {
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: #2a2722;
+      margin-top: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .hours-value span {
+      background: #f3efe8;
+      padding: 0.1rem 0.6rem;
+      border-radius: 60px;
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: #6b655a;
+      margin-left: 4px;
+    }
+
+    /* Плашка статуса — округлые края, мягкая тень */
+    .status-badge {
+      display: inline-block;
+      padding: 0.7rem 2.4rem;
+      border-radius: 60px;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      background: #eae7e0;
+      color: #4f4a40;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s, transform 0.1s;
+      margin: 0.5rem 0 0.8rem;
+      min-width: 160px;
+    }
+
+    /* Динамические цвета (применяются через JS) */
+    .status-badge.gray {
+      background: #e6e2da;
+      color: #5f5a4f;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+    .status-badge.greenish {
+      background: #dde8da;
+      color: #1f5a3a;
+      box-shadow: 0 4px 14px rgba(86, 142, 86, 0.08);
+    }
+    .status-badge.golden {
+      background: #efdecb;
+      color: #7a5f1f;
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.12);
+    }
+
+    /* Текстовая подсказка под плашкой */
+    .hint {
+      font-size: 0.95rem;
+      color: #6b655a;
+      margin-top: 0.8rem;
+      letter-spacing: 0.01em;
+      background: rgba(212, 175, 55, 0.04);
+      padding: 0.6rem 0.8rem;
+      border-radius: 60px;
+      display: inline-block;
+      border: 1px solid rgba(212, 175, 55, 0.08);
+      backdrop-filter: blur(2px);
+      transition: background 0.2s;
+    }
+
+    /* маленький акцент */
+    .hint i {
+      font-style: normal;
+      display: inline-block;
+      margin: 0 4px;
+    }
+
+    /* дополнительный текст с часами */
+    .meta {
+      margin-top: 1.8rem;
+      font-size: 0.85rem;
+      color: #9d968a;
+      border-top: 1px solid #eeeae1;
+      padding-top: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* адаптивность */
+    @media (max-width: 480px) {
+      .card {
+        padding: 2rem 1.5rem;
+      }
+      .card h1 {
+        font-size: 1.7rem;
+      }
+      .status-badge {
+        font-size: 1rem;
+        padding: 0.5rem 1.8rem;
+        min-width: 120px;
+      }
+      .hours-value {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📘 Объем программы</h1>
+
+    <div class="slider-wrapper">
+      <!-- Ползунок от 0 до 300 часов -->
+      <input type="range" id="hoursSlider" min="0" max="300" value="0" step="1" />
+
+      <!-- Отображение часов -->
+      <div class="hours-value" id="hoursDisplay">
+        0 <span>ч</span>
+      </div>
+    </div>
+
+    <!-- Плашка статуса (динамическая) -->
+    <div class="status-badge gray" id="statusBadge">Выберите часы</div>
+
+    <!-- Текстовая подсказка с типом документа -->
+    <div class="hint" id="hintText">📄 Выберите продолжительность</div>
+
+    <div class="meta">от 0 до 300 часов · шаг 1 ч</div>
+  </div>
+
+  <script>
+    (function() {
+      const slider = document.getElementById('hoursSlider');
+      const hoursDisplay = document.getElementById('hoursDisplay');
+      const statusBadge = document.getElementById('statusBadge');
+      const hintText = document.getElementById('hintText');
+
+      // Справочник статусов (для читаемости)
+      const STATUS_CONFIG = {
+        default: {
+          label: 'Выберите часы',
+          cssClass: 'gray',
+          hint: '📄 Выберите продолжительность',
+        },
+        micro: {
+          label: 'Микрокурс',
+          cssClass: 'gray',
+          hint: '🪪 Удостоверение о краткосрочном обучении',
+        },
+        prof: {
+          label: 'Повышение квалификации',
+          cssClass: 'greenish',
+          hint: '📜 Удостоверение о повышении квалификации',
+        },
+        retrain: {
+          label: 'Профессиональная переподготовка',
+          cssClass: 'golden',
+          hint: '🎓 Диплом о профессиональной переподготовке',
+        }
+      };
+
+      // Функция обновления всех элементов интерфейса
+      function updateUI(value) {
+        const hours = parseInt(value, 10);
+        // Обновляем цифры
+        hoursDisplay.innerHTML = `${hours} <span>ч</span>`;
+
+        // Определяем статус и подсказку
+        let statusKey;
+        if (hours === 0) {
+          statusKey = 'default';
+        } else if (hours >= 1 && hours <= 15) {
+          statusKey = 'micro';
+        } else if (hours >= 16 && hours <= 249) {
+          statusKey = 'prof';
+        } else if (hours >= 250) {
+          statusKey = 'retrain';
+        } else {
+          // на всякий случай (не должно происходить)
+          statusKey = 'default';
+        }
+
+        const config = STATUS_CONFIG[statusKey];
+        // Обновляем текст плашки
+        statusBadge.textContent = config.label;
+        // Сбрасываем все классы, затем добавляем нужный
+        statusBadge.className = 'status-badge'; // сброс
+        statusBadge.classList.add(config.cssClass);
+
+        // Обновляем подсказку
+        hintText.textContent = config.hint;
+      }
+
+      // Обработчик события input (для ползунка)
+      slider.addEventListener('input', function(e) {
+        const val = e.target.value;
+        updateUI(val);
+      });
+
+      // Инициализация при загрузке (значение 0)
+      // Убедимся, что слайдер в 0 и UI синхронизирован
+      slider.value = 0;
+      updateUI(0);
+
+      // дополнительная синхронизация, если value изменится извне (не нужно)
+      // но добавим событие change для надёжности
+      slider.addEventListener('change', function(e) {
+        // дублируем, чтобы вручную не сбивался
+        const val = e.target.value;
+        updateUI(val);
+      });
+    })();
+  </script>
+</body>
+</html>
