@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Города-миллионники России</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 28px 20px;
+            border: 1px solid #e8edf5;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h2 {
+            font-size: 1.4rem;
+            font-weight: 650;
+            color: #0b1f3b;
+        }
+
+        .header .badge {
+            font-size: 0.7rem;
+            background: #dce6f5;
+            padding: 0.15rem 0.9rem;
+            border-radius: 30px;
+            color: #1f4870;
+            font-weight: 600;
+        }
+
+        #map {
+            width: 100%;
+            height: 550px;
+            border-radius: 16px;
+            border: 1px solid #e8edf5;
+            background: #f0f4fa;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e8edf5;
+            font-size: 0.82rem;
+            color: #3d4a5a;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #c72a2a;
+            border: 2px solid #8b1a1a;
+        }
+
+        .leaflet-popup-content {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0b1f3b;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 14px;
+                border-radius: 16px;
+            }
+            .header h2 {
+                font-size: 1.1rem;
+            }
+            #map {
+                height: 400px;
+            }
+            .legend {
+                font-size: 0.7rem;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>🗺️ Города-миллионники России</h2>
+            <span class="badge">16 городов</span>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="legend">
+            <span class="legend-item">
+                <span class="legend-dot"></span>
+                Город с населением более 1 млн человек
+            </span>
+            <span class="legend-item">📍 Нажмите на точку — увидите название</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация карты
+            const map = L.map('map', {
+                center: [62, 70],
+                zoom: 3,
+                zoomControl: true,
+                fadeAnimation: true,
+                attributionControl: true
+            });
+
+            // Тёмный или светлый фон — используем стандартный слой
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Данные городов-миллионников (широта, долгота, название, население)
+            const cities = [
+                { lat: 55.7558, lng: 37.6173, name: 'Москва', population: '13 010 112' },
+                { lat: 59.9343, lng: 30.3351, name: 'Санкт-Петербург', population: '5 601 911' },
+                { lat: 55.0302, lng: 82.9204, name: 'Новосибирск', population: '1 633 851' },
+                { lat: 56.8380, lng: 60.6057, name: 'Екатеринбург', population: '1 493 749' },
+                { lat: 56.2965, lng: 43.9361, name: 'Нижний Новгород', population: '1 244 254' },
+                { lat: 55.7873, lng: 49.1231, name: 'Казань', population: '1 257 391' },
+                { lat: 53.1959, lng: 50.1001, name: 'Самара', population: '1 139 778' },
+                { lat: 54.7352, lng: 55.9587, name: 'Уфа', population: '1 124 842' },
+                { lat: 56.0106, lng: 92.8526, name: 'Красноярск', population: '1 092 851' },
+                { lat: 58.0104, lng: 56.2294, name: 'Пермь', population: '1 055 397' },
+                { lat: 51.6608, lng: 39.2003, name: 'Воронеж', population: '1 057 681' },
+                { lat: 48.7080, lng: 44.5133, name: 'Волгоград', population: '1 008 998' },
+                { lat: 54.9893, lng: 73.3682, name: 'Омск', population: '1 153 971' },
+                { lat: 55.1644, lng: 61.4368, name: 'Челябинск', population: '1 183 387' },
+                { lat: 47.2357, lng: 39.7015, name: 'Ростов-на-Дону', population: '1 142 162' },
+                { lat: 52.2855, lng: 104.2890, name: 'Иркутск', population: '1 043 200' }
+            ];
+
+            // Кастомная иконка
+            const redIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div style="background-color:#c72a2a; width:14px; height:14px; border-radius:50%; border:2px solid #8b1a1a; box-shadow: 0 0 10px rgba(199,42,42,0.3);"></div>',
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+
+            // Добавляем маркеры с всплывашками
+            cities.forEach(city => {
+                const popupContent = `
+                            <div style="font-weight:600; font-size:1.1rem; color:#0b1f3b;">${city.name}</div>
+                            <div style="font-size:0.85rem; color:#4a6a8a;">Население: ${city.population} чел.</div>
+                        `;
+
+                L.marker([city.lat, city.lng], {
+                        icon: redIcon,
+                        riseOnHover: true
+                    })
+                    .addTo(map)
+                    .bindPopup(popupContent, {
+                        offset: [0, -10],
+                        className: 'city-popup'
+                    });
+            });
+
+            // Адаптация под размер экрана
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
+
+            // Обработка изменения ориентации экрана
+            window.addEventListener('resize', function() {
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 200);
+            });
+        });
+    </script>
+
+</body>
+</html>
