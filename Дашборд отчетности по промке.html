@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд отчетности по промбезопасности</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f1f5f9;
+            padding: 30px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px 30px 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 28px;
+            color: #0b2b4a;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        /* ===== ВВОД ДАННЫХ ===== */
+        .data-input {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 20px 22px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+        .data-input .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .data-input .field {
+            flex: 1;
+            min-width: 140px;
+        }
+        .data-input label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .data-input input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d9e6;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+        .data-input input:focus {
+            outline: 2px solid #2563eb;
+            border-color: transparent;
+        }
+        .data-input .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 9px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-outline:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        /* ===== GRID ДАШБОРДА ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 20px 22px 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .card h3 {
+            font-size: 15px;
+            color: #475569;
+            margin: 0 0 14px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card h3 .badge {
+            background: #eef2ff;
+            color: #2563eb;
+            font-size: 12px;
+            padding: 1px 10px;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+
+        /* ===== ГРАФИКИ (canvas) ===== */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ===== СПИСОК МЕРОПРИЯТИЙ ===== */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 13px;
+        }
+        .event-item .year {
+            font-weight: 600;
+            color: #0b2b4a;
+        }
+        .event-item .value {
+            font-weight: 600;
+        }
+        .event-item .value.green { color: #16a34a; }
+        .event-item .value.yellow { color: #d97706; }
+        .event-item .value.red { color: #dc2626; }
+
+        /* ===== KPI ===== */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 14px;
+            margin-top: 20px;
+        }
+        @media (max-width: 700px) {
+            .kpi-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .kpi-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 14px 16px;
+            text-align: center;
+            border: 1px solid #eef2f6;
+        }
+        .kpi-item .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0b2b4a;
+        }
+        .kpi-item .label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .kpi-item .trend {
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .kpi-item .trend.up { color: #dc2626; }
+        .kpi-item .trend.down { color: #16a34a; }
+        .kpi-item .trend.flat { color: #d97706; }
+
+        /* ===== ИНСТРУКЦИЯ ===== */
+        .hint {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 18px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px dashed #d1d9e6;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 20px 14px; }
+            .data-input .row { flex-direction: column; }
+            .data-input .field { min-width: 100%; }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📊 Дашборд отчетности по промбезопасности</h1>
+    <div class="subtitle">
+        Введите данные за 5 лет — система покажет динамику ОПО, инцидентов, износа и выполнения мероприятий
+    </div>
+
+    <!-- ===== ВВОД ДАННЫХ ===== -->
+    <div class="data-input">
+        <div class="row">
+            <div class="field">
+                <label>📅 Год начала (например, 2021)</label>
+                <input type="number" id="startYear" value="2021" min="2015" max="2030">
+            </div>
+            <div class="field">
+                <label>🏭 Количество ОПО</label>
+                <input type="text" id="opoData" value="12,14,16,18,21" placeholder="через запятую: 12,14,16,18,21">
+            </div>
+            <div class="field">
+                <label>⚠️ Инциденты</label>
+                <input type="text" id="incidentData" value="5,4,3,2,1" placeholder="через запятую: 5,4,3,2,1">
+            </div>
+            <div class="field">
+                <label>🔧 Износ оборудования (%)</label>
+                <input type="text" id="wearData" value="45,50,55,60,65" placeholder="через запятую: 45,50,55,60,65">
+            </div>
+            <div class="field">
+                <label>✅ Выполнено мероприятий</label>
+                <input type="text" id="eventsData" value="8,10,12,15,18" placeholder="через запятую: 8,10,12,15,18">
+            </div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+            <div class="btn-group">
+                <button class="btn btn-primary" id="updateBtn">🔄 Обновить дашборд</button>
+                <button class="btn btn-success" id="exampleBtn">📂 Загрузить пример</button>
+                <button class="btn btn-outline" id="resetBtn">↺ Сбросить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== KPI ===== -->
+    <div class="kpi-row" id="kpiRow">
+        <div class="kpi-item">
+            <div class="number" id="kpiOpo">—</div>
+            <div class="label">Среднее количество ОПО</div>
+            <div class="trend" id="kpiOpoTrend">—</div>
+        </div>
+        <div class="kpi-item">
+            <div class="number" id="kpiIncidents">—</div>
+            <div class="label">Всего инцидентов за 5 лет</div>
+            <div class="trend" id="kpiIncTrend">—</div>
+        </div>
+        <div class="kpi-item">
+            <div class="number" id="kpiWear">—</div>
+            <div class="label">Средний износ</div>
+            <div class="trend" id="kpiWearTrend">—</div>
+        </div>
+        <div class="kpi-item">
+            <div class="number" id="kpiEvents">—</div>
+            <div class="label">Всего мероприятий</div>
+            <div class="trend" id="kpiEventsTrend">—</div>
+        </div>
+    </div>
+
+    <!-- ===== ГРАФИКИ ===== -->
+    <div class="dashboard-grid">
+        <!-- График 1: ОПО и инциденты -->
+        <div class="card">
+            <h3>📈 Динамика ОПО и инцидентов <span class="badge">тренд</span></h3>
+            <div class="chart-container">
+                <canvas id="chart1"></canvas>
+            </div>
+        </div>
+
+        <!-- График 2: Износ и мероприятия -->
+        <div class="card">
+            <h3>📊 Износ оборудования и мероприятия <span class="badge">выполнение</span></h3>
+            <div class="chart-container">
+                <canvas id="chart2"></canvas>
+            </div>
+        </div>
+
+        <!-- Карточка: Инциденты по годам (список) -->
+        <div class="card">
+            <h3>⚠️ Инциденты по годам</h3>
+            <div class="event-list" id="incidentList">
+                <div class="event-item"><span class="year">Нет данных</span></div>
+            </div>
+        </div>
+
+        <!-- Карточка: Выполнение мероприятий -->
+        <div class="card">
+            <h3>✅ Выполнение мероприятий</h3>
+            <div class="event-list" id="eventsList">
+                <div class="event-item"><span class="year">Нет данных</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">
+        💡 <strong>Как использовать:</strong> Введите данные за 5 лет (через запятую) в поля выше и нажмите «Обновить дашборд». 
+        Все графики и показатели пересчитаются автоматически. Данные сохраняются в браузере.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== ПОДКЛЮЧАЕМ CHART.JS ===== -->
+<!-- ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+</script>
+
+<script>
+// ================================================================
+// 1. РАБОТА С ДАННЫМИ (localStorage)
+// ================================================================
+const STORAGE_KEY = 'dashboard_pb_data';
+
+function getDefaultData() {
+    return {
+        years: ['2021', '2022', '2023', '2024', '2025'],
+        opo: [12, 14, 16, 18, 21],
+        incidents: [5, 4, 3, 2, 1],
+        wear: [45, 50, 55, 60, 65],
+        events: [8, 10, 12, 15, 18]
+    };
+}
+
+function loadData() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.opo) && parsed.opo.length === 5) {
+                return parsed;
+            }
+        }
+    } catch (e) {}
+    return getDefaultData();
+}
+
+function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ================================================================
+// 2. ПАРСИНГ ВВОДА
+// ================================================================
+function parseInput(value) {
+    return String(value)
+        .split(',')
+        .map(s => parseFloat(s.trim()))
+        .filter(n => !isNaN(n));
+}
+
+function getYearsFromStart(startYear) {
+    const years = [];
+    for (let i = 0; i < 5; i++) {
+        years.push(String(startYear + i));
+    }
+    return years;
+}
+
+// ================================================================
+// 3. ГЛАВНАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ
+// ================================================================
+let chart1 = null;
+let chart2 = null;
+
+function updateDashboard() {
+    // читаем поля
+    const startYear = parseInt(document.getElementById('startYear').value) || 2021;
+    const opoRaw = document.getElementById('opoData').value;
+    const incRaw = document.getElementById('incidentData').value;
+    const wearRaw = document.getElementById('wearData').value;
+    const eventsRaw = document.getElementById('eventsData').value;
+
+    // парсим
+    let opo = parseInput(opoRaw);
+    let incidents = parseInput(incRaw);
+    let wear = parseInput(wearRaw);
+    let events = parseInput(eventsRaw);
+
+    // если данных меньше 5 — дополняем нулями
+    while (opo.length < 5) opo.push(0);
+    while (incidents.length < 5) incidents.push(0);
+    while (wear.length < 5) wear.push(0);
+    while (events.length < 5) events.push(0);
+
+    // обрезаем до 5
+    opo = opo.slice(0, 5);
+    incidents = incidents.slice(0, 5);
+    wear = wear.slice(0, 5);
+    events = events.slice(0, 5);
+
+    const years = getYearsFromStart(startYear);
+
+    // сохраняем
+    const data = { years, opo, incidents, wear, events };
+    saveData(data);
+
+    // ---- ОБНОВЛЯЕМ KPI ----
+    const avgOpo = (opo.reduce((a,b) => a+b, 0) / 5).toFixed(1);
+    const totalInc = incidents.reduce((a,b) => a+b, 0);
+    const avgWear = (wear.reduce((a,b) => a+b, 0) / 5).toFixed(1);
+    const totalEvents = events.reduce((a,b) => a+b, 0);
+
+    document.getElementById('kpiOpo').textContent = avgOpo;
+    document.getElementById('kpiIncidents').textContent = totalInc;
+    document.getElementById('kpiWear').textContent = avgWear + '%';
+    document.getElementById('kpiEvents').textContent = totalEvents;
+
+    // тренды
+    document.getElementById('kpiOpoTrend').textContent = 
+        opo[4] > opo[0] ? '📈 рост' : opo[4] < opo[0] ? '📉 снижение' : '➖ стабильно';
+    document.getElementById('kpiOpoTrend').className = 'trend ' + 
+        (opo[4] > opo[0] ? 'up' : opo[4] < opo[0] ? 'down' : 'flat');
+
+    document.getElementById('kpiIncTrend').textContent = 
+        incidents[4] < incidents[0] ? '✅ снижение' : incidents[4] > incidents[0] ? '⚠️ рост' : '➖ стабильно';
+    document.getElementById('kpiIncTrend').className = 'trend ' + 
+        (incidents[4] < incidents[0] ? 'down' : incidents[4] > incidents[0] ? 'up' : 'flat');
+
+    document.getElementById('kpiWearTrend').textContent = 
+        wear[4] > wear[0] ? '📈 увеличение' : wear[4] < wear[0] ? '📉 снижение' : '➖ стабильно';
+    document.getElementById('kpiWearTrend').className = 'trend ' + 
+        (wear[4] > wear[0] ? 'up' : wear[4] < wear[0] ? 'down' : 'flat');
+
+    document.getElementById('kpiEventsTrend').textContent = 
+        events[4] > events[0] ? '📈 рост' : events[4] < events[0] ? '📉 снижение' : '➖ стабильно';
+    document.getElementById('kpiEventsTrend').className = 'trend ' + 
+        (events[4] > events[0] ? 'up' : events[4] < events[0] ? 'down' : 'flat');
+
+    // ---- СПИСКИ ----
+    // Инциденты
+    let incHtml = '';
+    for (let i = 0; i < 5; i++) {
+        const color = incidents[i] === 0 ? 'green' : incidents[i] <= 2 ? 'yellow' : 'red';
+        incHtml += `
+            <div class="event-item">
+                <span class="year">${years[i]}</span>
+                <span class="value ${color}">${incidents[i]} инцидентов</span>
+            </div>
+        `;
+    }
+    document.getElementById('incidentList').innerHTML = incHtml || '<div class="event-item">Нет данных</div>';
+
+    // Мероприятия
+    let evHtml = '';
+    for (let i = 0; i < 5; i++) {
+        const color = events[i] >= 15 ? 'green' : events[i] >= 10 ? 'yellow' : 'red';
+        evHtml += `
+            <div class="event-item">
+                <span class="year">${years[i]}</span>
+                <span class="value ${color}">${events[i]} выполнено</span>
+            </div>
+        `;
+    }
+    document.getElementById('eventsList').innerHTML = evHtml || '<div class="event-item">Нет данных</div>';
+
+    // ---- ГРАФИКИ ----
+    const ctx1 = document.getElementById('chart1').getContext('2d');
+    const ctx2 = document.getElementById('chart2').getContext('2d');
+
+    // уничтожаем старые графики
+    if (chart1) { chart1.destroy(); chart1 = null; }
+    if (chart2) { chart2.destroy(); chart2 = null; }
+
+    // График 1: ОПО и инциденты (две линии)
+    chart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Количество ОПО',
+                    data: opo,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#2563eb',
+                    pointRadius: 4,
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Инциденты',
+                    data: incidents,
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#dc2626',
+                    pointRadius: 4,
+                    yAxisID: 'y1',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { size: 12 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    position: 'left',
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    // График 2: Износ и мероприятия
+    chart2 = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Износ оборудования (%)',
+                    data: wear,
+                    backgroundColor: 'rgba(217, 119, 6, 0.6)',
+                    borderColor: '#d97706',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Выполнено мероприятий',
+                    data: events,
+                    backgroundColor: 'rgba(22, 163, 74, 0.6)',
+                    borderColor: '#16a34a',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    yAxisID: 'y1',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { size: 12 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    position: 'left',
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    max: 100,
+                    ticks: { callback: v => v + '%' }
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+}
+
+// ================================================================
+// 4. КНОПКИ
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем сохранённые данные
+    const saved = loadData();
+    document.getElementById('startYear').value = parseInt(saved.years[0]) || 2021;
+    document.getElementById('opoData').value = saved.opo.join(',');
+    document.getElementById('incidentData').value = saved.incidents.join(',');
+    document.getElementById('wearData').value = saved.wear.join(',');
+    document.getElementById('eventsData').value = saved.events.join(',');
+
+    // Обновить
+    document.getElementById('updateBtn').addEventListener('click', updateDashboard);
+
+    // Загрузить пример (сброс к дефолту)
+    document.getElementById('exampleBtn').addEventListener('click', function() {
+        const def = getDefaultData();
+        document.getElementById('startYear').value = parseInt(def.years[0]);
+        document.getElementById('opoData').value = def.opo.join(',');
+        document.getElementById('incidentData').value = def.incidents.join(',');
+        document.getElementById('wearData').value = def.wear.join(',');
+        document.getElementById('eventsData').value = def.events.join(',');
+        updateDashboard();
+    });
+
+    // Сбросить (очистить поля)
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        if (confirm('Сбросить все данные?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            document.getElementById('startYear').value = '2021';
+            document.getElementById('opoData').value = '';
+            document.getElementById('incidentData').value = '';
+            document.getElementById('wearData').value = '';
+            document.getElementById('eventsData').value = '';
+            updateDashboard();
+        }
+    });
+
+    // Первая отрисовка
+    updateDashboard();
+});
+</script>
+
+</body>
+</html>
