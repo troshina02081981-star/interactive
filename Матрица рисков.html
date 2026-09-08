@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матрица рисков при отсутствии документов</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f1f5f9;
+            padding: 30px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px 30px 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 28px;
+            color: #0b2b4a;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        /* ===== МАТРИЦА ===== */
+        .matrix-wrapper {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+        .matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 700px;
+        }
+        .matrix th {
+            background: #0b2b4a;
+            color: #ffffff;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .matrix th:first-child {
+            border-radius: 14px 0 0 0;
+        }
+        .matrix th:last-child {
+            border-radius: 0 14px 0 0;
+        }
+        .matrix td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #eef2f6;
+            vertical-align: middle;
+        }
+        .matrix tr:hover td {
+            background: #f8fafc;
+        }
+        .matrix .doc-name {
+            font-weight: 600;
+            color: #0b2b4a;
+            white-space: nowrap;
+        }
+        .matrix .doc-desc {
+            font-size: 12px;
+            color: #64748b;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ===== СТАТУСЫ (цветные точки и бейджи) ===== */
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid transparent;
+            white-space: nowrap;
+        }
+        .risk-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        /* Цвета */
+        .risk-critical {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+        .risk-high {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+        .risk-medium {
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #fde047;
+        }
+        .risk-low {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        .risk-none {
+            background: #e0e7ff;
+            color: #3730a3;
+            border-color: #c7d2fe;
+        }
+
+        /* Иконки статусов */
+        .risk-critical .icon { color: #dc2626; }
+        .risk-high .icon { color: #d97706; }
+        .risk-medium .icon { color: #ca8a04; }
+        .risk-low .icon { color: #16a34a; }
+        .risk-none .icon { color: #6366f1; }
+
+        /* ===== ПОДСКАЗКА (модалка) ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: #ffffff;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 24px;
+            padding: 32px 30px 28px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            animation: modalFade 0.25s ease;
+            position: relative;
+        }
+        @keyframes modalFade {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal .close-btn {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal .close-btn:hover {
+            color: #0f172a;
+            transform: rotate(90deg);
+        }
+        .modal h3 {
+            font-size: 22px;
+            margin: 0 0 4px 0;
+            color: #0b2b4a;
+        }
+        .modal .sub {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 14px;
+        }
+        .modal .detail-row:last-child {
+            border-bottom: none;
+        }
+        .modal .detail-row .label {
+            color: #64748b;
+        }
+        .modal .detail-row .value {
+            font-weight: 600;
+            color: #0b2b4a;
+            text-align: right;
+        }
+        .modal .detail-row .value.critical { color: #dc2626; }
+        .modal .detail-row .value.high { color: #d97706; }
+        .modal .detail-row .value.medium { color: #ca8a04; }
+        .modal .detail-row .value.low { color: #16a34a; }
+        .modal .action-box {
+            margin-top: 16px;
+            background: #f1f5f9;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+        }
+        .modal .action-box strong {
+            display: block;
+            color: #0b2b4a;
+            margin-bottom: 4px;
+        }
+        .modal .action-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        /* ===== ЛЕГЕНДА ===== */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0 18px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+        .legend-dot.critical { background: #dc2626; }
+        .legend-dot.high { background: #d97706; }
+        .legend-dot.medium { background: #ca8a04; }
+        .legend-dot.low { background: #16a34a; }
+        .legend-dot.none { background: #6366f1; }
+
+        /* ===== ИТОГО ===== */
+        .summary {
+            margin-top: 20px;
+            padding: 18px 22px;
+            background: #eef2ff;
+            border-radius: 14px;
+            border: 1px solid #c7d2fe;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .summary .stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+        .summary .stat .num {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .summary .stat .num.critical { color: #dc2626; }
+        .summary .stat .num.high { color: #d97706; }
+        .summary .stat .num.medium { color: #ca8a04; }
+        .summary .stat .num.low { color: #16a34a; }
+        .summary .stat .num.none { color: #6366f1; }
+
+        @media (max-width: 640px) {
+            .container { padding: 20px 14px; }
+            .matrix th, .matrix td { padding: 8px 10px; font-size: 13px; }
+            .risk-badge { font-size: 12px; padding: 3px 10px; }
+            .summary { flex-direction: column; align-items: stretch; gap: 8px; }
+            .modal { padding: 24px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚠️ Матрица рисков при отсутствии документов</h1>
+    <div class="subtitle">
+        Нажмите на любой уровень риска — узнаете подробности: штрафы, приостановку и что делать.
+    </div>
+
+    <!-- ЛЕГЕНДА -->
+    <div class="legend">
+        <span class="legend-item"><span class="legend-dot critical"></span> Критический риск</span>
+        <span class="legend-item"><span class="legend-dot high"></span> Высокий риск</span>
+        <span class="legend-item"><span class="legend-dot medium"></span> Средний риск</span>
+        <span class="legend-item"><span class="legend-dot low"></span> Низкий риск</span>
+        <span class="legend-item"><span class="legend-dot none"></span> Минимальный</span>
+    </div>
+
+    <!-- МАТРИЦА -->
+    <div class="matrix-wrapper">
+        <table class="matrix">
+            <thead>
+                <tr>
+                    <th style="min-width:200px;">📄 Документ</th>
+                    <th style="min-width:140px;">⚖️ Административная ответственность</th>
+                    <th style="min-width:100px;">⏸️ Приостановка деятельности</th>
+                    <th style="min-width:140px;">📋 Уголовная ответственность</th>
+                    <th style="min-width:120px;">🎯 Уровень риска</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Лицензия -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Лицензия на эксплуатацию</span>
+                        <span class="doc-desc">Взрывопожароопасные и химически опасные ОПО I–III класса</span>
+                    </td>
+                    <td>до 500 000 ₽ <span style="color:#dc2626;">🔴</span></td>
+                    <td style="color:#dc2626; font-weight:600;">✅ Да</td>
+                    <td style="color:#d97706;">🟡 До 5 лет (ст. 171 УК РФ)</td>
+                    <td>
+                        <span class="risk-badge risk-critical" data-modal="modal-license">
+                            <span class="icon">🔴</span> Критический
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Декларация ПБ -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Декларация промышленной безопасности</span>
+                        <span class="doc-desc">ОПО I–II класса опасности</span>
+                    </td>
+                    <td>до 300 000 ₽ <span style="color:#d97706;">🟡</span></td>
+                    <td style="color:#d97706; font-weight:600;">🟡 До 90 суток</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-high" data-modal="modal-decl">
+                            <span class="icon">🟡</span> Высокий
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Свидетельство о регистрации ОПО -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Свидетельство о регистрации ОПО</span>
+                        <span class="doc-desc">Внесение в госреестр ОПО</span>
+                    </td>
+                    <td>до 200 000 ₽ <span style="color:#d97706;">🟡</span></td>
+                    <td style="color:#d97706; font-weight:600;">🟡 До 90 суток</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-high" data-modal="modal-registry">
+                            <span class="icon">🟡</span> Высокий
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Паспорта на техустройства -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Паспорта на технические устройства</span>
+                        <span class="doc-desc">Оборудование, сосуды под давлением, подъёмные сооружения</span>
+                    </td>
+                    <td>до 200 000 ₽ <span style="color:#ca8a04;">🟡</span></td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-medium" data-modal="modal-passport">
+                            <span class="icon">🟡</span> Средний
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Проектная документация -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Проектная документация</span>
+                        <span class="doc-desc">Строительство, реконструкция, техперевооружение</span>
+                    </td>
+                    <td>до 200 000 ₽ <span style="color:#ca8a04;">🟡</span></td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-medium" data-modal="modal-project">
+                            <span class="icon">🟡</span> Средний
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Производственные инструкции -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Производственные инструкции</span>
+                        <span class="doc-desc">Порядок безопасного ведения работ</span>
+                    </td>
+                    <td>до 100 000 ₽ <span style="color:#16a34a;">🟢</span></td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-low" data-modal="modal-instr">
+                            <span class="icon">🟢</span> Низкий
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Страховой полис -->
+                <tr>
+                    <td>
+                        <span class="doc-name">Страховой полис ОПО</span>
+                        <span class="doc-desc">Обязательное страхование ответственности</span>
+                    </td>
+                    <td>до 50 000 ₽ <span style="color:#6366f1;">🔵</span></td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td style="color:#16a34a;">🟢 Нет</td>
+                    <td>
+                        <span class="risk-badge risk-none" data-modal="modal-insurance">
+                            <span class="icon">🔵</span> Минимальный
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- СТАТИСТИКА -->
+    <div class="summary">
+        <span style="font-weight:600; color:#0b2b4a;">📊 Итого по матрице:</span>
+        <div class="stat">
+            <span>🔴 <span class="num critical">1</span> критический</span>
+        </div>
+        <div class="stat">
+            <span>🟡 <span class="num high">2</span> высоких</span>
+        </div>
+        <div class="stat">
+            <span>🟡 <span class="num medium">2</span> средних</span>
+        </div>
+        <div class="stat">
+            <span>🟢 <span class="num low">1</span> низкий</span>
+        </div>
+        <div class="stat">
+            <span>🔵 <span class="num none">1</span> минимальный</span>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== МОДАЛЬНЫЕ ОКНА (подробности по каждому риску) ===== -->
+<!-- ============================================================ -->
+
+<!-- Лицензия -->
+<div id="modal-license" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🔴 Лицензия на эксплуатацию</h3>
+        <div class="sub">Критический риск — отсутствие лицензии</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value critical">до 500 000 ₽ (ст. 9.1 КоАП РФ)</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value critical">до 90 суток</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value high">до 5 лет (ст. 171 УК РФ)</span>
+        </div>
+        <div class="action-box">
+            <strong>🚨 Что делать срочно:</strong>
+            <p>1. Немедленно приостановить эксплуатацию ОПО до получения лицензии.<br>
+            2. Подать заявление на получение лицензии в территориальный орган Ростехнадзора.<br>
+            3. Собрать пакет документов: учредительные, подтверждение квалификации, акты проверок.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Декларация ПБ -->
+<div id="modal-decl" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🟡 Декларация промышленной безопасности</h3>
+        <div class="sub">Высокий риск — отсутствие декларации</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value high">до 300 000 ₽ (ст. 9.1 КоАП РФ)</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value high">до 90 суток</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>📋 Что делать:</strong>
+            <p>1. Заказать экспертизу промышленной безопасности в аккредитованной организации.<br>
+            2. Разработать или актуализировать декларацию.<br>
+            3. Зарегистрировать в Ростехнадзоре (для ОПО I–II класса).</p>
+        </div>
+    </div>
+</div>
+
+<!-- Свидетельство о регистрации -->
+<div id="modal-registry" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🟡 Свидетельство о регистрации ОПО</h3>
+        <div class="sub">Высокий риск — объект не зарегистрирован</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value high">до 200 000 ₽</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value high">до 90 суток</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>📋 Что делать:</strong>
+            <p>1. Провести идентификацию ОПО.<br>
+            2. Подать заявление и сведения об ОПО в территориальный орган Ростехнадзора.<br>
+            3. Получить свидетельство или выписку из реестра.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Паспорта на техустройства -->
+<div id="modal-passport" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🟡 Паспорта на технические устройства</h3>
+        <div class="sub">Средний риск — отсутствие паспортов на оборудование</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value medium">до 200 000 ₽</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>🔧 Что делать:</strong>
+            <p>1. Запросить дубликат у завода-изготовителя.<br>
+            2. При отказе — заказать экспертизу промышленной безопасности оборудования.<br>
+            3. На основании заключения ЭПБ оформить новый паспорт.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Проектная документация -->
+<div id="modal-project" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🟡 Проектная документация</h3>
+        <div class="sub">Средний риск — отсутствие проекта</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value medium">до 200 000 ₽</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>🏗️ Что делать:</strong>
+            <p>1. Запросить копию у проектной организации или заказчика.<br>
+            2. Проверить архивы (в т.ч. Ростехнадзор, БТИ).<br>
+            3. Если не найдено — разработать проект при техперевооружении ОПО.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Производственные инструкции -->
+<div id="modal-instr" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🟢 Производственные инструкции</h3>
+        <div class="sub">Низкий риск — отсутствие инструкций</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value low">до 100 000 ₽</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value low">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>📝 Что делать:</strong>
+            <p>1. Разработать инструкции самостоятельно силами организации.<br>
+            2. Учесть требования ФНП и технологических регламентов.<br>
+            3. Утвердить приказом руководителя и ознакомить персонал.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Страховой полис -->
+<div id="modal-insurance" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" data-close>✕</button>
+        <h3>🔵 Страховой полис ОПО</h3>
+        <div class="sub">Минимальный риск — отсутствие страховки</div>
+        <div class="detail-row">
+            <span class="label">Штраф</span>
+            <span class="value none">до 50 000 ₽</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Приостановка деятельности</span>
+            <span class="value none">Нет</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Уголовная ответственность</span>
+            <span class="value none">Нет</span>
+        </div>
+        <div class="action-box">
+            <strong>📄 Что делать:</strong>
+            <p>1. Заключить договор страхования со страховой компанией.<br>
+            2. Получить полис на каждый ОПО отдельно.<br>
+            3. Оформить быстро — в течение 1–2 дней.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== СКРИПТ ===== -->
+<!-- ============================================================ -->
+<script>
+    (function() {
+        // Открытие модалки по клику на бейдж
+        document.querySelectorAll('.risk-badge[data-modal]').forEach(function(badge) {
+            badge.addEventListener('click', function(e) {
+                const modalId = this.getAttribute('data-modal');
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                e.stopPropagation();
+            });
+        });
+
+        // Закрытие по кнопке ✕
+        document.querySelectorAll('.close-btn[data-close]').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                const overlay = this.closest('.modal-overlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                e.stopPropagation();
+            });
+        });
+
+        // Закрытие по клику на фон
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(function(modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>
