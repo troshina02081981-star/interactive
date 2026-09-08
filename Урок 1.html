@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Найдите ошибку в документе</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .task-block {
+            max-width: 820px;
+            width: 100%;
+            height: 100%;
+            max-height: 700px;
+            background: #ffffff;
+            padding: 20px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-height: 700px) {
+            .task-block {
+                padding: 12px 20px;
+                max-height: none;
+                height: auto;
+            }
+        }
+
+        /* Вступление */
+        .task-intro {
+            font-size: 14px;
+            color: #1a2a3a;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            background: #f0f6fe;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .task-intro strong {
+            color: #0b2a4a;
+        }
+
+        /* Текст задания (без слова "Задание") */
+        .task-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0b1e33;
+            flex-shrink: 0;
+        }
+
+        .task-sub {
+            font-size: 14px;
+            color: #3d4f62;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            flex-shrink: 0;
+        }
+
+        /* Документ */
+        .document-block {
+            background: #f8faff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 12px;
+            font-family: 'Times New Roman', 'Georgia', serif;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1a2a3a;
+            flex-shrink: 0;
+        }
+
+        .document-block .doc-title {
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .document-block .doc-sub {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 4px 0 8px 0;
+        }
+
+        .document-block .doc-order {
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .document-block ol {
+            margin: 4px 0 6px 20px;
+            padding-left: 4px;
+        }
+
+        .document-block ol li {
+            margin-bottom: 4px;
+        }
+
+        .document-block .doc-sign {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .document-block .doc-sign .sign-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .document-block .doc-sign .sign-line .line {
+            display: inline-block;
+            width: 120px;
+            border-bottom: 1px solid #1a2a3a;
+            margin-right: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .document-block {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            .document-block .doc-sign .sign-line .line {
+                width: 70px;
+            }
+        }
+
+        /* Варианты ответов */
+        .task-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border: 2px solid #e2e7ee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            font-size: 14px;
+            color: #0b1e33;
+        }
+
+        .option-item:hover {
+            border-color: #b0c7e0;
+            background: #f7faff;
+        }
+
+        .option-item input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1a5c9e;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .option-item .letter {
+            font-weight: 700;
+            color: #1a5c9e;
+            min-width: 20px;
+        }
+
+        /* Кнопка */
+        .check-btn {
+            background: #1a5c9e;
+            color: #ffffff;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 34px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            flex-shrink: 0;
+            width: fit-content;
+        }
+
+        .check-btn:hover {
+            background: #12457a;
+            transform: scale(1.01);
+        }
+
+        .check-btn:disabled {
+            background: #c5d2e2;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Подбадривание */
+        .encourage {
+            margin: 8px 0 10px 0;
+            padding: 8px 14px;
+            background: #f0f6fe;
+            border-radius: 10px;
+            border: 1px dashed #b8cbe0;
+            font-size: 13px;
+            color: #1a3a5e;
+            flex-shrink: 0;
+        }
+
+        .encourage strong {
+            color: #0b2a4a;
+        }
+
+        /* Результат */
+        .result-box {
+            margin-top: 10px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 5px solid #1a5c9e;
+            background: #f7faff;
+            flex-shrink: 0;
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-box .result-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #0b1e33;
+        }
+
+        .result-box .result-title .icon {
+            margin-right: 6px;
+        }
+
+        .result-box .explanation {
+            color: #1a2a3a;
+        }
+
+        .result-box .explanation strong {
+            color: #0b1e33;
+        }
+
+        .result-box .checklist {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #e2e7ee;
+        }
+
+        .result-box .checklist .ok {
+            color: #1a7a4a;
+            font-weight: 600;
+        }
+
+        .result-box .checklist .fail {
+            color: #b13d30;
+            font-weight: 600;
+        }
+
+        .result-box .extra-note {
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: #fff4e5;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #7a5a2a;
+        }
+
+        .result-box .extra-note strong {
+            color: #5a3a1a;
+        }
+
+        .footnote {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #b8c8dd;
+            text-align: center;
+            border-top: 1px solid #eef2f6;
+            padding-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .task-block {
+            overflow: hidden;
+        }
+
+        @media (max-height: 650px) {
+            .task-block {
+                padding: 10px 16px;
+            }
+            .document-block {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+            .option-item {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            .task-intro {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            .task-title {
+                font-size: 15px;
+            }
+            .check-btn {
+                padding: 8px 28px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="task-block">
+
+    <!-- Вступление -->
+    <div class="task-intro">
+        <strong>Чтобы вы сразу поняли, в чем суть нашего подхода, мы начнем не с теории, а с практики.</strong>
+        Попробуйте найти ошибку в реальном документе. Не важно, найдете или нет — важно, чтобы вы прочувствовали, как работает обучение через действие.
+    </div>
+
+    <!-- Текст задания (без слова "Задание", с большой буквы) -->
+    <div class="task-title">Найдите, чего не хватает в этом документе.</div>
+    <div class="task-sub">
+        Ниже представлен приказ о назначении ответственного за производственный контроль. Внимательно изучите его.
+    </div>
+
+    <!-- Документ -->
+    <div class="document-block">
+
+        <div class="doc-title">Общество с ограниченной ответственностью «Альфа»</div>
+
+        <div style="text-align:center; margin:6px 0 4px 0; font-weight:600; font-size:15px;">
+            ПРИКАЗ
+        </div>
+
+        <div style="text-align:center; margin-bottom:6px;">
+            «30» августа 2024 года &nbsp;&nbsp;&nbsp; № 2168
+        </div>
+
+        <div style="text-align:center; font-weight:600; font-size:14px; margin-bottom:6px;">
+            Об организации производственного контроля за соблюдением требований промышленной безопасности в ООО «Альфа»
+        </div>
+
+        <p style="margin:8px 0 6px 0; text-align:justify;">
+            В соответствии с требованиями Федерального закона от 21.07.1997 № 116-ФЗ «О промышленной безопасности опасных производственных объектов» и Постановления Правительства РФ от 18.12.2020 № 2168 «Об организации и осуществлении производственного контроля за соблюдением требований промышленной безопасности» в целях обеспечения требований промышленной безопасности при эксплуатации опасных производственных объектов ООО «Альфа»
+        </p>
+
+        <div class="doc-order">ПРИКАЗЫВАЮ:</div>
+
+        <ol>
+            <li>Назначить руководителя службы производственного контроля Петрова Петра Петровича ответственным за осуществление производственного контроля за соблюдением требований промышленной безопасности.</li>
+            <li>Контроль за исполнением настоящего приказа оставляю за собой.</li>
+        </ol>
+
+        <div class="doc-sign">
+            <div><strong>Генеральный директор</strong></div>
+            <div class="sign-line">
+                <span class="line">&nbsp;</span>
+                <span><strong>А.В. Львов</strong></span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Варианты ответов -->
+    <div class="task-question">Ваш ответ (выберите один вариант):</div>
+
+    <div class="options" id="optionsContainer">
+
+        <label class="option-item" id="optA">
+            <input type="radio" name="quiz" value="A" />
+            <span class="letter">А.</span>
+            Отсутствует дата утверждения приказа
+        </label>
+
+        <label class="option-item" id="optB">
+            <input type="radio" name="quiz" value="B" />
+            <span class="letter">Б.</span>
+            Нет отметки об ознакомлении работника с приказом
+        </label>
+
+        <label class="option-item" id="optC">
+            <input type="radio" name="quiz" value="C" />
+            <span class="letter">В.</span>
+            Неверно указана должность руководителя
+        </label>
+
+    </div>
+
+    <!-- Подбадривание -->
+    <div class="encourage">
+        <strong>Не бойтесь ошибиться!</strong> Это нормально — вы только начинаете. Правильный ответ и разбор вы увидите чуть ниже.
+    </div>
+
+    <!-- Кнопка -->
+    <button class="check-btn" id="checkBtn" disabled>Проверить ответ</button>
+
+    <!-- Результат -->
+    <div class="result-box" id="resultBox">
+        <div class="result-title">
+            <span class="icon" id="resultIcon">✅</span>
+            <span id="resultTitle">Разбор задания</span>
+        </div>
+        <div class="explanation" id="resultText">
+            <p><strong>Правильный ответ: Б. Нет отметки об ознакомлении работника с приказом.</strong></p>
+            <p style="margin-top:4px;">
+                Согласно ст. 22 и 68 Трудового кодекса РФ, работодатель обязан ознакомить каждого работника с локальными нормативными актами под роспись. Отметка об ознакомлении — это не формальность, а обязательный элемент документа.
+            </p>
+            <div class="checklist">
+                <span class="ok">✅ Дата есть (30 августа 2024 года)</span>
+                <span class="ok">✅ Подпись руководителя есть</span>
+                <span class="fail">❌ Нет отметки об ознакомлении Петрова П.П.</span>
+            </div>
+            <div class="extra-note">
+                <strong>💡 Важно:</strong> Отсутствие отметки об ознакомлении — нарушение, которое может выявить инспектор Ростехнадзора.
+            </div>
+        </div>
+    </div>
+
+    <div class="footnote">
+        <span>Этап 1 цикла Колба — конкретный опыт</span>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+
+        const radioButtons = document.querySelectorAll('input[name="quiz"]');
+        const checkBtn = document.getElementById('checkBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                checkBtn.disabled = false;
+            });
+        });
+
+        checkBtn.addEventListener('click', function() {
+
+            let selectedValue = null;
+            for (let rb of radioButtons) {
+                if (rb.checked) {
+                    selectedValue = rb.value;
+                    break;
+                }
+            }
+
+            if (!selectedValue) return;
+
+            document.querySelectorAll('.option-item').forEach(el => {
+                el.style.background = '#ffffff';
+                el.style.borderColor = '#e2e7ee';
+            });
+
+            let selectedLabel = null;
+            if (selectedValue === 'A') selectedLabel = document.getElementById('optA');
+            else if (selectedValue === 'B') selectedLabel = document.getElementById('optB');
+            else if (selectedValue === 'C') selectedLabel = document.getElementById('optC');
+
+            if (selectedLabel) {
+                selectedLabel.style.borderColor = '#1a5c9e';
+                selectedLabel.style.background = '#f0f6fe';
+            }
+
+            const isCorrect = (selectedValue === 'B');
+
+            resultBox.classList.add('visible');
+
+            const icon = isCorrect ? '✅' : '❌';
+            const title = isCorrect ? 'Верно!' : 'Разбор задания';
+
+            resultIcon.textContent = icon;
+            resultTitle.textContent = title;
+
+            let extraNote = '';
+            if (!isCorrect) {
+                if (selectedValue === 'A') {
+                    extraNote = `
+                        <div class="extra-note">
+                            <strong>Обратите внимание:</strong> Дата в приказе есть — «30» августа 2024 года. Это не ошибка.
+                        </div>
+                    `;
+                } else if (selectedValue === 'C') {
+                    extraNote = `
+                        <div class="extra-note">
+                            <strong>Обратите внимание:</strong> Генеральный директор имеет право подписывать такие приказы. Должность указана верно.
+                        </div>
+                    `;
+                }
+            }
+
+            resultText.innerHTML = `
+                <p><strong>Правильный ответ: Б. Нет отметки об ознакомлении работника с приказом.</strong></p>
+                <p style="margin-top:4px;">
+                    Согласно ст. 22 и 68 Трудового кодекса РФ, работодатель обязан ознакомить каждого работника с локальными нормативными актами под роспись. Отметка об ознакомлении — это не формальность, а обязательный элемент документа.
+                </p>
+                ${extraNote}
+                <div class="checklist">
+                    <span class="ok">✅ Дата есть (30 августа 2024 года)</span>
+                    <span class="ok">✅ Подпись руководителя есть</span>
+                    <span class="fail">❌ Нет отметки об ознакомлении Петрова П.П.</span>
+                </div>
+                <div class="extra-note">
+                    <strong>💡 Важно:</strong> Отсутствие отметки об ознакомлении — нарушение, которое может выявить инспектор Ростехнадзора.
+                </div>
+            `;
+
+            checkBtn.disabled = true;
+            radioButtons.forEach(rb => rb.disabled = true);
+        });
+
+    })();
+</script>
+
+</body>
+</html>
