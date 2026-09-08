@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: срок сдачи отчета о ПК</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            padding: 30px 15px;
+        }
+
+        .task-block {
+            max-width: 820px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 30px 34px;
+            border: 1px solid #eef2f6;
+        }
+
+        @media (max-width: 600px) {
+            .task-block {
+                padding: 18px 14px;
+            }
+        }
+
+        .task-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1e33;
+            margin-bottom: 6px;
+        }
+
+        .task-sub {
+            font-size: 15px;
+            color: #3d4f62;
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+
+        .task-question {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin: 16px 0 14px 0;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            border: 2px solid #e2e7ee;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            font-size: 15px;
+            color: #0b1e33;
+        }
+
+        .option-item:hover {
+            border-color: #b0c7e0;
+            background: #f7faff;
+        }
+
+        .option-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a5c9e;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .option-item .letter {
+            font-weight: 700;
+            color: #1a5c9e;
+            min-width: 22px;
+        }
+
+        .check-btn {
+            background: #1a5c9e;
+            color: #ffffff;
+            border: none;
+            border-radius: 40px;
+            padding: 13px 38px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .check-btn:hover {
+            background: #12457a;
+            transform: scale(1.01);
+        }
+
+        .check-btn:disabled {
+            background: #c5d2e2;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            margin-top: 22px;
+            padding: 20px 24px;
+            border-radius: 14px;
+            display: none;
+            font-size: 15px;
+            line-height: 1.7;
+            border-left: 6px solid #1a5c9e;
+            background: #f7faff;
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-box .result-title {
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 6px;
+            color: #0b1e33;
+        }
+
+        .result-box .result-title .icon {
+            margin-right: 8px;
+        }
+
+        .result-box .explanation {
+            color: #1a2a3a;
+            margin-top: 4px;
+        }
+
+        .result-box .explanation strong {
+            color: #0b1e33;
+        }
+
+        .result-box .extra-note {
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: #fff4e5;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #7a5a2a;
+        }
+
+        .result-box .extra-note strong {
+            color: #5a3a1a;
+        }
+
+        .footnote {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #aab8cc;
+            text-align: center;
+            border-top: 1px solid #eef2f6;
+            padding-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="task-block">
+
+    <div class="task-title">🎯 Ситуация</div>
+    <div class="task-sub">
+        «Сегодня 10 марта 2026 года. Вы отвечаете за отчетность на ОПО. До какого числа вы должны подать отчет о производственном контроле за 2025 год?»
+    </div>
+
+    <div class="task-question">Задание: выберите правильный вариант.</div>
+
+    <div class="options" id="optionsContainer">
+
+        <label class="option-item" id="optA">
+            <input type="radio" name="quiz" value="A" />
+            <span class="letter">А.</span>
+            1 апреля 2026 года
+        </label>
+
+        <label class="option-item" id="optB">
+            <input type="radio" name="quiz" value="B" />
+            <span class="letter">Б.</span>
+            1 июля 2026 года
+        </label>
+
+        <label class="option-item" id="optC">
+            <input type="radio" name="quiz" value="C" />
+            <span class="letter">В.</span>
+            1 января 2026 года
+        </label>
+
+    </div>
+
+    <button class="check-btn" id="checkBtn" disabled>Проверить ответ</button>
+
+    <div class="result-box" id="resultBox">
+        <div class="result-title">
+            <span class="icon" id="resultIcon">✅</span>
+            <span id="resultTitle">Разбор задания</span>
+        </div>
+        <div class="explanation" id="resultText">
+            <p><strong>Правильный ответ: А. 1 апреля 2026 года.</strong></p>
+            <p style="margin-top:6px;">
+                Организации, эксплуатирующие ОПО, ежегодно подают отчет о ПК <strong>до 1 апреля</strong> года, следующего за отчетным. Отчет за 2025 год нужно подать до 1 апреля 2026 года.
+            </p>
+            <div class="extra-note">
+                <strong>📌 Запомните:</strong> Срок единый для всех — 1 апреля. Не пропустите!
+            </div>
+        </div>
+    </div>
+
+    <div class="footnote">
+        <span>Этап 1 цикла Колба — конкретный опыт</span>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+
+        const radioButtons = document.querySelectorAll('input[name="quiz"]');
+        const checkBtn = document.getElementById('checkBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                checkBtn.disabled = false;
+            });
+        });
+
+        checkBtn.addEventListener('click', function() {
+
+            let selectedValue = null;
+            for (let rb of radioButtons) {
+                if (rb.checked) {
+                    selectedValue = rb.value;
+                    break;
+                }
+            }
+
+            if (!selectedValue) return;
+
+            document.querySelectorAll('.option-item').forEach(el => {
+                el.style.background = '#ffffff';
+                el.style.borderColor = '#e2e7ee';
+            });
+
+            let selectedLabel = null;
+            if (selectedValue === 'A') selectedLabel = document.getElementById('optA');
+            else if (selectedValue === 'B') selectedLabel = document.getElementById('optB');
+            else if (selectedValue === 'C') selectedLabel = document.getElementById('optC');
+
+            if (selectedLabel) {
+                selectedLabel.style.borderColor = '#1a5c9e';
+                selectedLabel.style.background = '#f0f6fe';
+            }
+
+            const isCorrect = (selectedValue === 'A');
+
+            resultBox.classList.add('visible');
+
+            const icon = isCorrect ? '✅' : '❌';
+            const title = isCorrect ? 'Верно!' : 'Разбор задания';
+
+            resultIcon.textContent = icon;
+            resultTitle.textContent = title;
+
+            let extraNote = '';
+            if (!isCorrect) {
+                if (selectedValue === 'B') {
+                    extraNote = `
+                        <div class="extra-note">
+                            <strong>Обратите внимание:</strong> 1 июля — это срок для другой отчетности (например, для некоторых видов статистической отчетности). Для отчета о ПК срок — 1 апреля.
+                        </div>
+                    `;
+                } else if (selectedValue === 'C') {
+                    extraNote = `
+                        <div class="extra-note">
+                            <strong>Обратите внимание:</strong> 1 января — это начало отчетного периода, а не срок сдачи. Отчет за 2025 год подается в 2026 году, до 1 апреля.
+                        </div>
+                    `;
+                }
+            }
+
+            resultText.innerHTML = `
+                <p><strong>Правильный ответ: А. 1 апреля 2026 года.</strong></p>
+                <p style="margin-top:6px;">
+                    Организации, эксплуатирующие ОПО, ежегодно подают отчет о ПК <strong>до 1 апреля</strong> года, следующего за отчетным. Отчет за 2025 год нужно подать до 1 апреля 2026 года.
+                </p>
+                ${extraNote}
+                <div class="extra-note" style="background:#e6f0fa; color:#1a3a5e;">
+                    <strong>📌 Запомните:</strong> Срок единый для всех — 1 апреля. Не пропустите!
+                </div>
+            `;
+
+            checkBtn.disabled = true;
+            radioButtons.forEach(rb => rb.disabled = true);
+        });
+
+    })();
+</script>
+
+</body>
+</html>
