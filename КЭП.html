@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Интерактив: выбери свой вариант</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fc;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 720px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px 28px;
+            box-shadow: 0 12px 40px rgba(0, 20, 40, 0.12);
+            transition: 0.2s;
+        }
+        .badge {
+            display: inline-block;
+            background: #eef3fa;
+            color: #1a3a5e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+            margin-bottom: 16px;
+        }
+        .card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+        .card .sub {
+            color: #3d5670;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .card .scenario {
+            background: #f0f5fe;
+            padding: 18px 20px;
+            border-radius: 16px;
+            border-left: 5px solid #1a6eff;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #0b1e33;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #f8faff;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 2px solid #e1e9f5;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #0b1e33;
+        }
+        .option:hover {
+            background: #eef4fe;
+            border-color: #aac0e0;
+        }
+        .option.selected {
+            border-color: #1a6eff;
+            background: #e6f0ff;
+        }
+        .option input[type="radio"] {
+            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: #1a6eff;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        .btn {
+            background: #1a6eff;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+        .btn:hover {
+            background: #0f5ae0;
+            transform: scale(1.01);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .feedback {
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            display: none;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .feedback.correct {
+            background: #e3f5e9;
+            border-left: 5px solid #1a9e5c;
+            color: #0a3d26;
+        }
+        .feedback.wrong {
+            background: #fee9e9;
+            border-left: 5px solid #d14545;
+            color: #631e1e;
+        }
+        .feedback.partial {
+            background: #fff2df;
+            border-left: 5px solid #d48b2b;
+            color: #5e3f0e;
+        }
+        .feedback strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .feedback .icon {
+            font-size: 22px;
+            margin-right: 8px;
+        }
+        .reset-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: #1a6eff;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .reset-link:hover {
+            text-decoration: underline;
+        }
+        hr {
+            border: none;
+            border-top: 2px dashed #dce4ef;
+            margin: 28px 0 16px;
+        }
+        .note {
+            font-size: 14px;
+            color: #5b6f88;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <div class="badge">🎯 Первое задание</div>
+
+    <h2>Выбери свой вариант</h2>
+    <p class="sub">Проверьте, как бы вы поступили в реальной ситуации</p>
+
+    <div class="scenario">
+        📌 «Завтра нужно подать отчёт о ПК через личный кабинет Ростехнадзора. <br />
+        Вы открываете сайт, а там требуется электронная подпись. У вас её нет. <br />
+        <strong>Ваши действия?</strong>»
+    </div>
+
+    <form id="quizForm">
+        <div class="options" id="optionsContainer">
+            <div class="option" data-value="A">
+                <input type="radio" name="answer" id="optA" value="A" />
+                <label for="optA"><strong>А.</strong> Попробую подать отчёт без подписи, может, пройдёт</label>
+            </div>
+            <div class="option" data-value="B">
+                <input type="radio" name="answer" id="optB" value="B" />
+                <label for="optB"><strong>Б.</strong> Срочно оформлю КЭП в удостоверяющем центре</label>
+            </div>
+            <div class="option" data-value="C">
+                <input type="radio" name="answer" id="optC" value="C" />
+                <label for="optC"><strong>В.</strong> Отправлю отчёт по почте с уведомлением</label>
+            </div>
+        </div>
+
+        <button type="button" class="btn" id="checkBtn" disabled>Проверить</button>
+    </form>
+
+    <div class="feedback" id="feedback">
+        <span class="icon" id="fbIcon"></span>
+        <strong id="fbTitle"></strong>
+        <span id="fbText"></span>
+    </div>
+
+    <hr />
+
+    <div class="note">
+        💡 После проверки вы увидите разбор — почему вариант правильный или нет
+    </div>
+
+</div>
+
+<script>
+    const options = document.querySelectorAll('.option');
+    const radioButtons = document.querySelectorAll('input[name="answer"]');
+    const checkBtn = document.getElementById('checkBtn');
+    const feedback = document.getElementById('feedback');
+    const fbIcon = document.getElementById('fbIcon');
+    const fbTitle = document.getElementById('fbTitle');
+    const fbText = document.getElementById('fbText');
+
+    const feedbackData = {
+        A: {
+            type: 'wrong',
+            icon: '❌',
+            title: 'Не совсем так.',
+            text: 'Без КЭП система не примет отчёт. Электронная подпись — обязательное условие для подачи через личный кабинет. Рисковать не стоит — отчёт просто не зарегистрируют.'
+        },
+        B: {
+            type: 'partial',
+            icon: '⚠️',
+            title: 'Мысль верная, но есть нюанс.',
+            text: 'Оформление КЭП в удостоверяющем центре занимает 1–2 дня. Если отчёт нужно сдать завтра — этот вариант может не успеть. Лучше подать на бумаге с сопроводительным письмом, а КЭП оформить впрок.'
+        },
+        C: {
+            type: 'correct',
+            icon: '✅',
+            title: 'Верно!',
+            text: 'В экстренной ситуации, когда КЭП нет, подавайте отчёт на бумажном носителе с сопроводительным письмом. После получения КЭП переходите на электронную подачу. И не забудьте сохранить отметку о принятии.'
+        }
+    };
+
+    // Разблокировка кнопки при выборе
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            options.forEach(opt => opt.classList.remove('selected'));
+            const parent = this.closest('.option');
+            if (parent) parent.classList.add('selected');
+
+            checkBtn.disabled = false;
+            feedback.classList.remove('show', 'correct', 'wrong', 'partial');
+        });
+    });
+
+    // Клик по опции — выбираем радио
+    options.forEach(opt => {
+        opt.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+
+    // Проверка
+    checkBtn.addEventListener('click', function() {
+        const selected = document.querySelector('input[name="answer"]:checked');
+        if (!selected) return;
+
+        const value = selected.value;
+        const data = feedbackData[value];
+        if (!data) return;
+
+        // Очищаем старые классы
+        feedback.classList.remove('correct', 'wrong', 'partial', 'show');
+
+        // Применяем новые
+        feedback.classList.add(data.type, 'show');
+        fbIcon.textContent = data.icon;
+        fbTitle.textContent = data.title;
+        fbText.textContent = data.text;
+
+        // Меняем кнопку
+        checkBtn.textContent = '✅ Готово';
+        checkBtn.disabled = true;
+
+        // Блокируем радио после проверки
+        radioButtons.forEach(r => r.disabled = true);
+    });
+
+    // Добавим сброс (по клику на "попробовать снова" — но мягко)
+    // Можно перезагрузить страницу, или сделать кнопку — но для простоты оставим как есть.
+    // Если нужно — добавим ссылку "Пройти заново"
+    const resetLink = document.createElement('a');
+    resetLink.className = 'reset-link';
+    resetLink.textContent = '🔄 Пройти заново';
+    resetLink.style.display = 'block';
+    resetLink.style.marginTop = '14px';
+    resetLink.style.textAlign = 'center';
+    resetLink.addEventListener('click', function() {
+        radioButtons.forEach(r => {
+            r.checked = false;
+            r.disabled = false;
+        });
+        options.forEach(opt => opt.classList.remove('selected'));
+        feedback.classList.remove('show', 'correct', 'wrong', 'partial');
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Проверить';
+    });
+    document.querySelector('.card').appendChild(resetLink);
+</script>
+
+</body>
+</html>
