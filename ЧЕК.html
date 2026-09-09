@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Чек-лист: что проверить уже сегодня</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 680px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px 28px;
+            border: 1px solid #eaeef4;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+        }
+        .badge {
+            display: inline-block;
+            background: #f0f4fa;
+            color: #1a3a5e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+            margin-bottom: 12px;
+        }
+        .card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin: 0 0 6px 0;
+            line-height: 1.3;
+        }
+        .card .sub {
+            color: #3d5670;
+            font-size: 15px;
+            margin-top: 0;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #ffffff;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .check-item:hover {
+            background: #f8faff;
+            border-color: #c8d4e8;
+        }
+        .check-item.checked {
+            background: #f5faff;
+            border-color: #1a6eff;
+        }
+        .check-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            accent-color: #1a6eff;
+            cursor: pointer;
+        }
+        .check-item .content {
+            flex: 1;
+        }
+        .check-item .title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #0b1e33;
+            line-height: 1.4;
+        }
+        .check-item .hint {
+            font-size: 14px;
+            color: #5b6f88;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        .check-item .hint .highlight {
+            color: #1a6eff;
+        }
+        .check-item .status-done {
+            display: none;
+            font-size: 18px;
+            color: #1a9e5c;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .check-item.checked .status-done {
+            display: block;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 4px 0 4px;
+            border-top: 2px dashed #e2e8f0;
+            margin-top: 4px;
+            padding-top: 18px;
+        }
+        .stats .count {
+            font-size: 14px;
+            color: #3d5670;
+        }
+        .stats .count strong {
+            color: #0b1e33;
+        }
+        .btn {
+            background: #1a6eff;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .btn:hover {
+            background: #0f5ae0;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #1a6eff;
+            border: 1.5px solid #1a6eff;
+        }
+        .btn-outline:hover {
+            background: #f0f5ff;
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .congrats {
+            display: none;
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            background: #f2faf5;
+            border: 1px solid #b8dfcc;
+            color: #0a3d26;
+            font-size: 15px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .congrats.show {
+            display: block;
+        }
+        .congrats strong {
+            display: block;
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <div class="badge">📋 Чек-лист</div>
+
+    <h2>Что проверить уже сегодня</h2>
+    <p class="sub">Отмечайте выполненные пункты — и будьте спокойны за отчётность</p>
+
+    <div class="checklist" id="checklistContainer">
+        <div class="check-item" data-id="1">
+            <input type="checkbox" id="chk1" />
+            <div class="content">
+                <div class="title">📅 Проверить срок действия КЭП</div>
+                <div class="hint">Если истекает — <span class="highlight">запланируйте перевыпуск</span> заранее</div>
+            </div>
+            <span class="status-done">✅</span>
+        </div>
+
+        <div class="check-item" data-id="2">
+            <input type="checkbox" id="chk2" />
+            <div class="content">
+                <div class="title">🏢 Зайти в личный кабинет Ростехнадзора</div>
+                <div class="hint">Проверьте <span class="highlight">непрочитанные уведомления</span> и предписания</div>
+            </div>
+            <span class="status-done">✅</span>
+        </div>
+
+        <div class="check-item" data-id="3">
+            <input type="checkbox" id="chk3" />
+            <div class="content">
+                <div class="title">📄 Проверить доверенность на право подписи</div>
+                <div class="hint">Особенно если КЭП на руководителя, а отчёты сдаёте <span class="highlight">вы</span></div>
+            </div>
+            <span class="status-done">✅</span>
+        </div>
+
+        <div class="check-item" data-id="4">
+            <input type="checkbox" id="chk4" />
+            <div class="content">
+                <div class="title">💾 Проверить резервные копии электронных журналов</div>
+                <div class="hint">На случай <span class="highlight">проверки или технического сбоя</span></div>
+            </div>
+            <span class="status-done">✅</span>
+        </div>
+
+        <div class="check-item" data-id="5">
+            <input type="checkbox" id="chk5" />
+            <div class="content">
+                <div class="title">⚙️ Настроить автоматический сбор данных через АСУ ТП</div>
+                <div class="hint">Это <span class="highlight">сэкономит часы</span> при подготовке отчётов</div>
+            </div>
+            <span class="status-done">✅</span>
+        </div>
+    </div>
+
+    <div class="stats">
+        <span class="count">Выполнено: <strong id="doneCount">0</strong> из <strong id="totalCount">5</strong></span>
+        <div class="footer-actions">
+            <button class="btn btn-outline" id="resetChecklistBtn">Сбросить всё</button>
+        </div>
+    </div>
+
+    <div class="congrats" id="congratsBlock">
+        <strong>🎉 Отлично!</strong>
+        Все пункты проверены — вы готовы к работе с электронной отчётностью.
+    </div>
+
+</div>
+
+<script>
+    const checkItems = document.querySelectorAll('.check-item');
+    const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+    const doneCount = document.getElementById('doneCount');
+    const totalCount = document.getElementById('totalCount');
+    const congratsBlock = document.getElementById('congratsBlock');
+    const resetBtn = document.getElementById('resetChecklistBtn');
+
+    totalCount.textContent = checkItems.length;
+
+    function updateStats() {
+        const checked = document.querySelectorAll('.check-item input[type="checkbox"]:checked');
+        const count = checked.length;
+        doneCount.textContent = count;
+
+        // Обновляем классы для стилей
+        checkItems.forEach(item => {
+            const cb = item.querySelector('input[type="checkbox"]');
+            if (cb.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        });
+
+        // Поздравление
+        if (count === checkItems.length) {
+            congratsBlock.classList.add('show');
+        } else {
+            congratsBlock.classList.remove('show');
+        }
+    }
+
+    // Клик по всему блоку — переключаем чекбокс
+    checkItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const cb = this.querySelector('input[type="checkbox"]');
+                if (cb) {
+                    cb.checked = !cb.checked;
+                    cb.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+
+    // Смена состояния чекбокса
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            updateStats();
+        });
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', function() {
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+        });
+        updateStats();
+    });
+
+    // Инициализация
+    updateStats();
+</script>
+
+</body>
+</html>
