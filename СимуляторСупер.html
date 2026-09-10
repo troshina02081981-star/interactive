@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симулятор: что актуализировать?</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            padding: 25px 15px;
+            margin: 0;
+        }
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px 26px 30px;
+            border: 1px solid #eef2f6;
+        }
+        h1 {
+            font-size: 22px;
+            color: #0b2b4a;
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* ПРОГРЕСС */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 18px;
+        }
+        .progress-bar .step-indicator {
+            font-weight: 600;
+            color: #0b2b4a;
+            font-size: 14px;
+        }
+        .progress-bar .step-indicator .num {
+            color: #2563eb;
+            font-size: 18px;
+        }
+        .progress-bar .dots {
+            display: flex;
+            gap: 7px;
+        }
+        .progress-bar .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: 0.3s;
+        }
+        .progress-bar .dot.active {
+            background: #2563eb;
+            transform: scale(1.2);
+        }
+        .progress-bar .dot.done {
+            background: #16a34a;
+        }
+        .progress-bar .score {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .progress-bar .score strong {
+            color: #0b2b4a;
+        }
+
+        /* СИТУАЦИЯ */
+        .situation-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 18px 20px;
+            border-left: 4px solid #2563eb;
+            margin-bottom: 18px;
+        }
+        .situation-card .situation-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .situation-card .situation-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0b2b4a;
+            margin-bottom: 6px;
+        }
+        .situation-card .situation-desc {
+            font-size: 14px;
+            color: #1e293b;
+            line-height: 1.55;
+        }
+        .situation-card .situation-desc .highlight-text {
+            background: #fef3c7;
+            padding: 1px 7px;
+            border-radius: 5px;
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        /* ВАРИАНТЫ */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 640px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 13.5px;
+            color: #1e293b;
+            user-select: none;
+            line-height: 1.4;
+        }
+        .option-item:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+        .option-item .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #cbd5e1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: 0.15s;
+            font-size: 12px;
+            color: #fff;
+        }
+        .option-item.selected .checkbox {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .option-item.selected .checkbox::after {
+            content: '✓';
+            color: #fff;
+        }
+        .option-item .doc-icon { font-size: 16px; }
+        .option-item .doc-name { flex: 1; }
+
+        .option-item.reveal-correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .option-item.reveal-correct .checkbox {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        .option-item.reveal-correct .checkbox::after {
+            content: '✓';
+            color: #fff;
+        }
+        .option-item.reveal-wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        .option-item.reveal-wrong .checkbox {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+        .option-item.reveal-wrong .checkbox::after {
+            content: '✕';
+            color: #fff;
+        }
+        .option-item.reveal-missed {
+            border-color: #d97706;
+            background: #fffbeb;
+            border-style: dashed;
+        }
+        .option-item.reveal-missed .checkbox {
+            background: #d97706;
+            border-color: #d97706;
+        }
+        .option-item.reveal-missed .checkbox::after {
+            content: '!';
+            color: #fff;
+        }
+        .option-item.disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        /* КНОПКИ */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .actions .left {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #16a34a; color: #fff; }
+        .btn-success:hover { background: #15803d; }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-outline:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        /* РАЗБОР */
+        .explanation-box {
+            margin-top: 16px;
+            padding: 16px 18px;
+            border-radius: 12px;
+            display: none;
+            border: 2px solid #e2e8f0;
+            font-size: 13.5px;
+            line-height: 1.6;
+        }
+        .explanation-box.show {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .explanation-box.correct {
+            background: #f0fdf4;
+            border-color: #16a34a;
+        }
+        .explanation-box.partial {
+            background: #fffbeb;
+            border-color: #d97706;
+        }
+        .explanation-box .exp-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: #0b2b4a;
+        }
+        .explanation-box .exp-list {
+            margin: 8px 0 0 0;
+            padding-left: 18px;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+        .explanation-box .exp-list .correct-item { color: #15803d; }
+        .explanation-box .exp-list .wrong-item { color: #991b1b; }
+
+        /* ФИНАЛ */
+        .final-result {
+            margin-top: 18px;
+            padding: 20px;
+            border-radius: 14px;
+            display: none;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        .final-result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        .final-result.success {
+            background: #f0fdf4;
+            border-color: #16a34a;
+        }
+        .final-result.partial {
+            background: #fffbeb;
+            border-color: #d97706;
+        }
+        .final-result .fr-icon { font-size: 44px; }
+        .final-result .fr-title {
+            font-weight: 700;
+            font-size: 19px;
+            margin-top: 6px;
+            color: #0b2b4a;
+        }
+        .final-result .fr-desc {
+            font-size: 14px;
+            color: #475569;
+            margin-top: 4px;
+        }
+        .final-result .fr-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .final-result .fr-stat { text-align: center; }
+        .final-result .fr-stat .num {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b2b4a;
+        }
+        .final-result .fr-stat .label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .hint-text {
+            font-size: 12.5px;
+            color: #94a3b8;
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px dashed #d1d9e6;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 18px 14px 20px; }
+            h1 { font-size: 19px; }
+            .actions { flex-direction: column; align-items: stretch; }
+            .actions .left { flex-direction: column; }
+            .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎯 Симулятор: что актуализировать?</h1>
+    <div class="subtitle">
+        Вам приходит ситуация — выберите <strong>все документы</strong>, которые нужно актуализировать.
+    </div>
+
+    <!-- ПРОГРЕСС -->
+    <div class="progress-bar">
+        <div class="step-indicator">
+            Ситуация <span class="num" id="currentStep">1</span> из <span id="totalSteps">4</span>
+        </div>
+        <div class="dots" id="dotsContainer"></div>
+        <div class="score">
+            ✅ <strong id="correctCount">0</strong> / <span id="totalCorrect">0</span>
+        </div>
+    </div>
+
+    <!-- СИТУАЦИЯ -->
+    <div class="situation-card">
+        <div class="situation-label" id="situationLabel">📌 СИТУАЦИЯ 1</div>
+        <div class="situation-title" id="situationTitle"></div>
+        <div class="situation-desc" id="situationDesc"></div>
+    </div>
+
+    <!-- ВАРИАНТЫ -->
+    <div class="options-grid" id="optionsGrid"></div>
+
+    <!-- КНОПКИ -->
+    <div class="actions">
+        <div class="left">
+            <button class="btn btn-primary" id="submitBtn">✅ Проверить</button>
+            <button class="btn btn-outline" id="resetBtn">🔄 Сбросить</button>
+        </div>
+        <button class="btn btn-success" id="nextBtn" disabled>➡️ Далее</button>
+    </div>
+
+    <!-- РАЗБОР -->
+    <div class="explanation-box" id="explanationBox">
+        <div class="exp-title" id="expTitle"></div>
+        <ul class="exp-list" id="expList"></ul>
+    </div>
+
+    <!-- ФИНАЛ -->
+    <div class="final-result" id="finalResult">
+        <div class="fr-icon" id="frIcon">🎉</div>
+        <div class="fr-title" id="frTitle"></div>
+        <div class="fr-desc" id="frDesc"></div>
+        <div class="fr-stats">
+            <div class="fr-stat">
+                <div class="num" id="frCorrect">0</div>
+                <div class="label">✅ Правильных</div>
+            </div>
+            <div class="fr-stat">
+                <div class="num" id="frWrong">0</div>
+                <div class="label">❌ Неправильных</div>
+            </div>
+            <div class="fr-stat">
+                <div class="num" id="frMissed">0</div>
+                <div class="label">⚠️ Пропущенных</div>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="restartBtn" style="margin-top:14px;">🔄 Пройти заново</button>
+    </div>
+
+    <div class="hint-text">
+        💡 Выберите все документы, которые нужно актуализировать, и нажмите «Проверить».
+    </div>
+</div>
+
+<script>
+// ================================================================
+// 1. ДАННЫЕ
+// ================================================================
+const SITUATIONS = [
+    {
+        title: 'Замена оборудования на ОПО',
+        desc: 'На вашем ОПО заменили 3 единицы технологического оборудования (насосы) на новые с другими характеристиками. Работы выполнены по проекту, смонтированы и введены в эксплуатацию.',
+        correct: [
+            'Паспорта на новые техустройства',
+            'Сведения, характеризующие ОПО',
+            'Технологические регламенты',
+            'Производственные инструкции'
+        ],
+        wrong: [
+            'Лицензия на эксплуатацию',
+            'Страховой полис',
+            'Декларация ПБ',
+            'Приказ о назначении ответственных'
+        ],
+        details: [
+            '✅ Паспорта на новые техустройства — оформить или внести изменения',
+            '✅ Сведения, характеризующие ОПО — обновить состав техустройств',
+            '✅ Технологические регламенты — если изменились параметры процесса',
+            '✅ Производственные инструкции — если изменился порядок работы',
+            '❌ Лицензия — не требуется, если вид деятельности не изменился',
+            '❌ Страховой полис — не требуется, если не изменился класс опасности',
+            '❌ Декларация ПБ — только если изменился технологический процесс',
+            '❌ Приказ о назначении ответственных — если лица не менялись'
+        ]
+    },
+    {
+        title: 'Получено предписание Ростехнадзора',
+        desc: 'Ростехнадзор выдал предписание с замечанием: в Положении о производственном контроле указана ссылка на Постановление № 263 от 10.03.1999, которое утратило силу. Также требует актуализировать график ППР и провести внеочередную аттестацию персонала.',
+        correct: [
+            'Положение о производственном контроле',
+            'График ППР',
+            'Аттестация специалистов'
+        ],
+        wrong: [
+            'Лицензия на эксплуатацию',
+            'Декларация ПБ',
+            'Страховой полис',
+            'Паспорта на техустройства'
+        ],
+        details: [
+            '✅ Положение о производственном контроле — актуализировать ссылки на НПА',
+            '✅ График ППР — актуализировать в соответствии с требованиями',
+            '✅ Аттестация специалистов — провести внеочередную',
+            '❌ Лицензия — не требуется, если предписание не касается лицензии',
+            '❌ Декларация ПБ — только если предписание требует пересмотра',
+            '❌ Страховой полис — не связан с предписанием',
+            '❌ Паспорта на техустройства — не требуют актуализации'
+        ]
+    },
+    {
+        title: 'Изменение законодательства',
+        desc: 'Вступил в силу новый Приказ Ростехнадзора № 518, который изменил форму отчёта об организации ПК и требования к его заполнению. Также изменились требования к обучению персонала.',
+        correct: [
+            'Сведения об организации ПК',
+            'Программа обучения персонала',
+            'Производственные инструкции'
+        ],
+        wrong: [
+            'Лицензия на эксплуатацию',
+            'Декларация ПБ',
+            'Страховой полис',
+            'Паспорта на техустройства',
+            'Технологический регламент'
+        ],
+        details: [
+            '✅ Сведения об организации ПК — заполнять по новой форме',
+            '✅ Программа обучения персонала — актуализировать под новые требования',
+            '✅ Производственные инструкции — если изменился порядок обучения',
+            '❌ Лицензия — не меняется при изменении формы отчёта',
+            '❌ Декларация ПБ — не требуется, если не изменились требования к объекту',
+            '❌ Страховой полис — не связан с изменением формы отчёта',
+            '❌ Паспорта на техустройства — не требуют актуализации',
+            '❌ Технологический регламент — не требует изменений'
+        ]
+    },
+    {
+        title: 'Смена ответственных лиц',
+        desc: 'В организации сменился генеральный директор и главный инженер. Новый директор утвердил новую структуру управления, в которой изменились ответственные за осуществление производственного контроля.',
+        correct: [
+            'Приказ о назначении ответственных',
+            'Должностные инструкции',
+            'Положение о производственном контроле'
+        ],
+        wrong: [
+            'Лицензия на эксплуатацию',
+            'Декларация ПБ',
+            'Страховой полис',
+            'Паспорта на техустройства',
+            'Технологический регламент',
+            'Сведения, характеризующие ОПО'
+        ],
+        details: [
+            '✅ Приказ о назначении ответственных — переиздать или внести изменения',
+            '✅ Должностные инструкции — актуализировать для новых руководителей',
+            '✅ Положение о производственном контроле — обновить информацию об ответственных',
+            '❌ Лицензия — не требуется, если вид деятельности не изменился',
+            '❌ Декларация ПБ — не связана со сменой руководителей',
+            '❌ Страховой полис — не меняется при смене руководителей',
+            '❌ Паспорта на техустройства — не связаны с руководителями',
+            '❌ Технологический регламент — не требует изменений',
+            '❌ Сведения, характеризующие ОПО — не требуют изменений'
+        ]
+    }
+];
+
+const DOC_ICONS = {
+    'Паспорта на новые техустройства': '📄',
+    'Паспорта на техустройства': '📄',
+    'Сведения, характеризующие ОПО': '📋',
+    'Технологические регламенты': '⚙️',
+    'Технологический регламент': '⚙️',
+    'Производственные инструкции': '📖',
+    'Лицензия на эксплуатацию': '📜',
+    'Страховой полис': '📑',
+    'Декларация ПБ': '📊',
+    'Приказ о назначении ответственных': '📃',
+    'Положение о производственном контроле': '📘',
+    'График ППР': '📅',
+    'Аттестация специалистов': '🎓',
+    'Сведения об организации ПК': '📊',
+    'Программа обучения персонала': '📚',
+    'Должностные инструкции': '📋'
+};
+
+// ================================================================
+// 2. СОСТОЯНИЕ
+// ================================================================
+let currentStep = 0;
+let selected = [];
+let results = [];
+let isAnswered = false;
+
+// ================================================================
+// 3. DOM
+// ================================================================
+const situationTitle = document.getElementById('situationTitle');
+const situationDesc = document.getElementById('situationDesc');
+const situationLabel = document.getElementById('situationLabel');
+const optionsGrid = document.getElementById('optionsGrid');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const nextBtn = document.getElementById('nextBtn');
+const explanationBox = document.getElementById('explanationBox');
+const expTitle = document.getElementById('expTitle');
+const expList = document.getElementById('expList');
+const finalResult = document.getElementById('finalResult');
+const frIcon = document.getElementById('frIcon');
+const frTitle = document.getElementById('frTitle');
+const frDesc = document.getElementById('frDesc');
+const frCorrect = document.getElementById('frCorrect');
+const frWrong = document.getElementById('frWrong');
+const frMissed = document.getElementById('frMissed');
+const restartBtn = document.getElementById('restartBtn');
+const currentStepEl = document.getElementById('currentStep');
+const totalStepsEl = document.getElementById('totalSteps');
+const correctCountEl = document.getElementById('correctCount');
+const totalCorrectEl = document.getElementById('totalCorrect');
+const dotsContainer = document.getElementById('dotsContainer');
+
+// ================================================================
+// 4. РЕНДЕР
+// ================================================================
+function render() {
+    const situation = SITUATIONS[currentStep];
+    const total = SITUATIONS.length;
+
+    currentStepEl.textContent = currentStep + 1;
+    totalStepsEl.textContent = total;
+
+    // Точки
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (i === currentStep) dot.classList.add('active');
+        else if (i < currentStep) dot.classList.add('done');
+        dotsContainer.appendChild(dot);
+    }
+
+    situationLabel.textContent = `📌 СИТУАЦИЯ ${currentStep + 1}`;
+    situationTitle.textContent = situation.title;
+    situationDesc.textContent = situation.desc;
+
+    // Собираем все документы и перемешиваем
+    const allDocs = [...situation.correct, ...situation.wrong];
+    const shuffled = shuffle(allDocs);
+
+    optionsGrid.innerHTML = '';
+    shuffled.forEach(doc => {
+        const div = document.createElement('div');
+        div.className = 'option-item';
+        div.dataset.doc = doc;
+        const icon = DOC_ICONS[doc] || '📄';
+        div.innerHTML = `
+            <span class="checkbox"></span>
+            <span class="doc-icon">${icon}</span>
+            <span class="doc-name">${doc}</span>
+        `;
+        div.addEventListener('click', function() {
+            if (isAnswered) return;
+            this.classList.toggle('selected');
+            updateSelected();
+        });
+        optionsGrid.appendChild(div);
+    });
+
+    selected = [];
+    isAnswered = false;
+    explanationBox.classList.remove('show');
+    explanationBox.className = 'explanation-box';
+    nextBtn.disabled = true;
+    submitBtn.disabled = false;
+
+    const totalCorrect = results.filter(r => r.correct === true).length;
+    correctCountEl.textContent = totalCorrect;
+    totalCorrectEl.textContent = results.length;
+
+    finalResult.classList.remove('show');
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function updateSelected() {
+    const items = optionsGrid.querySelectorAll('.option-item');
+    selected = [];
+    items.forEach(item => {
+        if (item.classList.contains('selected')) {
+            selected.push(item.dataset.doc);
+        }
+    });
+}
+
+// ================================================================
+// 5. ПРОВЕРКА
+// ================================================================
+function checkAnswer() {
+    const situation = SITUATIONS[currentStep];
+    const correctDocs = situation.correct;
+    const wrongDocs = situation.wrong;
+
+    const selectedDocs = selected;
+    const correctSelected = selectedDocs.filter(d => correctDocs.includes(d));
+    const wrongSelected = selectedDocs.filter(d => wrongDocs.includes(d));
+    const missedCorrect = correctDocs.filter(d => !selectedDocs.includes(d));
+
+    const isFullyCorrect = (correctSelected.length === correctDocs.length && wrongSelected.length === 0);
+
+    results.push({
+        correct: isFullyCorrect,
+        missedCorrect: missedCorrect
+    });
+
+    isAnswered = true;
+    submitBtn.disabled = true;
+
+    // Подсветка
+    const items = optionsGrid.querySelectorAll('.option-item');
+    items.forEach(item => {
+        const doc = item.dataset.doc;
+        item.classList.add('disabled');
+        if (correctDocs.includes(doc) && selectedDocs.includes(doc)) {
+            item.classList.add('reveal-correct');
+        } else if (correctDocs.includes(doc) && !selectedDocs.includes(doc)) {
+            item.classList.add('reveal-missed');
+        } else if (wrongDocs.includes(doc) && selectedDocs.includes(doc)) {
+            item.classList.add('reveal-wrong');
+        }
+    });
+
+    // Разбор
+    explanationBox.classList.add('show');
+    if (isFullyCorrect) {
+        explanationBox.classList.add('correct');
+        expTitle.innerHTML = '✅ Отлично! Все верно!';
+    } else {
+        explanationBox.classList.add('partial');
+        expTitle.innerHTML = '🔄 Есть ошибки. Изучите разбор.';
+    }
+
+    let listHtml = '';
+    situation.details.forEach(detail => {
+        const cls = detail.includes('✅') ? 'correct-item' : 'wrong-item';
+        listHtml += `<li class="${cls}">${detail}</li>`;
+    });
+    expList.innerHTML = listHtml;
+
+    const totalCorrect = results.filter(r => r.correct === true).length;
+    correctCountEl.textContent = totalCorrect;
+    totalCorrectEl.textContent = results.length;
+
+    if (currentStep < SITUATIONS.length - 1) {
+        nextBtn.disabled = false;
+    } else {
+        nextBtn.disabled = true;
+        setTimeout(showFinalResult, 1200);
+    }
+}
+
+// ================================================================
+// 6. ФИНАЛ
+// ================================================================
+function showFinalResult() {
+    const total = results.length;
+    const correct = results.filter(r => r.correct === true).length;
+    const wrong = total - correct;
+
+    let missed = 0;
+    results.forEach(r => {
+        if (r.missedCorrect) missed += r.missedCorrect.length;
+    });
+
+    finalResult.classList.add('show');
+
+    if (correct === total) {
+        finalResult.className = 'final-result show success';
+        frIcon.textContent = '🏆';
+        frTitle.textContent = 'Идеальный результат!';
+        frDesc.textContent = `Вы правильно определили документы во всех ${total} ситуациях!`;
+    } else if (correct >= total / 2) {
+        finalResult.className = 'final-result show partial';
+        frIcon.textContent = '👍';
+        frTitle.textContent = 'Хороший результат!';
+        frDesc.textContent = `Правильно в ${correct} из ${total} ситуаций. Продолжайте практиковаться!`;
+    } else {
+        finalResult.className = 'final-result show partial';
+        frIcon.textContent = '📚';
+        frTitle.textContent = 'Есть над чем поработать';
+        frDesc.textContent = `Правильно в ${correct} из ${total} ситуаций. Вернитесь к теории.`;
+    }
+
+    frCorrect.textContent = correct;
+    frWrong.textContent = wrong;
+    frMissed.textContent = missed;
+
+    finalResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ================================================================
+// 7. КНОПКИ
+// ================================================================
+submitBtn.addEventListener('click', checkAnswer);
+
+resetBtn.addEventListener('click', function() {
+    if (isAnswered) return;
+    const items = optionsGrid.querySelectorAll('.option-item');
+    items.forEach(item => item.classList.remove('selected'));
+    selected = [];
+});
+
+nextBtn.addEventListener('click', function() {
+    currentStep++;
+    if (currentStep < SITUATIONS.length) {
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+});
+
+restartBtn.addEventListener('click', function() {
+    currentStep = 0;
+    selected = [];
+    results = [];
+    isAnswered = false;
+    finalResult.classList.remove('show');
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ================================================================
+// 8. СТАРТ
+// ================================================================
+render();
+</script>
+
+</body>
+</html>
