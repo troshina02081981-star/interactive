@@ -1,0 +1,225 @@
+<!-- ДОРОЖНАЯ КАРТА КУРСА (5 уроков) -->
+<div id="roadmapCard" style="
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    border: 1px solid #eef2f6;
+    margin-top: 30px;
+    max-width: 560px;
+">
+    <!-- Заголовок -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-weight: 700; font-size: 16px; color: #0b1e33;">🗺️ Ваш путь</span>
+        <span id="rmTotalPoints" style="background: #1a5c9e; color: #fff; padding: 3px 14px; border-radius: 30px; font-size: 13px; font-weight: 600;">0 баллов</span>
+    </div>
+
+    <!-- Прогресс и звание -->
+    <div style="display: flex; justify-content: space-between; font-size: 13px; color: #4a5b6e; margin-bottom: 6px;">
+        <span>Пройдено: <strong id="rmCompletedCount">0</strong> из 5</span>
+        <span id="rmRank" style="font-weight: 600;">🟢 Стажер</span>
+    </div>
+
+    <!-- Прогресс-бар -->
+    <div style="background: #eef2f6; border-radius: 12px; height: 8px; overflow: hidden; margin-bottom: 12px;">
+        <div id="rmProgressFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #1a5c9e, #4a8ecf); border-radius: 12px; transition: width 0.4s;"></div>
+    </div>
+
+    <!-- Легенда -->
+    <div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 10px; font-size: 11.5px; color: #8aa0b8;">
+        <span>⬤ Пройден</span>
+        <span style="color: #1a5c9e;">⬤ Текущий</span>
+        <span>⬤ Заблокирован</span>
+    </div>
+
+    <!-- Список уроков -->
+    <div id="rmLessonsList" style="display: flex; flex-direction: column; gap: 4px;"></div>
+
+    <!-- Подсказка -->
+    <div style="margin-top: 12px; padding: 10px 14px; background: #f8faff; border-radius: 10px; font-size: 13px; color: #1a3a5e; text-align: center;">
+        💡 <strong>Совет:</strong> Возвращайтесь сюда, чтобы видеть свой прогресс.
+    </div>
+</div>
+
+<script>
+(function() {
+    // ================================================================
+    // 1. ДАННЫЕ КУРСА (5 уроков)
+    // ================================================================
+    const LESSONS = [
+        { id: 1, name: 'Урок 1. Старт', points: 25 },
+        { id: 2, name: 'Урок 2. 5 групп документов', points: 20 },
+        { id: 3, name: 'Урок 3. Нет документов?', points: 20 },
+        { id: 4, name: 'Урок 4. Отчеты', points: 20 },
+        { id: 5, name: 'Урок 5. ЭДО и КЭП', points: 25 }
+    ];
+
+    // ================================================================
+    // 2. ЗВАНИЯ
+    // ================================================================
+    const RANKS = [
+        { min: 0, name: '🟢 Стажер' },
+        { min: 2, name: '🔵 Практикант' },
+        { min: 4, name: '🟢 Специалист' },
+        { min: 5, name: '🏆 Эксперт' }
+    ];
+
+    // ================================================================
+    // 3. ХРАНИЛИЩЕ
+    // ================================================================
+    const STORAGE_KEY = 'course_progress_v1';
+
+    function loadProgress() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && Array.isArray(parsed.completed)) return parsed;
+            }
+        } catch (e) {}
+        return { completed: [] };
+    }
+
+    function saveProgress(progress) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    }
+
+    // ================================================================
+    // 4. ТЕКУЩИЙ УРОК
+    // ================================================================
+    function getCurrentLessonId() {
+        const el = document.querySelector('[data-current-lesson]');
+        if (el) return parseInt(el.dataset.currentLesson);
+
+        const progress = loadProgress();
+        for (const lesson of LESSONS) {
+            if (!progress.completed.includes(lesson.id)) return lesson.id;
+        }
+        return LESSONS[LESSONS.length - 1].id;
+    }
+
+    // ================================================================
+    // 5. ОТРИСОВКА КАРТЫ
+    // ================================================================
+    function renderRoadmap() {
+        const progress = loadProgress();
+        const completed = progress.completed;
+        const currentId = getCurrentLessonId();
+
+        // Баллы
+        const totalPoints = completed.reduce((sum, id) => {
+            const lesson = LESSONS.find(l => l.id === id);
+            return sum + (lesson ? lesson.points : 0);
+        }, 0);
+
+        const totalPointsEl = document.getElementById('rmTotalPoints');
+        if (totalPointsEl) totalPointsEl.textContent = totalPoints + ' баллов';
+
+        const completedCountEl = document.getElementById('rmCompletedCount');
+        if (completedCountEl) completedCountEl.textContent = completed.length;
+
+        // Прогресс-бар
+        const percent = (completed.length / LESSONS.length) * 100;
+        const fill = document.getElementById('rmProgressFill');
+        if (fill) fill.style.width = percent + '%';
+
+        // Звание
+        let rank = RANKS[0];
+        for (const r of RANKS) {
+            if (completed.length >= r.min) rank = r;
+        }
+        const rankEl = document.getElementById('rmRank');
+        if (rankEl) rankEl.textContent = rank.name;
+
+        // Список уроков
+        const list = document.getElementById('rmLessonsList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        LESSONS.forEach(lesson => {
+            const isDone = completed.includes(lesson.id);
+            const isCurrent = (lesson.id === currentId) && !isDone;
+            const isLocked = !isDone && !isCurrent;
+
+            const row = document.createElement('div');
+            row.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 7px 10px;
+                border-radius: 9px;
+                font-size: 13.5px;
+                transition: 0.15s;
+                ${isDone ? 'background: #f0fdf4;' : ''}
+                ${isCurrent ? 'background: #eff6ff; border: 1px solid #bfdbfe;' : ''}
+                ${isLocked ? 'opacity: 0.5;' : ''}
+            `;
+
+            let icon = '';
+            if (isDone) icon = '✅ ';
+            else if (isCurrent) icon = '▶️ ';
+            else icon = '🔒 ';
+
+            let nameColor = isDone ? '#15803d' : (isCurrent ? '#1a5c9e' : '#4a5b6e');
+            let pointsColor = isDone ? '#1a8c5e' : '#b8c8dd';
+
+            row.innerHTML = `
+                <span style="color: ${nameColor}; font-weight: ${isCurrent ? '600' : '400'};">
+                    ${icon}${lesson.name}
+                </span>
+                <span style="font-size: 12.5px; font-weight: 600; color: ${pointsColor};">
+                    +${lesson.points} баллов
+                </span>
+            `;
+
+            list.appendChild(row);
+        });
+    }
+
+    // ================================================================
+    // 6. ПУБЛИЧНОЕ API ДЛЯ УРОКОВ
+    // ================================================================
+    window.CourseProgress = {
+        complete: function(lessonId) {
+            const progress = loadProgress();
+            if (!progress.completed.includes(lessonId)) {
+                progress.completed.push(lessonId);
+                saveProgress(progress);
+                renderRoadmap();
+                return true;
+            }
+            return false;
+        },
+
+        isCompleted: function(lessonId) {
+            return loadProgress().completed.includes(lessonId);
+        },
+
+        reset: function() {
+            saveProgress({ completed: [] });
+            renderRoadmap();
+        },
+
+        getCurrent: function() {
+            return getCurrentLessonId();
+        },
+
+        getTotalPoints: function() {
+            const progress = loadProgress();
+            return progress.completed.reduce((sum, id) => {
+                const lesson = LESSONS.find(l => l.id === id);
+                return sum + (lesson ? lesson.points : 0);
+            }, 0);
+        }
+    };
+
+    // ================================================================
+    // 7. ЗАПУСК
+    // ================================================================
+    renderRoadmap();
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === STORAGE_KEY) renderRoadmap();
+    });
+})();
+</script>
+<!-- КОНЕЦ ДОРОЖНОЙ КАРТЫ -->
