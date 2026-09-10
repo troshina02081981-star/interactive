@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш путь — шкала баллов</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            padding: 25px 15px;
+            margin: 0;
+        }
+        .progress-card {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 22px 24px 20px;
+            border: 1px solid #eef2f6;
+        }
+
+        /* ===== ЗАГОЛОВОК ===== */
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+        .progress-header .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0b2b4a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-header .score {
+            text-align: right;
+            font-size: 13px;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        .progress-header .score .points {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0b2b4a;
+            display: block;
+        }
+
+        /* ===== СТАТУС И ПРОГРЕСС ===== */
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .progress-meta .completed-text {
+            font-size: 13.5px;
+            color: #475569;
+        }
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            background: #f1f5f9;
+            color: #475569;
+            transition: 0.3s;
+        }
+        .rank-badge .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #94a3b8;
+        }
+        .rank-badge.stage-1 { background: #f1f5f9; color: #475569; }
+        .rank-badge.stage-2 { background: #dbeafe; color: #1d4ed8; }
+        .rank-badge.stage-2 .dot { background: #2563eb; }
+        .rank-badge.stage-3 { background: #dcfce7; color: #15803d; }
+        .rank-badge.stage-3 .dot { background: #16a34a; }
+        .rank-badge.stage-4 { background: #fef3c7; color: #92400e; }
+        .rank-badge.stage-4 .dot { background: #d97706; }
+
+        .progress-bar-track {
+            height: 8px;
+            background: #eef2f6;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2563eb, #16a34a);
+            border-radius: 30px;
+            transition: width 0.5s ease;
+        }
+
+        /* ===== СПИСОК УРОКОВ ===== */
+        .lessons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .lesson-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: 0.15s;
+            font-size: 13.5px;
+        }
+        .lesson-row.done {
+            background: #f0fdf4;
+        }
+        .lesson-row.current {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+        .lesson-row.locked {
+            opacity: 0.5;
+        }
+        .lesson-row .check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .lesson-row.done .check {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        .lesson-row.done .check::after {
+            content: '✓';
+        }
+        .lesson-row.current .check {
+            border-color: #2563eb;
+        }
+        .lesson-row .name {
+            flex: 1;
+            color: #1e293b;
+        }
+        .lesson-row.done .name {
+            color: #15803d;
+        }
+        .lesson-row .points {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+        .lesson-row.done .points {
+            color: #16a34a;
+        }
+        .lesson-row .status-text {
+            font-size: 11.5px;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        /* ===== ЛЕГЕНДА ===== */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #eef2f6;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .legend-dot.done { background: #16a34a; }
+        .legend-dot.current { background: #2563eb; }
+        .legend-dot.locked { background: #cbd5e1; }
+
+        /* ===== ДЕМО-КНОПКИ ===== */
+        .demo-controls {
+            max-width: 560px;
+            margin: 16px auto 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .demo-controls button {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+        .demo-controls button:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        .demo-controls button.primary {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+        .demo-controls button.primary:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-card">
+    <!-- ЗАГОЛОВОК -->
+    <div class="progress-header">
+        <div class="title">📖 Ваш путь</div>
+        <div class="score">
+            <span class="points" id="totalPoints">0</span>
+            баллов
+        </div>
+    </div>
+
+    <!-- СТАТУС И ПРОГРЕСС -->
+    <div class="progress-meta">
+        <div class="completed-text">
+            Пройдено: <strong id="completedCount">0</strong> из <strong id="totalCount">5</strong>
+        </div>
+        <div class="rank-badge stage-1" id="rankBadge">
+            <span class="dot"></span>
+            <span id="rankText">Стажер</span>
+        </div>
+    </div>
+
+    <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+
+    <!-- СПИСОК УРОКОВ -->
+    <div class="lessons-list" id="lessonsList">
+        <!-- заполняется скриптом -->
+    </div>
+
+    <!-- ЛЕГЕНДА -->
+    <div class="legend">
+        <span class="legend-item"><span class="legend-dot done"></span> Пройден</span>
+        <span class="legend-item"><span class="legend-dot current"></span> Текущий</span>
+        <span class="legend-item"><span class="legend-dot locked"></span> Заблокирован</span>
+    </div>
+</div>
+
+<!-- ДЕМО-КНОПКИ -->
+<div class="demo-controls">
+    <button class="primary" id="completeCurrentBtn">✓ Пройти текущий урок</button>
+    <button id="resetProgressBtn">↺ Сбросить прогресс</button>
+</div>
+
+<script>
+// ================================================================
+// 1. ДАННЫЕ ОБ УРОКАХ (5 уроков)
+// ================================================================
+const LESSONS = [
+    { id: 1, name: 'Урок 1. Старт', points: 25 },
+    { id: 2, name: 'Урок 2. 5 групп документов', points: 20 },
+    { id: 3, name: 'Урок 3. Нет документов?', points: 20 },
+    { id: 4, name: 'Урок 4. Отчеты и предписания', points: 20 },
+    { id: 5, name: 'Урок 5. ЭДО и КЭП', points: 25 }
+];
+
+// ================================================================
+// 2. ЗВАНИЯ (по количеству пройденных уроков из 5)
+// ================================================================
+const RANKS = [
+    { min: 0, name: 'Стажер', cls: 'stage-1' },
+    { min: 2, name: 'Практикант', cls: 'stage-2' },
+    { min: 4, name: 'Специалист', cls: 'stage-3' },
+    { min: 5, name: 'Эксперт', cls: 'stage-4' }
+];
+
+// ================================================================
+// 3. КЛЮЧ ХРАНЕНИЯ
+// ================================================================
+const STORAGE_KEY = 'course_progress_v1';
+
+// ================================================================
+// 4. ЗАГРУЗКА / СОХРАНЕНИЕ
+// ================================================================
+function loadProgress() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.completed)) {
+                return parsed;
+            }
+        }
+    } catch (e) {}
+    return { completed: [] };
+}
+
+function saveProgress(progress) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+// ================================================================
+// 5. ТЕКУЩИЙ УРОК
+// ================================================================
+function getCurrentLessonId() {
+    const el = document.querySelector('[data-current-lesson]');
+    if (el) return parseInt(el.dataset.currentLesson);
+
+    const progress = loadProgress();
+    for (const lesson of LESSONS) {
+        if (!progress.completed.includes(lesson.id)) return lesson.id;
+    }
+    return LESSONS[LESSONS.length - 1].id;
+}
+
+// ================================================================
+// 6. ОТРИСОВКА
+// ================================================================
+function render() {
+    const progress = loadProgress();
+    const completed = progress.completed;
+    const currentId = getCurrentLessonId();
+
+    const totalPoints = completed.reduce((sum, id) => {
+        const lesson = LESSONS.find(l => l.id === id);
+        return sum + (lesson ? lesson.points : 0);
+    }, 0);
+
+    document.getElementById('totalPoints').textContent = totalPoints;
+    document.getElementById('completedCount').textContent = completed.length;
+    document.getElementById('totalCount').textContent = LESSONS.length;
+
+    const percent = (completed.length / LESSONS.length) * 100;
+    document.getElementById('progressFill').style.width = percent + '%';
+
+    let rank = RANKS[0];
+    for (const r of RANKS) {
+        if (completed.length >= r.min) rank = r;
+    }
+    const badge = document.getElementById('rankBadge');
+    badge.className = 'rank-badge ' + rank.cls;
+    document.getElementById('rankText').textContent = rank.name;
+
+    const list = document.getElementById('lessonsList');
+    list.innerHTML = '';
+
+    LESSONS.forEach(lesson => {
+        const isDone = completed.includes(lesson.id);
+        const isCurrent = (lesson.id === currentId) && !isDone;
+        const isLocked = !isDone && !isCurrent;
+
+        const row = document.createElement('div');
+        row.className = 'lesson-row';
+        if (isDone) row.classList.add('done');
+        else if (isCurrent) row.classList.add('current');
+        else row.classList.add('locked');
+
+        let statusText = '';
+        if (isDone) statusText = 'Пройден';
+        else if (isCurrent) statusText = 'Текущий';
+        else statusText = 'Заблокирован';
+
+        row.innerHTML = `
+            <span class="check"></span>
+            <span class="name">${lesson.name}</span>
+            <span class="status-text">${statusText}</span>
+            <span class="points">+${lesson.points} баллов</span>
+        `;
+
+        list.appendChild(row);
+    });
+}
+
+// ================================================================
+// 7. API ДЛЯ УРОКОВ
+// ================================================================
+window.CourseProgress = {
+    complete: function(lessonId) {
+        const progress = loadProgress();
+        if (!progress.completed.includes(lessonId)) {
+            progress.completed.push(lessonId);
+            saveProgress(progress);
+            render();
+            return true;
+        }
+        return false;
+    },
+
+    isCompleted: function(lessonId) {
+        return loadProgress().completed.includes(lessonId);
+    },
+
+    reset: function() {
+        saveProgress({ completed: [] });
+        render();
+    },
+
+    getCurrent: function() {
+        return getCurrentLessonId();
+    },
+
+    getTotalPoints: function() {
+        const progress = loadProgress();
+        return progress.completed.reduce((sum, id) => {
+            const lesson = LESSONS.find(l => l.id === id);
+            return sum + (lesson ? lesson.points : 0);
+        }, 0);
+    }
+};
+
+// ================================================================
+// 8. ДЕМО-КНОПКИ
+// ================================================================
+document.getElementById('completeCurrentBtn').addEventListener('click', function() {
+    const currentId = getCurrentLessonId();
+    const added = window.CourseProgress.complete(currentId);
+    if (!added) {
+        alert('Этот урок уже пройден.');
+    }
+});
+
+document.getElementById('resetProgressBtn').addEventListener('click', function() {
+    if (confirm('Сбросить весь прогресс курса?')) {
+        window.CourseProgress.reset();
+    }
+});
+
+// ================================================================
+// 9. СТАРТ
+// ================================================================
+render();
+
+window.addEventListener('storage', function(e) {
+    if (e.key === STORAGE_KEY) render();
+});
+</script>
+
+</body>
+</html>
