@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр: актуализация документов по промбезопасности</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            padding: 25px 15px;
+            margin: 0;
+        }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 26px 24px 28px;
+            border: 1px solid #eef2f6;
+        }
+        h1 {
+            font-size: 20px;
+            color: #0b2b4a;
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 13.5px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        /* ПРОГРЕСС */
+        .progress {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 16px;
+        }
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            border-radius: 30px;
+            background: #e2e8f0;
+            transition: 0.3s;
+        }
+        .progress-step.done { background: #16a34a; }
+        .progress-step.current { background: #2563eb; }
+
+        /* КАРТОЧКА СИТУАЦИИ */
+        .situation-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            border-left: 4px solid #2563eb;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .situation-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .situation-text {
+            font-size: 14.5px;
+            color: #0b2b4a;
+            line-height: 1.55;
+        }
+
+        /* ВОПРОС */
+        .question {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0b2b4a;
+            margin-bottom: 12px;
+        }
+
+        /* ВАРИАНТЫ */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #ffffff;
+            font-size: 13.5px;
+            color: #1e293b;
+            line-height: 1.45;
+        }
+        .option:hover {
+            border-color: #b0c7e0;
+            background: #f7faff;
+        }
+        .option .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 5px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #fff;
+            transition: 0.15s;
+            margin-top: 1px;
+        }
+        .option.selected .checkbox {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .option.selected .checkbox::after {
+            content: '✓';
+        }
+        .option.correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .option.correct .checkbox {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        .option.correct .checkbox::after { content: '✓'; }
+        .option.wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        .option.wrong .checkbox {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+        .option.wrong .checkbox::after { content: '✕'; }
+        .option.disabled {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        /* КНОПКИ */
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 11px 22px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+            flex: 1;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-primary:disabled {
+            background: #c5d2e2;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+        }
+        .btn-outline:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        /* РЕЗУЛЬТАТ */
+        .result {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            line-height: 1.55;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result.ok {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #14532d;
+        }
+        .result.miss {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #7f1d1d;
+        }
+        .result strong { color: inherit; }
+
+        /* ФИНАЛ */
+        .final {
+            display: none;
+            text-align: center;
+            padding: 20px 10px 10px;
+        }
+        .final.show { display: block; }
+        .final .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .final h2 {
+            font-size: 20px;
+            color: #0b2b4a;
+            margin: 0 0 8px 0;
+        }
+        .final .score {
+            font-size: 15px;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .final .score strong {
+            font-size: 24px;
+            color: #2563eb;
+        }
+        .final .msg {
+            font-size: 13.5px;
+            color: #64748b;
+            max-width: 420px;
+            margin: 10px auto 0;
+            line-height: 1.55;
+        }
+
+        .hint {
+            font-size: 12.5px;
+            color: #94a3b8;
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px dashed #d1d9e6;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 18px 14px 20px; }
+            h1 { font-size: 18px; }
+            .btn { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎓 Тренажёр: актуализация документов</h1>
+    <div class="subtitle">
+        Что изменилось — и какие документы нужно обновить? Отметьте все правильные варианты.
+    </div>
+
+    <!-- ПРОГРЕСС -->
+    <div class="progress" id="progress"></div>
+
+    <!-- СИТУАЦИЯ -->
+    <div id="taskArea">
+        <div class="situation-card">
+            <div class="situation-label" id="situationLabel">Ситуация 1 из 5</div>
+            <div class="situation-text" id="situationText"></div>
+        </div>
+
+        <div class="question" id="questionText">Какие документы нужно актуализировать?</div>
+
+        <div class="options" id="options"></div>
+
+        <div class="actions">
+            <button class="btn btn-primary" id="checkBtn" disabled>Проверить</button>
+            <button class="btn btn-outline" id="nextBtn" style="display:none;">Далее →</button>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <!-- ФИНАЛ -->
+    <div class="final" id="final">
+        <div class="icon">🏆</div>
+        <h2>Тренажёр пройден!</h2>
+        <div class="score" id="finalScore"></div>
+        <div class="msg" id="finalMsg"></div>
+        <div class="actions" style="justify-content:center; margin-top:16px;">
+            <button class="btn btn-outline" id="restartBtn">↺ Пройти заново</button>
+        </div>
+    </div>
+
+    <div class="hint" id="hintText">
+        💡 Отметьте все подходящие варианты. Правильных может быть несколько.
+    </div>
+</div>
+
+<script>
+// ================================================================
+// ДАННЫЕ
+// ================================================================
+const TASKS = [
+    {
+        situation: 'На ОПО <strong>изменился технологический процесс</strong>: установлено новое оборудование, изменились параметры работы.',
+        options: [
+            { text: 'Технологический регламент', correct: true },
+            { text: 'Производственные инструкции', correct: true },
+            { text: 'Паспорта на новое оборудование', correct: true },
+            { text: 'Декларация промышленной безопасности (если применимо)', correct: true },
+            { text: 'Свидетельство о регистрации ОПО', correct: false },
+            { text: 'Лицензия на эксплуатацию', correct: false }
+        ],
+        explanation: 'При изменении техпроцесса обновляются технологический регламент, производственные инструкции, паспорта на новое оборудование. Если изменения существенные — может потребоваться пересмотр декларации ПБ.'
+    },
+    {
+        situation: 'Вышло <strong>новое Постановление Правительства РФ</strong>, которое заменило ранее действовавший НПА по производственному контролю.',
+        options: [
+            { text: 'Положение о производственном контроле', correct: true },
+            { text: 'Приказ о назначении ответственных за ПК', correct: true },
+            { text: 'Все ЛНА, где есть ссылки на старый НПА', correct: true },
+            { text: 'Страховой полис', correct: false },
+            { text: 'Лицензия на эксплуатацию', correct: false },
+            { text: 'Свидетельство о регистрации ОПО', correct: false }
+        ],
+        explanation: 'При изменении НПА обновляются все локальные документы, где есть ссылки на устаревший акт: Положение о ПК, приказы, инструкции. Разрешительные документы (лицензия, полис) не зависят от этого.'
+    },
+    {
+        situation: 'Ростехнадзор выдал <strong>предписание</strong> с требованием устранить нарушения в организационных документах.',
+        options: [
+            { text: 'Документы, указанные в предписании', correct: true },
+            { text: 'Все ЛНА, связанные с выявленными нарушениями', correct: true },
+            { text: 'Технологический регламент', correct: false },
+            { text: 'Паспорта на оборудование', correct: false },
+            { text: 'Страховой полис', correct: false }
+        ],
+        explanation: 'По предписанию обновляются именно те документы, где выявлены нарушения, а также связанные с ними ЛНА. Остальные — по необходимости.'
+    },
+    {
+        situation: 'На ОПО <strong>сменился генеральный директор</strong> и ответственные за промышленную безопасность.',
+        options: [
+            { text: 'Приказы о назначении ответственных лиц', correct: true },
+            { text: 'Должностные инструкции', correct: true },
+            { text: 'Положение о производственном контроле', correct: true },
+            { text: 'Технологический регламент', correct: false },
+            { text: 'Паспорта на оборудование', correct: false },
+            { text: 'Лицензия', correct: false }
+        ],
+        explanation: 'При смене руководства и ответственных обновляются приказы о назначении, должностные инструкции, Положение о ПК. Технологические и эксплуатационные документы не меняются.'
+    },
+    {
+        situation: 'Истёк срок действия <strong>аттестации специалиста</strong> по промышленной безопасности.',
+        options: [
+            { text: 'Организовать повторную аттестацию специалиста', correct: true },
+            { text: 'Обновить приказ о допуске к работе', correct: true },
+            { text: 'Заменить технологический регламент', correct: false },
+            { text: 'Переоформить лицензию', correct: false },
+            { text: 'Обновить страховой полис', correct: false }
+        ],
+        explanation: 'Аттестация специалиста продлевается раз в 5 лет. Нужно организовать повторную аттестацию и обновить приказ о допуске. Остальные документы не затрагиваются.'
+    }
+];
+
+// ================================================================
+// СОСТОЯНИЕ
+// ================================================================
+let currentTask = 0;
+let score = 0;
+let selected = [];
+let answered = false;
+
+// ================================================================
+// DOM
+// ================================================================
+const progressEl = document.getElementById('progress');
+const taskArea = document.getElementById('taskArea');
+const situationLabel = document.getElementById('situationLabel');
+const situationText = document.getElementById('situationText');
+const questionText = document.getElementById('questionText');
+const optionsEl = document.getElementById('options');
+const checkBtn = document.getElementById('checkBtn');
+const nextBtn = document.getElementById('nextBtn');
+const resultEl = document.getElementById('result');
+const finalEl = document.getElementById('final');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+const hintText = document.getElementById('hintText');
+
+// ================================================================
+// РЕНДЕР
+// ================================================================
+function renderProgress() {
+    progressEl.innerHTML = '';
+    TASKS.forEach((_, i) => {
+        const step = document.createElement('div');
+        step.className = 'progress-step';
+        if (i < currentTask) step.classList.add('done');
+        if (i === currentTask) step.classList.add('current');
+        progressEl.appendChild(step);
+    });
+}
+
+function renderTask() {
+    answered = false;
+    selected = [];
+
+    const task = TASKS[currentTask];
+    situationLabel.textContent = `Ситуация ${currentTask + 1} из ${TASKS.length}`;
+    situationText.innerHTML = task.situation;
+    questionText.textContent = 'Какие документы нужно актуализировать? Отметьте все подходящие:';
+
+    optionsEl.innerHTML = '';
+    resultEl.className = 'result';
+    resultEl.innerHTML = '';
+    checkBtn.style.display = '';
+    checkBtn.disabled = true;
+    nextBtn.style.display = 'none';
+
+    task.options.forEach((opt, index) => {
+        const optEl = document.createElement('div');
+        optEl.className = 'option';
+        optEl.dataset.index = index;
+        optEl.innerHTML = `
+            <div class="checkbox"></div>
+            <div>${opt.text}</div>
+        `;
+        optEl.addEventListener('click', () => toggleOption(index, optEl));
+        optionsEl.appendChild(optEl);
+    });
+
+    renderProgress();
+    hintText.textContent = '💡 Отметьте все подходящие варианты. Правильных может быть несколько.';
+}
+
+function toggleOption(index, el) {
+    if (answered) return;
+
+    const opt = TASKS[currentTask].options[index];
+
+    if (selected.includes(index)) {
+        selected = selected.filter(i => i !== index);
+        el.classList.remove('selected');
+    } else {
+        selected.push(index);
+        el.classList.add('selected');
+    }
+
+    checkBtn.disabled = selected.length === 0;
+}
+
+// ================================================================
+// ПРОВЕРКА
+// ================================================================
+checkBtn.addEventListener('click', () => {
+    if (answered) return;
+    answered = true;
+
+    const task = TASKS[currentTask];
+    const allOptions = optionsEl.querySelectorAll('.option');
+
+    let allCorrect = true;
+
+    allOptions.forEach((el, index) => {
+        const isSelected = selected.includes(index);
+        const isCorrect = task.options[index].correct;
+
+        el.classList.add('disabled');
+
+        if (isCorrect) {
+            el.classList.add('correct');
+        } else if (isSelected && !isCorrect) {
+            el.classList.add('wrong');
+            allCorrect = false;
+        }
+
+        if (!isSelected && isCorrect) {
+            allCorrect = false;
+        }
+    });
+
+    if (allCorrect) score++;
+
+    resultEl.className = 'result show ' + (allCorrect ? 'ok' : 'miss');
+    resultEl.innerHTML = `
+        <strong>${allCorrect ? '✅ Верно!' : '❌ Не совсем.'}</strong><br>
+        ${task.explanation}
+    `;
+
+    checkBtn.style.display = 'none';
+    nextBtn.style.display = '';
+    nextBtn.textContent = (currentTask === TASKS.length - 1) ? 'Завершить →' : 'Далее →';
+
+    hintText.textContent = '💡 Нажмите «Далее», чтобы продолжить.';
+});
+
+// ================================================================
+// ДАЛЕЕ
+// ================================================================
+nextBtn.addEventListener('click', () => {
+    currentTask++;
+    if (currentTask >= TASKS.length) {
+        showFinal();
+    } else {
+        renderTask();
+        taskArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+});
+
+// ================================================================
+// ФИНАЛ
+// ================================================================
+function showFinal() {
+    taskArea.style.display = 'none';
+    progressEl.style.display = 'none';
+    hintText.style.display = 'none';
+    finalEl.classList.add('show');
+
+    finalScore.innerHTML = `Правильных ответов: <strong>${score} из ${TASKS.length}</strong>`;
+
+    let msg = '';
+    if (score === TASKS.length) {
+        msg = 'Отлично! Вы уверенно определяете, какие документы нужно актуализировать в разных ситуациях.';
+    } else if (score >= TASKS.length - 1) {
+        msg = 'Хороший результат! Осталось закрепить пару моментов — пересмотрите разбор ситуаций.';
+    } else {
+        msg = 'Есть над чем поработать. Вернитесь к теории актуализации и попробуйте снова.';
+    }
+    finalMsg.textContent = msg;
+}
+
+// ================================================================
+// ПЕРЕЗАПУСК
+// ================================================================
+restartBtn.addEventListener('click', () => {
+    currentTask = 0;
+    score = 0;
+    answered = false;
+    selected = [];
+    taskArea.style.display = '';
+    progressEl.style.display = '';
+    hintText.style.display = '';
+    finalEl.classList.remove('show');
+    renderTask();
+});
+
+// ================================================================
+// СТАРТ
+// ================================================================
+renderTask();
+</script>
+
+</body>
+</html>
