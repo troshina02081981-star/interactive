@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практикум: ошибки в документах по промбезопасности</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            padding: 30px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px 28px 30px;
+            border: 1px solid #eef2f6;
+        }
+        h1 {
+            font-size: 22px;
+            color: #0b2b4a;
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        /* ===== ПРОГРЕСС ===== */
+        .progress-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .progress-step {
+            flex: 1;
+            height: 5px;
+            border-radius: 30px;
+            background: #e2e8f0;
+            transition: 0.3s;
+        }
+        .progress-step.done { background: #16a34a; }
+        .progress-step.current { background: #2563eb; }
+
+        /* ===== КАРТОЧКА ЗАДАНИЯ ===== */
+        .task-card {
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 20px 22px 22px;
+        }
+        .task-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .task-situation {
+            font-size: 15px;
+            color: #0b2b4a;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .task-situation strong { color: #0b2b4a; }
+        .task-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0b2b4a;
+            margin-bottom: 12px;
+        }
+
+        /* ===== ВАРИАНТЫ ===== */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 13px 16px;
+            border: 2px solid #e2e7ee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #ffffff;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #1e293b;
+        }
+        .option:hover {
+            border-color: #b0c7e0;
+            background: #f7faff;
+        }
+        .option .letter {
+            font-weight: 700;
+            color: #2563eb;
+            flex-shrink: 0;
+        }
+        .option.correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .option.correct .letter { color: #16a34a; }
+        .option.wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        .option.wrong .letter { color: #dc2626; }
+        .option.disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        /* ===== РЕЗУЛЬТАТ ===== */
+        .result-box {
+            margin-top: 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            display: none;
+        }
+        .result-box.visible { display: block; }
+        .result-box.ok {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #14532d;
+        }
+        .result-box.miss {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #7f1d1d;
+        }
+        .result-box strong { color: inherit; }
+
+        /* ===== КНОПКИ ===== */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-primary:disabled {
+            background: #c5d2e2;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: #ffffff;
+            color: #2563eb;
+            border: 2px solid #d0ddee;
+        }
+        .btn-outline:hover { background: #eef3fc; }
+
+        /* ===== ФИНАЛ ===== */
+        .final-screen {
+            display: none;
+            text-align: center;
+            padding: 30px 10px 10px;
+        }
+        .final-screen.visible { display: block; }
+        .final-screen .final-icon {
+            font-size: 56px;
+            margin-bottom: 14px;
+        }
+        .final-screen h2 {
+            font-size: 22px;
+            color: #0b2b4a;
+            margin: 0 0 10px 0;
+        }
+        .final-screen .final-score {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .final-screen .final-score strong {
+            font-size: 26px;
+            color: #2563eb;
+        }
+        .final-screen .final-msg {
+            font-size: 14px;
+            color: #64748b;
+            max-width: 440px;
+            margin: 12px auto 0;
+            line-height: 1.6;
+        }
+
+        .hint {
+            font-size: 12.5px;
+            color: #94a3b8;
+            margin-top: 20px;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px dashed #d1d9e6;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 20px 16px; }
+            h1 { font-size: 19px; }
+            .task-card { padding: 16px 16px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧩 Практикум: ошибки в документах по промбезопасности</h1>
+    <div class="subtitle">
+        Разберите 7 реальных ситуаций. Выберите, что было сделано неправильно или как исправить ошибку.
+    </div>
+
+    <!-- ПРОГРЕСС -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- КАРТОЧКА ЗАДАНИЯ -->
+    <div class="task-card" id="taskCard">
+        <div class="task-num" id="taskNum">Ситуация 1 из 7</div>
+        <div class="task-situation" id="taskSituation"></div>
+        <div class="task-question" id="taskQuestion"></div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="result-box" id="resultBox"></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="nextBtn" disabled>Следующая ситуация →</button>
+        </div>
+    </div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <div class="final-screen" id="finalScreen">
+        <div class="final-icon">🏆</div>
+        <h2>Практикум пройден!</h2>
+        <div class="final-score" id="finalScore"></div>
+        <div class="final-msg" id="finalMsg"></div>
+        <div class="btn-group" style="justify-content:center;">
+            <button class="btn btn-outline" id="restartBtn">↺ Пройти заново</button>
+        </div>
+    </div>
+
+    <div class="hint" id="hintText">
+        💡 Выберите один вариант ответа. После выбора появится разбор.
+    </div>
+</div>
+
+<script>
+// ================================================================
+// ДАННЫЕ: 7 ситуаций по мотивам ошибок
+// ================================================================
+const TASKS = [
+    {
+        situation: 'На предприятии издали приказ об организации производственного контроля, в котором назначили только <strong>лицо, ответственное за осуществление ПК</strong>. При документарном аудите инспектор указал замечание: «Неполнота содержания приказа».',
+        question: 'Что было упущено в приказе?',
+        options: [
+            'Ничего, приказ составлен верно',
+            'Нужно было назначить также ответственных за организацию ПК и осуществляющих контроль',
+            'Нужно было указать только руководителя организации',
+            'Нужно было добавить перечень оборудования'
+        ],
+        correct: 1,
+        explanation: 'Согласно пп. 7, 9 и 10 Постановления Правительства РФ № 2168, необходимо назначить не только ответственного за осуществление ПК, но и ответственных за организацию ПК и осуществляющих контроль.'
+    },
+    {
+        situation: 'Организация разработала Положение о производственном контроле, в котором указала, что нужно руководствоваться <strong>Постановлением Правительства РФ от 10.03.1999 № 263</strong>. При плановой проверке инспектор признал документ недействительным.',
+        question: 'Почему документ признали недействительным?',
+        options: [
+            'Потому что документ не был заверен печатью',
+            'Потому что Постановление № 263 было отменено и заменено на № 2168 от 18.12.2020',
+            'Потому что Положение должно быть на английском языке',
+            'Потому что инспектор не имеет права проверять внутренние документы'
+        ],
+        correct: 1,
+        explanation: 'Постановление № 263 утратило силу в 2020 году. Его заменило Постановление Правительства РФ от 18.12.2020 № 2168. Ссылки на неактуальные НПА недопустимы.'
+    },
+    {
+        situation: 'Локальный документ по промбезопасности утвердил <strong>начальник отдела охраны труда</strong>, у которого нет на это полномочий по Уставу организации.',
+        question: 'Какие последствия это имеет?',
+        options: [
+            'Документ действует, так как начальник отдела — компетентное лицо',
+            'Документ не имеет юридической силы — считается, что его нет',
+            'Документ действует только после согласования с профсоюзом',
+            'Документ нужно просто переподписать у секретаря'
+        ],
+        correct: 1,
+        explanation: 'Если локальный документ утверждает лицо, не уполномоченное на это Уставом, он не имеет юридической силы. Нужна доверенность или утверждение руководителем.'
+    },
+    {
+        situation: 'Для ОПО хранения и переработки растительного сырья организация подготовила ПМЛА (план мероприятий по локализации и ликвидации последствий аварий) <strong>по собственной форме</strong>, не используя утверждённые формы титульного листа и журналов.',
+        question: 'В чём ошибка?',
+        options: [
+            'Ошибки нет — форма свободная',
+            'Нужно использовать утверждённые формы (Приложения к Рекомендациям № 287)',
+            'Нужно перевести документ на иностранный язык',
+            'Нужно заверить документ у нотариуса'
+        ],
+        correct: 1,
+        explanation: 'Для ОПО хранения и переработки растительного сырья утверждены формы титульного листа ПМЛА, журнала тренировок и т.д. (Приложения к Рекомендациям № 287). Использование неутверждённой формы лишает документ юридической силы.'
+    },
+    {
+        situation: 'Организация разработала все локальные документы по промбезопасности, но <strong>не ознакомила работников под роспись</strong>. Руководство считает, что достаточно издать приказ.',
+        question: 'Нарушение какого требования допущено?',
+        options: [
+            'Никакого нарушения нет',
+            'Нарушение ст. 22 и 68 ТК РФ — работников нужно ознакомить под роспись',
+            'Нарушение только для дистанционных работников',
+            'Достаточно ознакомить только руководителей'
+        ],
+        correct: 1,
+        explanation: 'Согласно ст. 22 и 68 ТК РФ, работодатель обязан ознакомить каждого работника с локальными нормативными актами под роспись. Для дистанционных работников — через ЭЦП (ст. 312.1 ТК РФ).'
+    },
+    {
+        situation: 'В Положении по промбезопасности ООО «Альфа» указано, что <strong>проверки технического состояния оборудования и инспекции проводятся только по предварительному согласованию с руководством</strong> и без уведомления надзорных органов.',
+        question: 'Что не так с этим пунктом?',
+        options: [
+            'Всё верно — так и должно быть',
+            'Пункт противоречит № 116-ФЗ: проверки должны проводиться своевременно, а надзорные органы — иметь доступ без согласования',
+            'Пункт нужно дополнить подписью юриста',
+            'Пункт можно оставить, если согласовать с профсоюзом'
+        ],
+        correct: 1,
+        explanation: 'Согласно № 116-ФЗ, организация обязана своевременно проводить проверки технического состояния оборудования и обеспечивать доступ надзорных органов без предварительного согласования. Такой пункт может быть признан недействительным, а организация — оштрафована.'
+    },
+    {
+        situation: 'На нефтеперерабатывающем комплексе подготовили «Положение о мерах по обеспечению промышленной безопасности» — <strong>со стандартными формулировками, без учёта специфики производства</strong>. После аварии Ростехнадзор установил: документ «для галочки», конкретных мероприятий и ответственных нет.',
+        question: 'Какая ошибка допущена?',
+        options: [
+            'Документ слишком короткий',
+            'Документ носит формальный характер — не учитывает реальные риски и не содержит конкретных мероприятий',
+            'Документ написан не на фирменном бланке',
+            'Документ не заверен нотариусом'
+        ],
+        correct: 1,
+        explanation: 'Формальный подход недопустим: внутренние документы должны учитывать реальные производственные процессы, содержать конкретные мероприятия, сроки, ответственных и регулярно пересматриваться.'
+    }
+];
+
+// ================================================================
+// СОСТОЯНИЕ
+// ================================================================
+let currentTask = 0;
+let score = 0;
+let answered = false;
+
+const progressBar = document.getElementById('progressBar');
+const taskNum = document.getElementById('taskNum');
+const taskSituation = document.getElementById('taskSituation');
+const taskQuestion = document.getElementById('taskQuestion');
+const optionsContainer = document.getElementById('optionsContainer');
+const resultBox = document.getElementById('resultBox');
+const nextBtn = document.getElementById('nextBtn');
+const taskCard = document.getElementById('taskCard');
+const finalScreen = document.getElementById('finalScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const hintText = document.getElementById('hintText');
+
+// ================================================================
+// РЕНДЕР ПРОГРЕССА
+// ================================================================
+function renderProgress() {
+    progressBar.innerHTML = '';
+    TASKS.forEach((_, i) => {
+        const step = document.createElement('div');
+        step.className = 'progress-step';
+        if (i < currentTask) step.classList.add('done');
+        if (i === currentTask) step.classList.add('current');
+        progressBar.appendChild(step);
+    });
+}
+
+// ================================================================
+// РЕНДЕР ЗАДАНИЯ
+// ================================================================
+function renderTask() {
+    answered = false;
+    const task = TASKS[currentTask];
+
+    taskNum.textContent = `Ситуация ${currentTask + 1} из ${TASKS.length}`;
+    taskSituation.innerHTML = task.situation;
+    taskQuestion.textContent = task.question;
+
+    optionsContainer.innerHTML = '';
+    resultBox.className = 'result-box';
+    resultBox.innerHTML = '';
+    nextBtn.disabled = true;
+    nextBtn.textContent = (currentTask === TASKS.length - 1)
+        ? 'Завершить практикум →'
+        : 'Следующая ситуация →';
+
+    const letters = ['А', 'Б', 'В', 'Г'];
+
+    task.options.forEach((opt, index) => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'option';
+        optionEl.innerHTML = `
+            <span class="letter">${letters[index]}.</span>
+            <span>${opt}</span>
+        `;
+
+        optionEl.addEventListener('click', () => selectOption(index, optionEl));
+        optionsContainer.appendChild(optionEl);
+    });
+
+    renderProgress();
+    hintText.textContent = '💡 Выберите один вариант ответа. После выбора появится разбор.';
+}
+
+// ================================================================
+// ВЫБОР ОТВЕТА
+// ================================================================
+function selectOption(index, optionEl) {
+    if (answered) return;
+    answered = true;
+
+    const task = TASKS[currentTask];
+    const allOptions = optionsContainer.querySelectorAll('.option');
+
+    // Блокируем все
+    allOptions.forEach(el => el.classList.add('disabled'));
+
+    // Подсвечиваем правильный
+    allOptions[task.correct].classList.add('correct');
+
+    // Если выбрали неправильный — подсвечиваем красным
+    if (index !== task.correct) {
+        optionEl.classList.add('wrong');
+        resultBox.className = 'result-box miss visible';
+        resultBox.innerHTML = `
+            <strong>❌ Не совсем.</strong><br>
+            ${task.explanation}
+        `;
+    } else {
+        score++;
+        resultBox.className = 'result-box ok visible';
+        resultBox.innerHTML = `
+            <strong>✅ Верно!</strong><br>
+            ${task.explanation}
+        `;
+    }
+
+    nextBtn.disabled = false;
+    hintText.textContent = '💡 Нажмите «Следующая ситуация», чтобы продолжить.';
+}
+
+// ================================================================
+// СЛЕДУЮЩЕЕ ЗАДАНИЕ
+// ================================================================
+nextBtn.addEventListener('click', () => {
+    currentTask++;
+    if (currentTask >= TASKS.length) {
+        showFinal();
+    } else {
+        renderTask();
+        taskCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+});
+
+// ================================================================
+// ФИНАЛЬНЫЙ ЭКРАН
+// ================================================================
+function showFinal() {
+    taskCard.style.display = 'none';
+    progressBar.style.display = 'none';
+    finalScreen.classList.add('visible');
+    hintText.style.display = 'none';
+
+    finalScore.innerHTML = `Правильных ответов: <strong>${score} из ${TASKS.length}</strong>`;
+
+    let msg = '';
+    if (score === TASKS.length) {
+        msg = 'Отлично! Вы отлично разбираетесь в типичных ошибках оформления документов по промбезопасности.';
+    } else if (score >= TASKS.length - 2) {
+        msg = 'Хороший результат! Осталось закрепить пару моментов — пересмотрите разбор ошибок выше.';
+    } else {
+        msg = 'Есть над чем поработать. Вернитесь к материалу урока и обратите внимание на типичные ошибки — это поможет избежать штрафов.';
+    }
+    finalMsg.textContent = msg;
+}
+
+// ================================================================
+// ПЕРЕЗАПУСК
+// ================================================================
+document.getElementById('restartBtn').addEventListener('click', () => {
+    currentTask = 0;
+    score = 0;
+    answered = false;
+    taskCard.style.display = '';
+    progressBar.style.display = '';
+    hintText.style.display = '';
+    finalScreen.classList.remove('visible');
+    renderTask();
+});
+
+// ================================================================
+// СТАРТ
+// ================================================================
+renderTask();
+</script>
+
+</body>
+</html>
