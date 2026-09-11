@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: найдите, чего не хватает</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            padding: 30px 15px;
+        }
+
+        .lesson-card {
+            max-width: 880px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 45px;
+            transition: all 0.2s;
+        }
+
+        @media (max-width: 600px) {
+            .lesson-card {
+                padding: 20px 16px;
+            }
+        }
+
+        /* ===== ЛИСТАЛКА ===== */
+        .flip-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .flip-page {
+            display: none;
+            animation: fadeSlide 0.35s ease;
+        }
+
+        .flip-page.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(18px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Заголовок задания */
+        .task-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b1e33;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .task-sub {
+            font-size: 16px;
+            color: #4a5b6e;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Блок документа (приказ) */
+        .document-block {
+            background: #ffffff;
+            border: 1px solid #e6edf6;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin: 20px 0 28px 0;
+            font-family: 'Times New Roman', 'Georgia', serif;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #1a2a3a;
+        }
+
+        .document-block .doc-title {
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .document-block .doc-order {
+            font-weight: 600;
+            margin-top: 14px;
+        }
+
+        .document-block .doc-sign {
+            margin-top: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .document-block .doc-sign .sign-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .document-block .doc-sign .sign-line .line {
+            display: inline-block;
+            width: 140px;
+            border-bottom: 1px solid #1a2a3a;
+            margin-right: 6px;
+        }
+
+        @media (max-width: 480px) {
+            .document-block {
+                padding: 18px 14px;
+                font-size: 14px;
+            }
+            .document-block .doc-sign {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .document-block .doc-sign .sign-line .line {
+                width: 80px;
+            }
+        }
+
+        /* Кнопка «Перейти к вопросу» */
+        .next-btn {
+            background: #1a5c9e;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 40px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .next-btn:hover {
+            background: #134880;
+            transform: scale(1.01);
+        }
+
+        /* Варианты ответов */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0 18px 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #0b1e33;
+        }
+
+        .option-item:hover {
+            background: #eef3fc;
+            border-color: #b8cbe0;
+        }
+
+        .option-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a5c9e;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .option-item .letter {
+            font-weight: 700;
+            color: #1a5c9e;
+            min-width: 22px;
+        }
+
+        /* Кнопка проверки */
+        .check-btn {
+            background: #1a5c9e;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 40px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .check-btn:hover {
+            background: #134880;
+            transform: scale(1.01);
+        }
+
+        .check-btn:disabled {
+            background: #a0b8d0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Блок результата */
+        .result-box {
+            margin-top: 10px;
+            padding: 22px 26px;
+            border-radius: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .result-box.correct {
+            background: #e6f7ed;
+            border-left: 6px solid #1a8c5e;
+        }
+
+        .result-box.incorrect {
+            background: #fef0ef;
+            border-left: 6px solid #c0392b;
+        }
+
+        .result-box .result-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .result-box .result-title .icon {
+            margin-right: 8px;
+        }
+
+        .result-box .checklist {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 28px;
+            margin-top: 10px;
+        }
+
+        .result-box .checklist span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-box .checklist .ok {
+            color: #1a8c5e;
+            font-weight: 600;
+        }
+
+        .result-box .checklist .fail {
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        /* Кнопка «назад» */
+        .back-btn {
+            background: transparent;
+            color: #1a5c9e;
+            border: 2px solid #1a5c9e;
+            border-radius: 40px;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 24px;
+        }
+
+        .back-btn:hover {
+            background: #eef3fc;
+        }
+
+        /* Подпись */
+        .footnote {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7a8b9e;
+            text-align: center;
+            border-top: 1px solid #e6edf6;
+            padding-top: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="lesson-card">
+<div class="flip-container">
+
+    <!-- ================= СТРАНИЦА 1: ДОКУМЕНТ ================= -->
+    <div class="flip-page active" id="page1">
+
+        <div class="task-title">Задание: найдите, чего не хватает в этом документе.</div>
+        <div class="task-sub">
+            Ниже представлен приказ о назначении ответственного за производственный контроль. Внимательно изучите его.
+        </div>
+
+        <div class="document-block">
+            <div class="doc-title">Общество с ограниченной ответственностью «Альфа»</div>
+
+            <div style="text-align:center; margin: 12px 0 4px 0; font-weight:600; font-size:18px;">
+                ПРИКАЗ
+            </div>
+
+            <div style="text-align:center; margin-bottom:10px;">
+                «30» августа 2024 года &nbsp;&nbsp;&nbsp; № 2168
+            </div>
+
+            <div style="text-align:center; font-weight:600; font-size:17px; margin-bottom:10px;">
+                Об организации производственного контроля за соблюдением требований <br />
+                промышленной безопасности в ООО «Альфа»
+            </div>
+
+            <p style="margin: 14px 0 10px 0; text-align:justify;">
+                В соответствии с требованиями Федерального закона от 21.07.1997 № 116-ФЗ «О промышленной безопасности опасных производственных объектов» и Постановления Правительства РФ от 18.12.2020 № 2168 «Об организации и осуществлении производственного контроля за соблюдением требований промышленной безопасности» в целях обеспечения требований промышленной безопасности при эксплуатации опасных производственных объектов ООО «Альфа»
+            </p>
+
+            <div class="doc-order">ПРИКАЗЫВАЮ:</div>
+
+            <ol style="margin: 8px 0 10px 22px; padding-left: 6px;">
+                <li style="margin-bottom: 6px;">
+                    Назначить руководителя службы производственного контроля Петрова Петра Петровича ответственным за осуществление производственного контроля за соблюдением требований промышленной безопасности.
+                </li>
+                <li>
+                    Контроль за исполнением настоящего приказа оставляю за собой.
+                </li>
+            </ol>
+
+            <div class="doc-sign">
+                <div><strong>Генеральный директор</strong></div>
+                <div class="sign-line">
+                    <span class="line">&nbsp;</span>
+                    <span><strong>А.В. Львов</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="next-btn" id="nextBtn">Перейти к вопросу →</button>
+
+    </div>
+    <!-- ================= КОНЕЦ СТРАНИЦЫ 1 ================= -->
+
+
+    <!-- ================= СТРАНИЦА 2: ВОПРОС + РАЗБОР ================= -->
+    <div class="flip-page" id="page2">
+
+        <div class="task-title">Найдите, чего не хватает в документе</div>
+        <div class="task-sub">Выберите один вариант ответа.</div>
+
+        <div class="options" id="optionsContainer">
+
+            <label class="option-item" id="optA">
+                <input type="radio" name="quiz" value="A" />
+                <span class="letter">А.</span>
+                Отсутствует дата утверждения приказа
+            </label>
+
+            <label class="option-item" id="optB">
+                <input type="radio" name="quiz" value="B" />
+                <span class="letter">Б.</span>
+                Нет отметки об ознакомлении работника с приказом
+            </label>
+
+            <label class="option-item" id="optC">
+                <input type="radio" name="quiz" value="C" />
+                <span class="letter">В.</span>
+                Неверно указана должность руководителя
+            </label>
+
+        </div>
+
+        <button class="check-btn" id="checkBtn" disabled>Проверить ответ</button>
+
+        <div class="result-box" id="resultBox" style="display:none;">
+            <div class="result-title" id="resultTitle">
+                <span class="icon">✅</span> Разбор задания
+            </div>
+            <div id="resultText"></div>
+        </div>
+
+        <button class="back-btn" id="backBtn">← Вернуться к документу</button>
+
+    </div>
+    <!-- ================= КОНЕЦ СТРАНИЦЫ 2 ================= -->
+
+</div>
+
+    <div class="footnote">
+        <span>Практическое задание · Методика Колба (конкретный опыт)</span>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+
+        const radioButtons = document.querySelectorAll('input[name="quiz"]');
+        const checkBtn = document.getElementById('checkBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const nextBtn = document.getElementById('nextBtn');
+        const backBtn = document.getElementById('backBtn');
+
+        // Переход на страницу 2
+        nextBtn.addEventListener('click', function() {
+            page1.classList.remove('active');
+            page2.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Возврат на страницу 1
+        backBtn.addEventListener('click', function() {
+            page2.classList.remove('active');
+            page1.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Разблокируем кнопку, когда выбран вариант
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                checkBtn.disabled = false;
+            });
+        });
+
+        // Обработчик нажатия на кнопку «Проверить»
+        checkBtn.addEventListener('click', function() {
+
+            let selectedValue = null;
+            for (let rb of radioButtons) {
+                if (rb.checked) {
+                    selectedValue = rb.value;
+                    break;
+                }
+            }
+
+            if (!selectedValue) return;
+
+            // Сбрасываем классы у всех option-блоков
+            document.querySelectorAll('.option-item').forEach(el => {
+                el.style.background = '#ffffff';
+                el.style.borderColor = '#e2e8f0';
+            });
+
+            // Подсвечиваем выбранный вариант
+            let selectedLabel = null;
+            if (selectedValue === 'A') selectedLabel = document.getElementById('optA');
+            else if (selectedValue === 'B') selectedLabel = document.getElementById('optB');
+            else if (selectedValue === 'C') selectedLabel = document.getElementById('optC');
+
+            if (selectedLabel) {
+                selectedLabel.style.borderColor = '#1a5c9e';
+                selectedLabel.style.background = '#e3edfa';
+            }
+
+            const isCorrect = (selectedValue === 'B');
+
+            // Показываем блок результата
+            resultBox.style.display = 'block';
+            resultBox.className = 'result-box ' + (isCorrect ? 'correct' : 'incorrect');
+
+            const icon = isCorrect ? '✅' : '❌';
+            const titleText = isCorrect ? 'Верно! Разбор задания' : 'Разбор задания';
+            resultTitle.innerHTML = '<span class="icon">' + icon + '</span> ' + titleText;
+
+            // Если ответ неправильный — добавляем пояснение
+            let extraNote = '';
+            if (!isCorrect) {
+                if (selectedValue === 'A') {
+                    extraNote = '<p style="margin-top:8px; color:#7a1a1a;"><strong>🔍 Обратите внимание:</strong> дата в приказе есть — «30» августа 2024 года. Это не является ошибкой.</p>';
+                } else if (selectedValue === 'C') {
+                    extraNote = '<p style="margin-top:8px; color:#7a1a1a;"><strong>🔍 Обратите внимание:</strong> генеральный директор имеет право подписывать такие приказы. Должность указана верно.</p>';
+                }
+            }
+
+            resultText.innerHTML = `
+                <p><strong>Правильный ответ: Б. Нет отметки об ознакомлении работника с приказом.</strong></p>
+                <p style="margin-top:8px;">
+                    Согласно ст. 22 и 68 Трудового кодекса РФ, работодатель обязан ознакомить каждого работника с локальными нормативными актами под роспись. Отметка об ознакомлении — это не формальность, а обязательный элемент документа, подтверждающий, что работник знает свои обязанности.
+                </p>
+                ${extraNote}
+                <div class="checklist">
+                    <span class="ok">✅ Дата есть (30 августа 2024 года)</span>
+                    <span class="ok">✅ Подпись руководителя есть</span>
+                    <span class="fail">❌ Нет отметки об ознакомлении Петрова П.П. с приказом</span>
+                </div>
+            `;
+
+            // Блокируем кнопку и радиокнопки
+            checkBtn.disabled = true;
+            radioButtons.forEach(rb => rb.disabled = true);
+
+            // Прокручиваем к результату
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+    })();
+</script>
+
+</body>
+</html>
