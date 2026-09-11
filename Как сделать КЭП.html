@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Как оформить КЭП с нуля</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background: #ffffff;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        .wizard {
+            max-width: 680px;
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 520px;
+        }
+
+        /* ===== ПРОГРЕСС ===== */
+        .progress-wrap {
+            margin-bottom: 28px;
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a6eff;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .progress-count {
+            font-size: 13px;
+            color: #8a99ab;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #eef2f7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1a6eff;
+            border-radius: 4px;
+            transition: width 0.35s ease;
+            width: 12.5%;
+        }
+
+        /* ===== ЛИСТАЛКА ===== */
+        .stage {
+            flex: 1;
+            position: relative;
+        }
+
+        .step {
+            display: none;
+            animation: fadeSlide 0.35s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .step-icon {
+            font-size: 40px;
+            margin-bottom: 14px;
+            line-height: 1;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b1e33;
+            margin-bottom: 12px;
+            line-height: 1.25;
+        }
+
+        .step-text {
+            font-size: 16px;
+            line-height: 1.65;
+            color: #3d4f62;
+        }
+
+        .step-text p + p {
+            margin-top: 10px;
+        }
+
+        .step-text ul {
+            margin: 10px 0 0 20px;
+        }
+
+        .step-text li {
+            margin-bottom: 6px;
+        }
+
+        .step-note {
+            margin-top: 18px;
+            padding: 14px 18px;
+            background: #f5f9ff;
+            border-left: 4px solid #1a6eff;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.55;
+            color: #23405e;
+        }
+
+        .step-note strong {
+            color: #0b1e33;
+        }
+
+        .step-warn {
+            margin-top: 18px;
+            padding: 14px 18px;
+            background: #fff8ee;
+            border-left: 4px solid #d48b2b;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.55;
+            color: #6b4a14;
+        }
+
+        /* ===== НАВИГАЦИЯ ===== */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .nav-btn {
+            border: none;
+            border-radius: 40px;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .nav-btn.primary {
+            background: #1a6eff;
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .nav-btn.primary:hover {
+            background: #0f5ae0;
+            transform: scale(1.01);
+        }
+
+        .nav-btn.primary:disabled {
+            background: #c5d2e2;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.ghost {
+            background: transparent;
+            color: #1a6eff;
+            border: 2px solid #dfe8f5;
+        }
+
+        .nav-btn.ghost:hover {
+            background: #f5f9ff;
+            border-color: #1a6eff;
+        }
+
+        .nav-btn.ghost:disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #dfe6ef;
+            transition: 0.25s;
+        }
+
+        .dot.active {
+            background: #1a6eff;
+            width: 20px;
+            border-radius: 4px;
+        }
+
+        .dot.done {
+            background: #a8c4f0;
+        }
+
+        @media (max-width: 600px) {
+            .step-title { font-size: 20px; }
+            .step-text { font-size: 15px; }
+            .nav-btn { padding: 12px 22px; font-size: 15px; }
+            .wizard { min-height: 480px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wizard">
+
+    <!-- ПРОГРЕСС -->
+    <div class="progress-wrap">
+        <div class="progress-top">
+            <span class="progress-label" id="progressLabel">Шаг 1 — Подготовка</span>
+            <span class="progress-count" id="progressCount">1 / 8</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- ШАГИ -->
+    <div class="stage">
+
+        <!-- ШАГ 1 -->
+        <div class="step active" data-step="1">
+            <div class="step-icon">🎯</div>
+            <div class="step-title">Зачем вам КЭП</div>
+            <div class="step-text">
+                <p>КЭП — квалифицированная электронная подпись. Она приравнивается к собственноручной подписи с печатью и дает право подавать документы в Ростехнадзор электронно.</p>
+                <p>Без нее нельзя подать:</p>
+                <ul>
+                    <li>Сведения о производственном контроле</li>
+                    <li>Отчет об инцидентах</li>
+                    <li>Заявление на регистрацию ОПО</li>
+                    <li>Уведомление о выполнении предписания</li>
+                    <li>Ответ на предостережение</li>
+                </ul>
+            </div>
+            <div class="step-note">
+                <strong>Единственный случай, когда КЭП не нужна,</strong> — подача отчета на бумажном носителе.
+            </div>
+        </div>
+
+        <!-- ШАГ 2 -->
+        <div class="step" data-step="2">
+            <div class="step-icon">👤</div>
+            <div class="step-title">Кто получает подпись</div>
+            <div class="step-text">
+                <p>По умолчанию КЭП оформляется на руководителя организации — он подписывает документы от имени компании.</p>
+                <p>Если отчеты сдаете вы, а подпись на руководителе, вам понадобится:</p>
+                <ul>
+                    <li>своя КЭП физического лица;</li>
+                    <li>машиночитаемая доверенность (МЧД) от руководителя.</li>
+                </ul>
+            </div>
+            <div class="step-note">
+                <strong>Важно:</strong> у руководителя КЭП только одна. При перевыпуске старая аннулируется.
+            </div>
+        </div>
+
+        <!-- ШАГ 3 -->
+        <div class="step" data-step="3">
+            <div class="step-icon">🏛️</div>
+            <div class="step-title">Где получить</div>
+            <div class="step-text">
+                <p>Руководители организаций и ИП получают КЭП в <strong>Удостоверяющем центре ФНС России</strong> или у его доверенных лиц.</p>
+                <p>Сотрудники — в любом аккредитованном коммерческом центре. Список аккредитованных центров есть на сайте Минцифры.</p>
+            </div>
+            <div class="step-note">
+                <strong>С 2022 года</strong> коммерческие центры выдают подписи только физическим лицам. Для организации — УЦ ФНС.
+            </div>
+        </div>
+
+        <!-- ШАГ 4 -->
+        <div class="step" data-step="4">
+            <div class="step-icon">📄</div>
+            <div class="step-title">Соберите документы</div>
+            <div class="step-text">
+                <p>Для оформления понадобятся:</p>
+                <ul>
+                    <li>паспорт;</li>
+                    <li>СНИЛС;</li>
+                    <li>ИНН — свой и организации;</li>
+                    <li>выписка из ЕГРЮЛ.</li>
+                </ul>
+                <p>Точный список уточните в своем удостоверяющем центре — он может немного отличаться.</p>
+            </div>
+        </div>
+
+        <!-- ШАГ 5 -->
+        <div class="step" data-step="5">
+            <div class="step-icon">🔑</div>
+            <div class="step-title">Купите токен и установите ПО</div>
+            <div class="step-text">
+                <p>Сертификат записывается на сертифицированный USB-токен. Устройство должно быть сертифицировано ФСБ или ФСТЭК России. Рекомендованные модели указаны на сайте ФНС.</p>
+                <p>Для работы с подписью установите средство криптографической защиты — например, «КриптоПро CSP». Лицензию можно приобрести в удостоверяющем центре.</p>
+            </div>
+            <div class="step-warn">
+                <strong>Не забудьте:</strong> сохраните PIN-код от токена. Восстановление не предусмотрено — удостоверяющий центр пароли не хранит.
+            </div>
+        </div>
+
+        <!-- ШАГ 6 -->
+        <div class="step" data-step="6">
+            <div class="step-icon">🖥️</div>
+            <div class="step-title">Выберите способ оформления</div>
+            <div class="step-text">
+                <p><strong>Лично в налоговой.</strong> Руководитель обращается в любой налоговый орган без записи, предоставляет документы и токен. Это обязательный шаг при получении первого сертификата — ФНС должна убедиться, что подпись получает именно руководитель.</p>
+                <p><strong>Дистанционно по биометрии.</strong> Оформление онлайн, без визита. Понадобятся: подтвержденная учетная запись на Госуслугах, подтвержденная биометрия в ЕБС, компьютер с камерой и микрофоном, установленное ПО, сертифицированный токен.</p>
+            </div>
+            <div class="step-note">
+                <strong>Дистанционный выпуск бесплатный</strong> — оплачивается только стоимость токена.
+            </div>
+        </div>
+
+        <!-- ШАГ 7 -->
+        <div class="step" data-step="7">
+            <div class="step-icon">✅</div>
+            <div class="step-title">Получите и проверьте</div>
+            <div class="step-text">
+                <p>После выпуска сертификат записывается на токен. Срок действия КЭП от УЦ ФНС — <strong>15 месяцев</strong>. Коммерческие центры обычно выдают на 12 месяцев.</p>
+                <p>Проверить срок можно:</p>
+                <ul>
+                    <li>на портале «Госуслуги» — в разделе «Электронная подпись»;</li>
+                    <li>в программе «КриптоПро CSP»;</li>
+                    <li>через «Управление сертификатами» в меню «Пуск».</li>
+                </ul>
+            </div>
+            <div class="step-warn">
+                <strong>Проверяйте срок заранее.</strong> Если КЭП истекла, перевыпуск может потребовать личного визита.
+            </div>
+        </div>
+
+        <!-- ШАГ 8 -->
+        <div class="step" data-step="8">
+            <div class="step-icon">🔄</div>
+            <div class="step-title">Перевыпуск и экстренные случаи</div>
+            <div class="step-text">
+                <p><strong>Перевыпуск.</strong> Через личный кабинет налогоплательщика — заявление подписывается действующей КЭП. Условия: подпись выдана УЦ ФНС, срок не истек, используется тот же токен, персональные данные не изменились.</p>
+                <p><strong>Если КЭП нет, а отчет нужен срочно.</strong> Подайте заявку в УЦ — оформление занимает 1–2 дня. Пока подпись делается, подайте отчет на бумаге с сопроводительным письмом и сохраните подтверждение отправки.</p>
+            </div>
+            <div class="step-note">
+                <strong>Главное правило:</strong> раз в квартал проверяйте срок действия КЭП. За месяц до окончания — запускайте перевыпуск.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
+    <div class="nav">
+        <button class="nav-btn ghost" id="backBtn" disabled>← Назад</button>
+        <button class="nav-btn primary" id="nextBtn">Далее →</button>
+    </div>
+
+    <div class="dots" id="dots"></div>
+
+</div>
+
+<script>
+    (function() {
+        const steps = document.querySelectorAll('.step');
+        const total = steps.length;
+        let current = 0;
+
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressLabel = document.getElementById('progressLabel');
+        const progressCount = document.getElementById('progressCount');
+        const dotsWrap = document.getElementById('dots');
+
+        const labels = [
+            'Подготовка',
+            'Кто получает',
+            'Где получить',
+            'Документы',
+            'Токен и ПО',
+            'Способ оформления',
+            'Получение',
+            'Перевыпуск'
+        ];
+
+        // Создаем точки
+        for (let i = 0; i < total; i++) {
+            const d = document.createElement('div');
+            d.className = 'dot';
+            dotsWrap.appendChild(d);
+        }
+        const dots = document.querySelectorAll('.dot');
+
+        function render() {
+            steps.forEach((s, i) => {
+                s.classList.toggle('active', i === current);
+            });
+
+            dots.forEach((d, i) => {
+                d.classList.toggle('active', i === current);
+                d.classList.toggle('done', i < current);
+            });
+
+            progressFill.style.width = ((current + 1) / total * 100) + '%';
+            progressLabel.textContent = 'Шаг ' + (current + 1) + ' — ' + labels[current];
+            progressCount.textContent = (current + 1) + ' / ' + total;
+
+            backBtn.disabled = current === 0;
+            nextBtn.textContent = current === total - 1 ? 'Готово ✓' : 'Далее →';
+            nextBtn.disabled = current === total - 1;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (current < total - 1) {
+                current++;
+                render();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (current > 0) {
+                current--;
+                render();
+            }
+        });
+
+        // Навигация стрелками клавиатуры
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && current < total - 1) {
+                current++;
+                render();
+            }
+            if (e.key === 'ArrowLeft' && current > 0) {
+                current--;
+                render();
+            }
+        });
+
+        render();
+    })();
+</script>
+
+</body>
+</html>
