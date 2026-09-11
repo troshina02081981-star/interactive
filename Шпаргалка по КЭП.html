@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Шпаргалка: оформление КЭП</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background: #ffffff;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .cheat {
+            max-width: 720px;
+            width: 100%;
+            background: #ffffff;
+        }
+
+        .cheat-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1e33;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .tile {
+            background: #f7faff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            border-left: 4px solid #1a6eff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+
+        .tile:hover {
+            background: #eef4ff;
+        }
+
+        .tile.open {
+            background: #eef4ff;
+            box-shadow: 0 4px 14px rgba(26, 110, 255, 0.08);
+        }
+
+        .tile.warn {
+            border-left-color: #d48b2b;
+            background: #fff8ee;
+        }
+
+        .tile.warn:hover {
+            background: #fff2dd;
+        }
+
+        .tile.warn.open {
+            background: #fff2dd;
+            box-shadow: 0 4px 14px rgba(212, 139, 43, 0.1);
+        }
+
+        .tile-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tile-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a6eff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tile.warn .tile-title {
+            color: #a0620f;
+        }
+
+        .tile-arrow {
+            font-size: 12px;
+            color: #1a6eff;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .tile.warn .tile-arrow {
+            color: #a0620f;
+        }
+
+        .tile.open .tile-arrow {
+            transform: rotate(90deg);
+        }
+
+        .tile-summary {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #0b1e33;
+            margin-top: 6px;
+        }
+
+        .tile-summary strong {
+            font-weight: 700;
+        }
+
+        .tile-summary .big {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a6eff;
+        }
+
+        .tile.warn .tile-summary .big {
+            color: #a0620f;
+        }
+
+        .tile-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease;
+        }
+
+        .tile.open .tile-details {
+            max-height: 300px;
+            margin-top: 10px;
+        }
+
+        .tile-details-inner {
+            border-top: 1px dashed rgba(26, 110, 255, 0.2);
+            padding-top: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #3d4f62;
+        }
+
+        .tile.warn .tile-details-inner {
+            border-top-color: rgba(212, 139, 43, 0.25);
+        }
+
+        .tile-details-inner ul {
+            margin-left: 18px;
+        }
+
+        .tile-details-inner li {
+            margin-bottom: 4px;
+        }
+
+        .tile-details-inner strong {
+            color: #0b1e33;
+        }
+
+        @media (max-width: 560px) {
+            .grid { grid-template-columns: 1fr; }
+            .cheat-title { font-size: 17px; }
+            .tile-summary { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cheat">
+
+    <div class="cheat-title">🔑 Шпаргалка: оформление КЭП</div>
+
+    <div class="grid">
+
+        <!-- КТО СДАЕТ -->
+        <div class="tile" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Кто сдает</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                Руководитель — от имени компании<br />
+                Сотрудник — по доверенности
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li><strong>Руководитель</strong> — действует без доверенности по ЕГРЮЛ</li>
+                        <li><strong>Сотрудник</strong> — нужна своя КЭП + МЧД от руководителя</li>
+                        <li>У руководителя КЭП только одна</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ГДЕ ПОЛУЧИТЬ -->
+        <div class="tile" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Где получить</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                Руководитель — <strong>УЦ ФНС</strong><br />
+                Сотрудник — коммерческий УЦ
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li>Список аккредитованных УЦ — на сайте Минцифры</li>
+                        <li>С 2022 коммерческие УЦ выдают подписи только физлицам</li>
+                        <li>Для организации — только УЦ ФНС</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЧТО НУЖНО -->
+        <div class="tile" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Что нужно</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                Паспорт, СНИЛС, ИНН,<br />
+                ЕГРЮЛ, токен, КриптоПро
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li>Токен — сертифицирован ФСБ или ФСТЭК</li>
+                        <li>КриптоПро CSP — лицензия в УЦ</li>
+                        <li>Сохраните PIN-код — восстановления нет</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- СКОЛЬКО ЖДАТЬ -->
+        <div class="tile" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Сколько ждать</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                Лично в ФНС — <strong>15 минут</strong><br />
+                Коммерческий УЦ — <strong>1–2 дня</strong>
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li>Лично — без записи, в любой налоговой</li>
+                        <li>Дистанционно по биометрии — онлайн</li>
+                        <li>Коммерческий УЦ — 1–2 дня</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- СРОК ДЕЙСТВИЯ -->
+        <div class="tile" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Срок действия</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                УЦ ФНС — <span class="big">15 мес.</span><br />
+                Коммерческий — <span class="big">12 мес.</span>
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li>Проверять раз в квартал</li>
+                        <li>Перевыпуск — за месяц до окончания</li>
+                        <li>Проверить: Госуслуги, КриптоПро, «Управление сертификатами»</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЕСЛИ КЭП ИСТЕКЛА -->
+        <div class="tile warn" data-tile>
+            <div class="tile-head">
+                <span class="tile-title">Если КЭП истекла</span>
+                <span class="tile-arrow">▸</span>
+            </div>
+            <div class="tile-summary">
+                Заявка в УЦ — <strong>1–2 дня</strong><br />
+                Отчет — на бумаге
+            </div>
+            <div class="tile-details">
+                <div class="tile-details-inner">
+                    <ul>
+                        <li>Зафиксируйте сбой: скриншот, время</li>
+                        <li>Подайте отчет на бумаге + сопроводительное письмо</li>
+                        <li>Сохраните подтверждение отправки</li>
+                        <li>Перевыпуск через ЛК налогоплательщика — если срок не истек</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        const tiles = document.querySelectorAll('[data-tile]');
+
+        tiles.forEach(tile => {
+            tile.addEventListener('click', () => {
+                const isOpen = tile.classList.contains('open');
+
+                tiles.forEach(t => t.classList.remove('open'));
+
+                if (!isOpen) {
+                    tile.classList.add('open');
+                }
+            });
+        });
+    })();
+</script>
+
+</body>
+</html>
