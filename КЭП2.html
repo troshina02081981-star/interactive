@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Интерактив: выберите свой вариант</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background: #ffffff;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 720px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px 28px;
+            box-shadow: none;
+            border: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #f0f4fa;
+            color: #1a3a5e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .card .sub {
+            color: #3d5670;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .card .scenario {
+            background: #f7faff;
+            padding: 18px 20px;
+            border-radius: 16px;
+            border: 1px solid #dde6f2;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #0b1e33;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+
+        /* ===== ЛИСТАЛКА ===== */
+        .flip-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .flip-page {
+            display: none;
+            animation: fadeSlide 0.35s ease;
+        }
+
+        .flip-page.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(18px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #ffffff;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 2px solid #dce3ed;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #0b1e33;
+        }
+
+        .option:hover {
+            background: #f5f8fe;
+            border-color: #b0c6e0;
+        }
+
+        .option.selected {
+            border-color: #1a6eff;
+            background: #f0f5ff;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: #1a6eff;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn {
+            background: #1a6eff;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            letter-spacing: 0.3px;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: #0f5ae0;
+            transform: scale(1.01);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Разбор (страница 2) */
+        .feedback {
+            padding: 18px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            border: 1px solid #eaeef4;
+        }
+
+        .feedback.correct {
+            background: #f2faf5;
+            border-left: 5px solid #1a9e5c;
+            color: #0a3d26;
+        }
+
+        .feedback.wrong {
+            background: #fdf3f3;
+            border-left: 5px solid #d14545;
+            color: #631e1e;
+        }
+
+        .feedback.partial {
+            background: #fdf8ed;
+            border-left: 5px solid #d48b2b;
+            color: #5e3f0e;
+        }
+
+        .feedback strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .feedback .icon {
+            font-size: 22px;
+            margin-right: 8px;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: #1a6eff;
+            border: 2px solid #1a6eff;
+            border-radius: 40px;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            background: #f0f5ff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+<div class="flip-container">
+
+    <!-- ================= СТРАНИЦА 1: ВОПРОС ================= -->
+    <div class="flip-page active" id="page1">
+
+        <div class="badge">🎯 Первое задание</div>
+
+        <h2>Выберите свой вариант</h2>
+        <p class="sub">Проверьте, как бы вы поступили в реальной ситуации</p>
+
+        <div class="scenario">
+            📌 «Завтра нужно подать отчет о ПК через личный кабинет Ростехнадзора. <br />
+            Вы открываете сайт, а там требуется электронная подпись. У вас ее нет. <br />
+            <strong>Ваши действия?</strong>»
+        </div>
+
+        <form id="quizForm">
+            <div class="options" id="optionsContainer">
+                <div class="option" data-value="A">
+                    <input type="radio" name="answer" id="optA" value="A" />
+                    <label for="optA"><strong>А.</strong> Попробую подать отчет без подписи, может, пройдет</label>
+                </div>
+                <div class="option" data-value="B">
+                    <input type="radio" name="answer" id="optB" value="B" />
+                    <label for="optB"><strong>Б.</strong> Срочно оформлю КЭП в удостоверяющем центре</label>
+                </div>
+                <div class="option" data-value="C">
+                    <input type="radio" name="answer" id="optC" value="C" />
+                    <label for="optC"><strong>В.</strong> Отправлю отчет по почте с уведомлением</label>
+                </div>
+            </div>
+
+            <button type="button" class="btn" id="checkBtn" disabled>Проверить</button>
+        </form>
+
+    </div>
+    <!-- ================= КОНЕЦ СТРАНИЦЫ 1 ================= -->
+
+
+    <!-- ================= СТРАНИЦА 2: РАЗБОР ================= -->
+    <div class="flip-page" id="page2">
+
+        <div class="feedback" id="feedback">
+            <span class="icon" id="fbIcon"></span>
+            <strong id="fbTitle"></strong>
+            <span id="fbText"></span>
+        </div>
+
+        <button class="back-btn" id="backBtn">← Вернуться к заданию</button>
+
+    </div>
+    <!-- ================= КОНЕЦ СТРАНИЦЫ 2 ================= -->
+
+</div>
+</div>
+
+<script>
+    const options = document.querySelectorAll('.option');
+    const radioButtons = document.querySelectorAll('input[name="answer"]');
+    const checkBtn = document.getElementById('checkBtn');
+    const feedback = document.getElementById('feedback');
+    const fbIcon = document.getElementById('fbIcon');
+    const fbTitle = document.getElementById('fbTitle');
+    const fbText = document.getElementById('fbText');
+
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    const backBtn = document.getElementById('backBtn');
+
+    const feedbackData = {
+        A: {
+            type: 'wrong',
+            icon: '❌',
+            title: 'Не совсем так.',
+            text: 'Без КЭП система не примет отчет. Электронная подпись — обязательное условие для подачи через личный кабинет. Рисковать не стоит — отчет просто не зарегистрируют.'
+        },
+        B: {
+            type: 'partial',
+            icon: '⚠️',
+            title: 'Мысль верная, но есть нюанс.',
+            text: 'Оформление КЭП в удостоверяющем центре занимает 1–2 дня. Если отчет нужно сдать завтра — этот вариант может не успеть. Лучше подать на бумаге с сопроводительным письмом, а КЭП оформить впрок.'
+        },
+        C: {
+            type: 'correct',
+            icon: '✅',
+            title: 'Верно!',
+            text: 'В экстренной ситуации, когда КЭП нет, подавайте отчет на бумажном носителе с сопроводительным письмом. После получения КЭП переходите на электронную подачу. И не забудьте сохранить отметку о принятии.'
+        }
+    };
+
+    // Разблокировка кнопки при выборе
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            options.forEach(opt => opt.classList.remove('selected'));
+            const parent = this.closest('.option');
+            if (parent) parent.classList.add('selected');
+
+            checkBtn.disabled = false;
+        });
+    });
+
+    // Клик по опции — выбираем радио
+    options.forEach(opt => {
+        opt.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+
+    // Проверка → перелистываем на страницу 2
+    checkBtn.addEventListener('click', function() {
+        const selected = document.querySelector('input[name="answer"]:checked');
+        if (!selected) return;
+
+        const value = selected.value;
+        const data = feedbackData[value];
+        if (!data) return;
+
+        feedback.classList.remove('correct', 'wrong', 'partial');
+        feedback.classList.add(data.type);
+        fbIcon.textContent = data.icon;
+        fbTitle.textContent = data.title;
+        fbText.textContent = data.text;
+
+        checkBtn.disabled = true;
+        radioButtons.forEach(r => r.disabled = true);
+
+        // Перелистываем на страницу 2
+        page1.classList.remove('active');
+        page2.classList.add('active');
+    });
+
+    // Кнопка «Вернуться к заданию»
+    backBtn.addEventListener('click', function() {
+        page2.classList.remove('active');
+        page1.classList.add('active');
+    });
+
+</script>
+
+</body>
+</html>
