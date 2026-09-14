@@ -18,65 +18,53 @@
 
   .scene {
     width: 100%;
-    max-width: 760px;
+    max-width: 720px;
   }
 
-  /* ===== Верхний блок: Дмитрий + облако ===== */
-  .top-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-
-  /* Дмитрий — компактный */
-  .dmitry {
-    width: 90px;
-    height: 110px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    background: #f1f5f9;
-    border: 2px dashed #94a3b8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
-    overflow: hidden;
-  }
-  .dmitry img { width: 100%; height: 100%; object-fit: contain; }
-
-  /* Облако Дмитрия */
-  .dmitry-speech {
+  /* ===== Облако с вопросом (от Дмитрия) ===== */
+  .speech-block {
     position: relative;
-    flex: 1;
-    padding: 16px 20px;
+    margin-bottom: 24px;
+    padding: 18px 22px 16px 26px;
     border: 2px solid #c7d0da;
     border-radius: 16px;
     background: #ffffff;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
 
-  /* Хвостик облака к Дмитрию */
-  .dmitry-speech::before {
+  /* Хвостик облака — как будто кто-то говорит */
+  .speech-block::before {
     content: "";
     position: absolute;
-    left: -14px;
-    top: 24px;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 14px solid #c7d0da;
+    left: 30px;
+    bottom: -14px;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 14px solid #c7d0da;
   }
-  .dmitry-speech::after {
+  .speech-block::after {
     content: "";
     position: absolute;
-    left: -10px;
-    top: 26px;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-right: 12px solid #ffffff;
+    left: 32px;
+    bottom: -10px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 12px solid #ffffff;
+  }
+
+  /* Подпись «Дмитрий» */
+  .speaker {
+    position: absolute;
+    left: 26px;
+    bottom: -38px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a5c9e;
+    letter-spacing: 0.3px;
+  }
+  .speaker::before {
+    content: "👤 ";
+    font-size: 14px;
   }
 
   .speech-text {
@@ -96,22 +84,11 @@
     border-top: 2px dashed #c7d0da;
   }
 
-  /* ===== Основной блок: варианты + Виталик справа ===== */
-  .main-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .content {
-    flex: 1;
-    min-width: 0;
-  }
-
   /* ===== Варианты ===== */
   .options {
     display: flex;
     flex-direction: column;
+    margin-top: 46px;
   }
 
   .option {
@@ -219,35 +196,11 @@
     color: #7f1d1d;
   }
 
-  /* ===== Виталик — справа, компактный ===== */
-  .vitalik {
-    width: 90px;
-    height: 110px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    background: #f1f5f9;
-    border: 2px dashed #94a3b8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
-    overflow: hidden;
-  }
-  .vitalik img { width: 100%; height: 100%; object-fit: contain; }
-
   /* ===== Мобильная ===== */
-  @media (max-width: 640px) {
-    .top-row { flex-direction: column; align-items: center; text-align: center; }
-    .dmitry-speech::before,
-    .dmitry-speech::after { display: none; }
-    .main-row { flex-direction: column; align-items: center; }
-    .content { width: 100%; }
-    .vitalik { align-self: center; }
+  @media (max-width: 560px) {
     .speech-question { font-size: 15px; }
     .option { font-size: 14px; }
+    .speech-block { padding: 16px 18px 14px 22px; }
   }
 </style>
 </head>
@@ -255,70 +208,45 @@
 
 <div class="scene">
 
-  <!-- ВЕРХНИЙ БЛОК: Дмитрий + облако -->
-  <div class="top-row">
-
-    <!-- Дмитрий -->
-    <div class="dmitry">
-      <img src="dmitry.png" alt="Дмитрий"
-           onerror="this.style.display='none'; this.parentNode.textContent='Дмитрий';">
+  <!-- ОБЛАКО С ВОПРОСОМ (задаёт Дмитрий) -->
+  <div class="speech-block">
+    <div class="speech-text">
+      В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
     </div>
-
-    <!-- Облако Дмитрия с вопросом -->
-    <div class="dmitry-speech">
-      <div class="speech-text">
-        В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
-      </div>
-      <div class="speech-question">
-        Что вы сделаете в этой ситуации?
-      </div>
+    <div class="speech-question">
+      Что вы сделаете в этой ситуации?
     </div>
+    <div class="speaker">Дмитрий</div>
+  </div>
+
+  <!-- ВАРИАНТЫ -->
+  <div class="options" id="options">
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="A">
+      <span class="box"></span>
+      <span class="text">Не скажу никому до прихода инспектора</span>
+    </label>
+
+    <label class="option" data-correct="true">
+      <input type="checkbox" name="answer" value="B">
+      <span class="box"></span>
+      <span class="text">Организую в срочном порядке оформление недостающих документов</span>
+    </label>
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="C">
+      <span class="box"></span>
+      <span class="text">Сообщу в территориальное управление Ростехнадзора</span>
+    </label>
 
   </div>
 
-  <!-- ОСНОВНОЙ БЛОК: варианты + Виталик -->
-  <div class="main-row">
+  <!-- КНОПКА -->
+  <button class="check-btn" id="checkBtn" disabled>Проверить</button>
 
-    <div class="content">
-
-      <!-- ВАРИАНТЫ -->
-      <div class="options" id="options">
-
-        <label class="option" data-correct="false">
-          <input type="checkbox" name="answer" value="A">
-          <span class="box"></span>
-          <span class="text">Не скажу никому до прихода инспектора</span>
-        </label>
-
-        <label class="option" data-correct="true">
-          <input type="checkbox" name="answer" value="B">
-          <span class="box"></span>
-          <span class="text">Организую в срочном порядке оформление недостающих документов</span>
-        </label>
-
-        <label class="option" data-correct="false">
-          <input type="checkbox" name="answer" value="C">
-          <span class="box"></span>
-          <span class="text">Сообщу в территориальное управление Ростехнадзора</span>
-        </label>
-
-      </div>
-
-      <!-- КНОПКА -->
-      <button class="check-btn" id="checkBtn" disabled>Проверить</button>
-
-      <!-- РЕЗУЛЬТАТ -->
-      <div class="result" id="result"></div>
-
-    </div>
-
-    <!-- Виталик -->
-    <div class="vitalik">
-      <img src="vitalik.png" alt="Виталик"
-           onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
-    </div>
-
-  </div>
+  <!-- РЕЗУЛЬТАТ -->
+  <div class="result" id="result"></div>
 
 </div>
 
