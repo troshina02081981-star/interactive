@@ -9,204 +9,389 @@
         body {
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             background: #ffffff;
-            padding: 30px 20px;
+            padding: 16px 12px;
             margin: 0;
+            display: flex;
+            justify-content: center;
         }
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            max-width: 460px;
+            width: 100%;
             background: #ffffff;
-            border-radius: 24px;
-            padding: 35px 30px 40px;
+            border-radius: 16px;
+            padding: 16px 14px 18px;
             border: 1px solid #eef2f6;
         }
-        h1 { font-size: 28px; color: #0b2b4a; margin: 0 0 6px 0; }
-        .subtitle { color: #64748b; font-size: 16px; margin-bottom: 25px; }
-
-        .legend {
-            display: flex; flex-wrap: wrap; gap: 16px;
-            padding: 14px 18px; background: #f8fafc;
-            border-radius: 12px; border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-        }
-        .legend-item {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 13px; color: #1e293b;
-        }
-        .legend-dot { width: 14px; height: 14px; border-radius: 4px; }
-        .legend-dot.warning { background: #fef3c7; border: 1px solid #92400e; }
-        .legend-dot.danger  { background: #fee2e2; border: 1px solid #b91c1c; }
-        .legend-dot.has     { background: #d97706; border-radius: 50%; width: 10px; height: 10px; }
 
         /* ===== КАЛЕНДАРЬ ===== */
         .flip-calendar {
-            background: #ffffff; border-radius: 18px;
+            background: #ffffff;
+            border-radius: 14px;
             border: 1px solid #e2e8f0;
-            padding: 22px 24px 20px;
-            max-width: 520px; margin: 0 auto 25px;
+            padding: 14px 14px 12px;
         }
         .flip-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
-        .flip-header h3 { font-size: 17px; color: #0b2b4a; margin: 0; font-weight: 700; }
-        .flip-nav { display: flex; gap: 8px; align-items: center; }
+        .flip-nav {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
         .flip-nav button {
-            width: 32px; height: 32px; border-radius: 50%;
-            border: 1px solid #d1d9e6; background: #ffffff; color: #2563eb;
-            font-size: 16px; font-weight: 700; cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #d1d9e6;
+            background: #ffffff;
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
             transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
-        .flip-nav button:hover { background: #eef2ff; border-color: #2563eb; }
+        .flip-nav button:hover {
+            background: #eef2ff;
+            border-color: #2563eb;
+        }
         .flip-month {
-            font-size: 15px; font-weight: 600; color: #0b2b4a;
-            min-width: 150px; text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0b2b4a;
+            text-align: center;
+            flex: 1;
         }
         .flip-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
         }
         .flip-weekday {
-            text-align: center; font-size: 11px; font-weight: 700;
-            color: #94a3b8; padding: 6px 0; text-transform: uppercase;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            padding: 4px 0;
+            text-transform: uppercase;
         }
         .flip-day {
-            text-align: center; padding: 9px 0; font-size: 13px;
-            border-radius: 7px; cursor: pointer; transition: 0.15s;
-            color: #1e293b; border: 1px solid transparent;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1e293b;
+            border: 1px solid transparent;
             position: relative;
         }
-        .flip-day:hover { background: #eef2ff; border-color: #c7d2fe; }
-        .flip-day.empty { color: transparent; cursor: default; }
-        .flip-day.empty:hover { background: transparent; border-color: transparent; }
-        .flip-day.today { background: #2563eb; color: #ffffff; font-weight: 700; }
+        .flip-day:hover {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+        }
+        .flip-day.empty {
+            color: transparent;
+            cursor: default;
+        }
+        .flip-day.empty:hover {
+            background: transparent;
+            border-color: transparent;
+        }
+        .flip-day.today {
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+        }
         .flip-day.today:hover { background: #1d4ed8; }
-        .flip-day.selected { background: #16a34a; color: #ffffff; font-weight: 700; }
+        .flip-day.selected {
+            background: #16a34a;
+            color: #ffffff;
+            font-weight: 700;
+        }
         .flip-day.selected:hover { background: #15803d; }
+
+        /* ===== ТОЧКА НА ДАТЕ С ОТЧЁТНОСТЬЮ ===== */
         .flip-day.has-event::after {
-            content: ''; position: absolute; bottom: 3px; left: 50%;
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
             transform: translateX(-50%);
-            width: 5px; height: 5px; border-radius: 50%; background: #d97706;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #d97706;
+            box-shadow: 0 0 0 1.5px #ffffff;
         }
         .flip-day.today.has-event::after,
-        .flip-day.selected.has-event::after { background: #ffffff; }
+        .flip-day.selected.has-event::after {
+            background: #ffffff;
+            box-shadow: 0 0 0 1.5px #2563eb;
+        }
+        .flip-day.selected.has-event::after {
+            box-shadow: 0 0 0 1.5px #16a34a;
+        }
+
+        /* ===== МИНИ-ЛЕГЕНДА ===== */
+        .mini-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #64748b;
+        }
+        .mini-legend .li {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .mini-legend .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #d97706;
+        }
+        .mini-legend .sq-blue {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            background: #2563eb;
+        }
 
         .flip-info {
-            margin-top: 14px; font-size: 13px; color: #475569;
-            padding: 9px 12px; background: #f8fafc; border-radius: 9px;
-            border: 1px dashed #d1d9e6; text-align: center; min-height: 38px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #475569;
+            padding: 7px 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px dashed #d1d9e6;
+            text-align: center;
+            min-height: 32px;
         }
         .flip-info strong { color: #0b2b4a; }
         .flip-info .event-note {
-            display: block; margin-top: 6px; color: #b45309; font-weight: 600;
+            display: block;
+            margin-top: 4px;
+            color: #b45309;
+            font-weight: 600;
         }
 
-        /* ===== МОДАЛКА ===== */
+        /* ===== КНОПКА ПОДСКАЗКИ ===== */
+        .hint-btn {
+            display: block;
+            margin: 14px auto 0;
+            background: #f8fafc;
+            color: #2563eb;
+            border: 1px solid #d1d9e6;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .hint-btn:hover {
+            background: #eef2ff;
+            border-color: #2563eb;
+        }
+
+        /* ===== МОДАЛКА ПОДСКАЗКИ ===== */
+        .hint-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            padding: 20px;
+        }
+        .hint-modal.active { display: flex; }
+        .hint-modal .hint-box {
+            background: #ffffff;
+            max-width: 420px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 20px 22px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+            animation: hintFade 0.25s ease;
+        }
+        @keyframes hintFade {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .hint-modal .hint-box h4 {
+            font-size: 15px;
+            color: #0b2b4a;
+            margin: 0 0 10px 0;
+        }
+        .hint-modal .hint-box p {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #334155;
+            margin: 0 0 8px 0;
+        }
+        .hint-modal .hint-box .hint-close {
+            display: block;
+            margin: 14px auto 0;
+            background: #1a5c9e;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 9px 26px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .hint-modal .hint-box .hint-close:hover {
+            background: #12457a;
+        }
+        .hint-modal .close-x {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+        .hint-modal .close-x:hover { color: #0f172a; }
+
+        /* ===== МОДАЛКА СОБЫТИЯ ===== */
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0;
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
-            align-items: center; justify-content: center;
-            z-index: 9999; padding: 20px;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
         }
         .modal-overlay.active { display: flex; }
         .modal {
-            background: #ffffff; max-width: 560px; width: 100%;
-            border-radius: 24px; padding: 32px 30px 28px;
+            background: #ffffff;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 18px;
+            padding: 24px 22px 20px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.25);
             animation: modalFade 0.25s ease;
-            position: relative; max-height: 90vh; overflow-y: auto;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalFade {
             0% { opacity: 0; transform: scale(0.95) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         .modal .close-btn {
-            position: sticky; top: 0; float: right;
-            background: none; border: none; font-size: 28px;
-            color: #94a3b8; cursor: pointer; transition: 0.2s; z-index: 10;
+            position: sticky;
+            top: 0;
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.2s;
+            z-index: 10;
         }
         .modal .close-btn:hover { color: #0f172a; transform: rotate(90deg); }
-        .modal h3 { font-size: 22px; margin: 0 0 4px 0; color: #0b2b4a; }
-        .modal .sub { color: #64748b; font-size: 14px; margin-bottom: 16px; }
+        .modal h3 { font-size: 18px; margin: 0 0 4px 0; color: #0b2b4a; }
+        .modal .sub { color: #64748b; font-size: 13px; margin-bottom: 14px; }
         .modal .detail-row {
-            display: flex; justify-content: space-between;
-            padding: 8px 0; border-bottom: 1px solid #eef2f6; font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 13px;
         }
         .modal .detail-row:last-child { border-bottom: none; }
         .modal .detail-row .label { color: #64748b; }
         .modal .detail-row .value {
-            font-weight: 600; color: #0b2b4a; text-align: right;
+            font-weight: 600;
+            color: #0b2b4a;
+            text-align: right;
         }
         .modal .detail-row .value.danger { color: #dc2626; }
         .modal .detail-row .value.warning { color: #d97706; }
         .modal .action-box {
-            margin-top: 16px; background: #f1f5f9;
-            padding: 14px 18px; border-radius: 12px;
+            margin-top: 14px;
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 10px;
             border-left: 4px solid #2563eb;
         }
         .modal .action-box strong {
-            display: block; color: #0b2b4a; margin-bottom: 4px;
+            display: block;
+            color: #0b2b4a;
+            margin-bottom: 4px;
+            font-size: 13px;
         }
-        .modal .action-box p { margin: 0; font-size: 14px; color: #334155; }
+        .modal .action-box p { margin: 0; font-size: 13px; color: #334155; }
         .modal .checklist {
-            margin-top: 12px; background: #f8fafc;
-            padding: 12px 16px; border-radius: 10px;
+            margin-top: 10px;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 10px;
         }
         .modal .checklist .item {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 14px; padding: 3px 0; color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            padding: 3px 0;
+            color: #1e293b;
         }
-        .modal hr { border: 1px dashed #e2e8f0; margin: 16px 0; }
+        .modal hr { border: 1px dashed #e2e8f0; margin: 14px 0; }
 
-        /* Заглушка для дня без отчётности */
         .modal .empty-day {
-            text-align: center; padding: 20px 0;
+            text-align: center;
+            padding: 16px 0;
         }
         .modal .empty-day .icon {
-            font-size: 42px; margin-bottom: 10px;
+            font-size: 36px;
+            margin-bottom: 8px;
         }
         .modal .empty-day h4 {
-            font-size: 17px; color: #0b2b4a; margin: 0 0 6px 0;
+            font-size: 15px;
+            color: #0b2b4a;
+            margin: 0 0 6px 0;
         }
         .modal .empty-day p {
-            font-size: 14px; color: #64748b; margin: 0;
-        }
-
-        .hint {
-            font-size: 13px; color: #94a3b8; margin-top: 20px;
-            padding: 12px 16px; background: #f8fafc;
-            border-radius: 10px; border: 1px dashed #d1d9e6;
-            text-align: center;
-        }
-
-        @media (max-width: 640px) {
-            .container { padding: 20px 14px; }
-            .modal { padding: 24px 18px; }
-            .flip-calendar { padding: 16px 14px; }
-            .flip-month { min-width: 110px; font-size: 14px; }
+            font-size: 13px;
+            color: #64748b;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📅 Календарь отчетности по промбезопасности</h1>
-    <div class="subtitle">
-        Нажмите на любую дату — откроется карточка отчёта. Оранжевая точка = в этот день есть отчётность.
-    </div>
-
-    <div class="legend">
-        <span class="legend-item"><span class="legend-dot warning"></span> Квартальный отчёт (инциденты)</span>
-        <span class="legend-item"><span class="legend-dot danger"></span> Годовой отчёт (ПК)</span>
-        <span class="legend-item"><span class="legend-dot has"></span> Есть отчётность в этот день</span>
-    </div>
 
     <!-- КАЛЕНДАРЬ-ЛИСТАЛКА -->
     <div class="flip-calendar">
         <div class="flip-header">
-            <h3>🗓 Календарь</h3>
             <div class="flip-nav">
                 <button id="prevMonthBtn" title="Предыдущий месяц">‹</button>
                 <span class="flip-month" id="flipMonthLabel">Январь 2025</span>
@@ -214,16 +399,37 @@
             </div>
         </div>
         <div class="flip-grid" id="flipGrid"></div>
+
+        <!-- МИНИ-ЛЕГЕНДА -->
+        <div class="mini-legend">
+            <span class="li"><span class="dot"></span> Дата с отчётностью</span>
+            <span class="li"><span class="sq-blue"></span> Сегодня</span>
+        </div>
+
         <div class="flip-info" id="flipInfo">Нажмите на любую дату в календаре</div>
     </div>
 
-    <div class="hint">
-        💡 <strong>Подсказка:</strong> В году 4 квартальных отчёта об инцидентах (до 31.01, 30.04, 31.07, 31.10) 
-        и 1 годовой отчёт о производственном контроле (до 01.04).
+    <!-- КНОПКА ПОДСКАЗКИ -->
+    <button class="hint-btn" id="hintBtn">💡 Подсказка по срокам</button>
+
+</div>
+
+<!-- МОДАЛКА ПОДСКАЗКИ -->
+<div id="hintModal" class="hint-modal">
+    <div class="hint-box">
+        <button class="close-x" data-hint-close>✕</button>
+        <h4>💡 Подсказка по срокам</h4>
+        <p>В году <strong>4 квартальных отчёта</strong> об инцидентах:</p>
+        <p>• до <strong>31 января</strong> — за 4-й квартал<br>
+           • до <strong>30 апреля</strong> — за 1-й квартал<br>
+           • до <strong>31 июля</strong> — за 2-й квартал<br>
+           • до <strong>31 октября</strong> — за 3-й квартал</p>
+        <p>И <strong>1 годовой отчёт</strong> о производственном контроле — до <strong>1 апреля</strong>.</p>
+        <button class="hint-close" data-hint-close>Понятно</button>
     </div>
 </div>
 
-<!-- МОДАЛКА -->
+<!-- МОДАЛКА СОБЫТИЯ -->
 <div id="eventModal" class="modal-overlay">
     <div class="modal">
         <button class="close-btn" data-close>✕</button>
@@ -376,7 +582,6 @@ function renderFlipCalendar() {
 
     grid.innerHTML = html;
 
-    // Клик по любому дню — открывает карточку
     grid.querySelectorAll('.flip-day:not(.empty)').forEach(el => {
         el.addEventListener('click', function() {
             const day = parseInt(this.dataset.day);
@@ -419,7 +624,7 @@ document.getElementById('nextMonthBtn').addEventListener('click', function() {
 });
 
 // ================================================================
-// 5. МОДАЛКА
+// 5. МОДАЛКА СОБЫТИЯ
 // ================================================================
 function openModal(year, month, day, events) {
     const modal = document.getElementById('eventModal');
@@ -439,7 +644,7 @@ function openModal(year, month, day, events) {
                 <div class="icon">🗓</div>
                 <h4>Свободный день</h4>
                 <p>В этот день не нужно сдавать отчётность в Ростехнадзор.</p>
-                <p style="margin-top:10px; font-size:13px; color:#94a3b8;">
+                <p style="margin-top:10px; font-size:12px; color:#94a3b8;">
                     Ближайшие даты с отчётами отмечены оранжевой точкой в календаре.
                 </p>
             </div>
@@ -471,7 +676,7 @@ function openModal(year, month, day, events) {
                     <span class="value danger">${event.fine}</span>
                 </div>
                 <div class="checklist">
-                    <strong style="display:block; font-size:14px; color:#0b2b4a; margin-bottom:6px;">✅ Чек-лист перед подачей:</strong>
+                    <strong style="display:block; font-size:13px; color:#0b2b4a; margin-bottom:6px;">✅ Чек-лист перед подачей:</strong>
                     ${event.checklist.map(item => `
                         <div class="item"><span>☐</span> ${item}</div>
                     `).join('')}
@@ -493,7 +698,7 @@ function openModal(year, month, day, events) {
 }
 
 // ================================================================
-// 6. ЗАКРЫТИЕ МОДАЛКИ
+// 6. ЗАКРЫТИЕ МОДАЛКИ СОБЫТИЯ
 // ================================================================
 document.querySelectorAll('.close-btn[data-close]').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -517,11 +722,38 @@ document.addEventListener('keydown', function(e) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
+        const hint = document.getElementById('hintModal');
+        if (hint.classList.contains('active')) {
+            hint.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
 });
 
 // ================================================================
-// 7. СТАРТ
+// 7. КНОПКА ПОДСКАЗКИ
+// ================================================================
+document.getElementById('hintBtn').addEventListener('click', function() {
+    document.getElementById('hintModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+});
+
+document.querySelectorAll('[data-hint-close]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.getElementById('hintModal').classList.remove('active');
+        document.body.style.overflow = '';
+    });
+});
+
+document.getElementById('hintModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
+// ================================================================
+// 8. СТАРТ
 // ================================================================
 renderFlipCalendar();
 </script>
