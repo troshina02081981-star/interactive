@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что вы сделаете в этой ситуации?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #ffffff;
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    color: #2c3e50;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .scene {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    min-height: 560px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px 180px 30px 200px;
+  }
+
+  /* ===== Дмитрий — левый верх ===== */
+  .dmitry {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    width: 140px;
+    height: 170px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    border: 2px dashed #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    user-select: none;
+    z-index: 5;
+    overflow: hidden;
+  }
+  .dmitry img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ===== Речевое облако Дмитрия ===== */
+  .dmitry-speech {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto 34px;
+    padding: 20px 24px 18px;
+    border: 2px solid #c7d0da;
+    border-radius: 16px;
+    background: #ffffff;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #2c3e50;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+
+  .dmitry-speech::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 26px;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 16px solid #c7d0da;
+  }
+  .dmitry-speech::after {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 28px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 14px solid #ffffff;
+  }
+
+  .dmitry-speech .speech-text {
+    color: #2c3e50;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .dmitry-speech .speech-question {
+    color: #1a5c9e;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 2px dashed #c7d0da;
+  }
+
+  /* ===== Варианты ===== */
+  .options {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 6px;
+    border-bottom: 1px solid #dfe4ea;
+    cursor: pointer;
+    font-size: 15.5px;
+    color: #2c3e50;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .option:last-child { border-bottom: none; }
+  .option:hover { background: #f8fafc; }
+
+  .option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .box {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: 2px solid #c7d0da;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+  }
+
+  .option.checked .box {
+    border-color: #1a7a4a;
+    background: #f0fdf4;
+  }
+  .option.checked .box::after {
+    content: "✔";
+    color: #1a7a4a;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .option.wrong .box {
+    border-color: #b91c1c;
+    background: #fef2f2;
+  }
+  .option.wrong .box::after {
+    content: "✘";
+    color: #b91c1c;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .option .text { flex: 1; line-height: 1.4; }
+
+  /* ===== Кнопка ===== */
+  .check-btn {
+    display: block;
+    margin: 30px auto 0;
+    background: #1a5c9e;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 13px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: inherit;
+  }
+  .check-btn:hover:not(:disabled) {
+    background: #12457a;
+    transform: scale(1.02);
+  }
+  .check-btn:disabled {
+    background: #c5d2e2;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ===== Результат ===== */
+  .result {
+    max-width: 600px;
+    margin: 22px auto 0;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    display: none;
+    border-left: 5px solid #1a5c9e;
+  }
+  .result.show { display: block; }
+  .result.ok {
+    background: #f0fdf4;
+    border-left-color: #1a7a4a;
+    color: #14532d;
+  }
+  .result.bad {
+    background: #fef2f2;
+    border-left-color: #b91c1c;
+    color: #7f1d1d;
+  }
+
+  /* ===== Виталик — справа, на уровне вопросов ===== */
+  .vitalik {
+    position: absolute;
+    top: 230px;
+    right: 20px;
+    width: 140px;
+    height: 170px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    border: 2px dashed #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    user-select: none;
+    z-index: 5;
+    overflow: hidden;
+  }
+  .vitalik img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ===== Мобильная ===== */
+  @media (max-width: 780px) {
+    .scene { padding: 20px 16px; min-height: auto; }
+    .dmitry { position: static; margin: 0 auto 16px; width: 120px; height: 150px; }
+    .vitalik { position: static; margin: 20px auto 0; width: 120px; height: 150px; }
+    .dmitry-speech { margin-left: 0; font-size: 14px; padding: 16px 18px; }
+    .dmitry-speech .speech-question { font-size: 16px; }
+    .dmitry-speech::before, .dmitry-speech::after { display: none; }
+    .option { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+
+  <!-- ДМИТРИЙ — левый верх -->
+  <div class="dmitry">
+    <img src="dmitry.png" alt="Дмитрий"
+         onerror="this.style.display='none'; this.parentNode.textContent='Дмитрий';">
+  </div>
+
+  <!-- ВИТАЛИК — справа, на уровне вариантов -->
+  <div class="vitalik">
+    <img src="vitalik.png" alt="Виталик"
+         onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
+  </div>
+
+  <!-- РЕЧЕВОЕ ОБЛАКО ДМИТРИЯ -->
+  <div class="dmitry-speech">
+    <div class="speech-text">
+      В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
+    </div>
+    <div class="speech-question">
+      Что вы сделаете в этой ситуации?
+    </div>
+  </div>
+
+  <!-- ВАРИАНТЫ -->
+  <div class="options" id="options">
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="A">
+      <span class="box"></span>
+      <span class="text">Не скажу никому до прихода инспектора</span>
+    </label>
+
+    <label class="option" data-correct="true">
+      <input type="checkbox" name="answer" value="B">
+      <span class="box"></span>
+      <span class="text">Организую в срочном порядке оформление недостающих документов</span>
+    </label>
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="C">
+      <span class="box"></span>
+      <span class="text">Сообщу в территориальное управление Ростехнадзора</span>
+    </label>
+
+  </div>
+
+  <button class="check-btn" id="checkBtn" disabled>Проверить</button>
+
+  <div class="result" id="result"></div>
+
+</div>
+
+<script>
+(function () {
+  const options = document.querySelectorAll('.option');
+  const checkBtn = document.getElementById('checkBtn');
+  const result = document.getElementById('result');
+
+  options.forEach(opt => {
+    const cb = opt.querySelector('input[type="checkbox"]');
+    cb.addEventListener('change', () => {
+      opt.classList.toggle('checked', cb.checked);
+      const anyChecked = [...document.querySelectorAll('input[name="answer"]')].some(c => c.checked);
+      checkBtn.disabled = !anyChecked;
+    });
+  });
+
+  checkBtn.addEventListener('click', () => {
+    let correctCount = 0, wrongCount = 0;
+
+    options.forEach(opt => {
+      const cb = opt.querySelector('input[type="checkbox"]');
+      const isCorrect = opt.dataset.correct === 'true';
+      opt.classList.remove('wrong');
+
+      if (cb.checked && isCorrect) correctCount++;
+      else if (cb.checked && !isCorrect) { wrongCount++; opt.classList.add('wrong'); }
+    });
+
+    const totalCorrect = [...options].filter(o => o.dataset.correct === 'true').length;
+
+    if (correctCount === totalCorrect && wrongCount === 0) {
+      result.className = 'result show ok';
+      result.innerHTML = '<strong>✅ Верно!</strong> Нужно срочно организовать оформление недостающих документов: свидетельства о регистрации ОПО и сведений, характеризующих ОПО.';
+    } else {
+      result.className = 'result show bad';
+      result.innerHTML = '<strong>❌ Не совсем так.</strong> Правильный вариант — «Организую в срочном порядке оформление недостающих документов». Скрывать проблему или сразу сообщать в Ростехнадзор — неверная тактика.';
+    }
+
+    options.forEach(opt => {
+      opt.querySelector('input').disabled = true;
+      opt.style.cursor = 'default';
+    });
+    checkBtn.disabled = true;
+    checkBtn.textContent = 'Проверено';
+  });
+})();
+</script>
+
+</body>
+</html>
