@@ -11,47 +11,48 @@
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     background: #ffffff;
     color: #2c3e50;
-    padding: 30px 20px;
+    padding: 24px 16px;
     display: flex;
     justify-content: center;
   }
 
   .scene {
     width: 100%;
-    max-width: 900px;
-    display: grid;
-    grid-template-columns: 150px 1fr 150px;
-    grid-template-rows: auto auto auto;
-    gap: 20px 24px;
-    align-items: start;
+    max-width: 760px;
   }
 
-  /* ===== Дмитрий — левый верх ===== */
+  /* ===== Верхний блок: Дмитрий + облако ===== */
+  .top-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  /* Дмитрий — компактный */
   .dmitry {
-    grid-column: 1;
-    grid-row: 1;
-    width: 150px;
-    height: 180px;
-    border-radius: 14px;
+    width: 90px;
+    height: 110px;
+    flex-shrink: 0;
+    border-radius: 12px;
     background: #f1f5f9;
     border: 2px dashed #94a3b8;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-align: center;
     overflow: hidden;
   }
   .dmitry img { width: 100%; height: 100%; object-fit: contain; }
 
-  /* ===== Речевое облако Дмитрия ===== */
+  /* Облако Дмитрия */
   .dmitry-speech {
-    grid-column: 2;
-    grid-row: 1;
     position: relative;
-    padding: 20px 24px;
+    flex: 1;
+    padding: 16px 20px;
     border: 2px solid #c7d0da;
     border-radius: 16px;
     background: #ffffff;
@@ -62,31 +63,31 @@
   .dmitry-speech::before {
     content: "";
     position: absolute;
-    left: -16px;
-    top: 30px;
-    border-top: 12px solid transparent;
-    border-bottom: 12px solid transparent;
-    border-right: 16px solid #c7d0da;
+    left: -14px;
+    top: 24px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 14px solid #c7d0da;
   }
   .dmitry-speech::after {
     content: "";
     position: absolute;
-    left: -12px;
-    top: 32px;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 14px solid #ffffff;
+    left: -10px;
+    top: 26px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 12px solid #ffffff;
   }
 
   .speech-text {
-    font-size: 15px;
+    font-size: 14.5px;
     line-height: 1.5;
     color: #2c3e50;
     margin-bottom: 10px;
   }
 
   .speech-question {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1.35;
     color: #1a5c9e;
@@ -95,10 +96,20 @@
     border-top: 2px dashed #c7d0da;
   }
 
+  /* ===== Основной блок: варианты + Виталик справа ===== */
+  .main-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+  }
+
   /* ===== Варианты ===== */
   .options {
-    grid-column: 2;
-    grid-row: 2;
     display: flex;
     flex-direction: column;
   }
@@ -106,11 +117,11 @@
   .option {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 6px;
+    gap: 12px;
+    padding: 12px 4px;
     border-bottom: 1px solid #dfe4ea;
     cursor: pointer;
-    font-size: 15.5px;
+    font-size: 15px;
     color: #2c3e50;
     transition: background 0.15s;
     position: relative;
@@ -125,8 +136,8 @@
   }
 
   .box {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     flex-shrink: 0;
     border: 2px solid #c7d0da;
     border-radius: 6px;
@@ -144,7 +155,7 @@
   .option.checked .box::after {
     content: "✔";
     color: #1a7a4a;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
   }
 
@@ -155,7 +166,7 @@
   .option.wrong .box::after {
     content: "✘";
     color: #b91c1c;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
   }
 
@@ -163,20 +174,18 @@
 
   /* ===== Кнопка ===== */
   .check-btn {
-    grid-column: 2;
-    grid-row: 3;
-    justify-self: center;
+    display: block;
+    margin: 22px auto 0;
     background: #1a5c9e;
     color: #fff;
     border: none;
     border-radius: 40px;
-    padding: 13px 40px;
-    font-size: 16px;
+    padding: 12px 36px;
+    font-size: 15.5px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
     font-family: inherit;
-    margin-top: 10px;
   }
   .check-btn:hover:not(:disabled) {
     background: #12457a;
@@ -190,15 +199,13 @@
 
   /* ===== Результат ===== */
   .result {
-    grid-column: 2;
-    grid-row: 4;
-    padding: 16px 20px;
+    margin-top: 18px;
+    padding: 14px 18px;
     border-radius: 12px;
-    font-size: 14.5px;
+    font-size: 14px;
     line-height: 1.6;
     display: none;
     border-left: 5px solid #1a5c9e;
-    margin-top: 10px;
   }
   .result.show { display: block; }
   .result.ok {
@@ -212,21 +219,19 @@
     color: #7f1d1d;
   }
 
-  /* ===== Виталик — правый столбец ===== */
+  /* ===== Виталик — справа, компактный ===== */
   .vitalik {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    align-self: center;
-    width: 150px;
-    height: 180px;
-    border-radius: 14px;
+    width: 90px;
+    height: 110px;
+    flex-shrink: 0;
+    border-radius: 12px;
     background: #f1f5f9;
     border: 2px dashed #94a3b8;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-align: center;
     overflow: hidden;
@@ -234,29 +239,14 @@
   .vitalik img { width: 100%; height: 100%; object-fit: contain; }
 
   /* ===== Мобильная ===== */
-  @media (max-width: 780px) {
-    .scene {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto;
-      gap: 16px;
-    }
-    .dmitry,
-    .dmitry-speech,
-    .options,
-    .check-btn,
-    .result,
-    .vitalik {
-      grid-column: 1;
-      grid-row: auto;
-    }
-    .dmitry, .vitalik {
-      justify-self: center;
-      width: 130px;
-      height: 160px;
-    }
+  @media (max-width: 640px) {
+    .top-row { flex-direction: column; align-items: center; text-align: center; }
     .dmitry-speech::before,
     .dmitry-speech::after { display: none; }
-    .speech-question { font-size: 16px; }
+    .main-row { flex-direction: column; align-items: center; }
+    .content { width: 100%; }
+    .vitalik { align-self: center; }
+    .speech-question { font-size: 15px; }
     .option { font-size: 14px; }
   }
 </style>
@@ -265,56 +255,70 @@
 
 <div class="scene">
 
-  <!-- ДМИТРИЙ — левый верх -->
-  <div class="dmitry">
-    <img src="dmitry.png" alt="Дмитрий"
-         onerror="this.style.display='none'; this.parentNode.textContent='Дмитрий';">
-  </div>
+  <!-- ВЕРХНИЙ БЛОК: Дмитрий + облако -->
+  <div class="top-row">
 
-  <!-- РЕЧЕВОЕ ОБЛАКО ДМИТРИЯ (задаёт вопрос) -->
-  <div class="dmitry-speech">
-    <div class="speech-text">
-      В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
+    <!-- Дмитрий -->
+    <div class="dmitry">
+      <img src="dmitry.png" alt="Дмитрий"
+           onerror="this.style.display='none'; this.parentNode.textContent='Дмитрий';">
     </div>
-    <div class="speech-question">
-      Что вы сделаете в этой ситуации?
+
+    <!-- Облако Дмитрия с вопросом -->
+    <div class="dmitry-speech">
+      <div class="speech-text">
+        В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
+      </div>
+      <div class="speech-question">
+        Что вы сделаете в этой ситуации?
+      </div>
     </div>
-  </div>
-
-  <!-- ВИТАЛИК — правый столбец, на уровне облака и вариантов -->
-  <div class="vitalik">
-    <img src="vitalik.png" alt="Виталик"
-         onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
-  </div>
-
-  <!-- ВАРИАНТЫ -->
-  <div class="options" id="options">
-
-    <label class="option" data-correct="false">
-      <input type="checkbox" name="answer" value="A">
-      <span class="box"></span>
-      <span class="text">Не скажу никому до прихода инспектора</span>
-    </label>
-
-    <label class="option" data-correct="true">
-      <input type="checkbox" name="answer" value="B">
-      <span class="box"></span>
-      <span class="text">Организую в срочном порядке оформление недостающих документов</span>
-    </label>
-
-    <label class="option" data-correct="false">
-      <input type="checkbox" name="answer" value="C">
-      <span class="box"></span>
-      <span class="text">Сообщу в территориальное управление Ростехнадзора</span>
-    </label>
 
   </div>
 
-  <!-- КНОПКА -->
-  <button class="check-btn" id="checkBtn" disabled>Проверить</button>
+  <!-- ОСНОВНОЙ БЛОК: варианты + Виталик -->
+  <div class="main-row">
 
-  <!-- РЕЗУЛЬТАТ -->
-  <div class="result" id="result"></div>
+    <div class="content">
+
+      <!-- ВАРИАНТЫ -->
+      <div class="options" id="options">
+
+        <label class="option" data-correct="false">
+          <input type="checkbox" name="answer" value="A">
+          <span class="box"></span>
+          <span class="text">Не скажу никому до прихода инспектора</span>
+        </label>
+
+        <label class="option" data-correct="true">
+          <input type="checkbox" name="answer" value="B">
+          <span class="box"></span>
+          <span class="text">Организую в срочном порядке оформление недостающих документов</span>
+        </label>
+
+        <label class="option" data-correct="false">
+          <input type="checkbox" name="answer" value="C">
+          <span class="box"></span>
+          <span class="text">Сообщу в территориальное управление Ростехнадзора</span>
+        </label>
+
+      </div>
+
+      <!-- КНОПКА -->
+      <button class="check-btn" id="checkBtn" disabled>Проверить</button>
+
+      <!-- РЕЗУЛЬТАТ -->
+      <div class="result" id="result"></div>
+
+    </div>
+
+    <!-- Виталик -->
+    <div class="vitalik">
+      <img src="vitalik.png" alt="Виталик"
+           onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
+    </div>
+
+  </div>
 
 </div>
 
