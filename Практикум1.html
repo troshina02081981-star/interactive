@@ -7,37 +7,32 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    background: #ffffff;
-    height: 100%;
-  }
-
   body {
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #ffffff;
     color: #2c3e50;
-    padding: 20px 15px;
+    padding: 30px 20px;
     display: flex;
     justify-content: center;
   }
 
   .scene {
-    position: relative;
     width: 100%;
     max-width: 900px;
-    min-height: 560px;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 30px 180px 30px 200px;
+    display: grid;
+    grid-template-columns: 150px 1fr 150px;
+    grid-template-rows: auto auto auto;
+    gap: 20px 24px;
+    align-items: start;
   }
 
   /* ===== Дмитрий — левый верх ===== */
   .dmitry {
-    position: absolute;
-    top: 30px;
-    left: 20px;
-    width: 140px;
-    height: 170px;
-    border-radius: 12px;
+    grid-column: 1;
+    grid-row: 1;
+    width: 150px;
+    height: 180px;
+    border-radius: 14px;
     background: #f1f5f9;
     border: 2px dashed #94a3b8;
     display: flex;
@@ -47,33 +42,28 @@
     font-size: 12px;
     font-weight: 600;
     text-align: center;
-    user-select: none;
-    z-index: 5;
     overflow: hidden;
   }
   .dmitry img { width: 100%; height: 100%; object-fit: contain; }
 
   /* ===== Речевое облако Дмитрия ===== */
   .dmitry-speech {
+    grid-column: 2;
+    grid-row: 1;
     position: relative;
-    max-width: 480px;
-    margin: 0 auto 34px;
-    padding: 20px 24px 18px;
+    padding: 20px 24px;
     border: 2px solid #c7d0da;
     border-radius: 16px;
     background: #ffffff;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #2c3e50;
-    text-align: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
 
+  /* Хвостик облака к Дмитрию */
   .dmitry-speech::before {
     content: "";
     position: absolute;
     left: -16px;
-    top: 26px;
+    top: 30px;
     border-top: 12px solid transparent;
     border-bottom: 12px solid transparent;
     border-right: 16px solid #c7d0da;
@@ -82,24 +72,24 @@
     content: "";
     position: absolute;
     left: -12px;
-    top: 28px;
+    top: 32px;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-right: 14px solid #ffffff;
   }
 
-  .dmitry-speech .speech-text {
-    color: #2c3e50;
+  .speech-text {
     font-size: 15px;
     line-height: 1.5;
+    color: #2c3e50;
     margin-bottom: 10px;
   }
 
-  .dmitry-speech .speech-question {
-    color: #1a5c9e;
-    font-size: 19px;
+  .speech-question {
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.35;
+    color: #1a5c9e;
     margin-top: 8px;
     padding-top: 10px;
     border-top: 2px dashed #c7d0da;
@@ -107,10 +97,10 @@
 
   /* ===== Варианты ===== */
   .options {
+    grid-column: 2;
+    grid-row: 2;
     display: flex;
     flex-direction: column;
-    max-width: 600px;
-    margin: 0 auto;
   }
 
   .option {
@@ -143,7 +133,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
     background: #ffffff;
     transition: all 0.2s ease;
   }
@@ -174,8 +163,9 @@
 
   /* ===== Кнопка ===== */
   .check-btn {
-    display: block;
-    margin: 30px auto 0;
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: center;
     background: #1a5c9e;
     color: #fff;
     border: none;
@@ -186,6 +176,7 @@
     cursor: pointer;
     transition: 0.2s;
     font-family: inherit;
+    margin-top: 10px;
   }
   .check-btn:hover:not(:disabled) {
     background: #12457a;
@@ -199,14 +190,15 @@
 
   /* ===== Результат ===== */
   .result {
-    max-width: 600px;
-    margin: 22px auto 0;
+    grid-column: 2;
+    grid-row: 4;
     padding: 16px 20px;
     border-radius: 12px;
     font-size: 14.5px;
     line-height: 1.6;
     display: none;
     border-left: 5px solid #1a5c9e;
+    margin-top: 10px;
   }
   .result.show { display: block; }
   .result.ok {
@@ -220,14 +212,14 @@
     color: #7f1d1d;
   }
 
-  /* ===== Виталик — справа, на уровне вопросов ===== */
+  /* ===== Виталик — правый столбец ===== */
   .vitalik {
-    position: absolute;
-    top: 230px;
-    right: 20px;
-    width: 140px;
-    height: 170px;
-    border-radius: 12px;
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+    width: 150px;
+    height: 180px;
+    border-radius: 14px;
     background: #f1f5f9;
     border: 2px dashed #94a3b8;
     display: flex;
@@ -237,20 +229,34 @@
     font-size: 12px;
     font-weight: 600;
     text-align: center;
-    user-select: none;
-    z-index: 5;
     overflow: hidden;
   }
   .vitalik img { width: 100%; height: 100%; object-fit: contain; }
 
   /* ===== Мобильная ===== */
   @media (max-width: 780px) {
-    .scene { padding: 20px 16px; min-height: auto; }
-    .dmitry { position: static; margin: 0 auto 16px; width: 120px; height: 150px; }
-    .vitalik { position: static; margin: 20px auto 0; width: 120px; height: 150px; }
-    .dmitry-speech { margin-left: 0; font-size: 14px; padding: 16px 18px; }
-    .dmitry-speech .speech-question { font-size: 16px; }
-    .dmitry-speech::before, .dmitry-speech::after { display: none; }
+    .scene {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      gap: 16px;
+    }
+    .dmitry,
+    .dmitry-speech,
+    .options,
+    .check-btn,
+    .result,
+    .vitalik {
+      grid-column: 1;
+      grid-row: auto;
+    }
+    .dmitry, .vitalik {
+      justify-self: center;
+      width: 130px;
+      height: 160px;
+    }
+    .dmitry-speech::before,
+    .dmitry-speech::after { display: none; }
+    .speech-question { font-size: 16px; }
     .option { font-size: 14px; }
   }
 </style>
@@ -265,13 +271,7 @@
          onerror="this.style.display='none'; this.parentNode.textContent='Дмитрий';">
   </div>
 
-  <!-- ВИТАЛИК — справа, на уровне вариантов -->
-  <div class="vitalik">
-    <img src="vitalik.png" alt="Виталик"
-         onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
-  </div>
-
-  <!-- РЕЧЕВОЕ ОБЛАКО ДМИТРИЯ -->
+  <!-- РЕЧЕВОЕ ОБЛАКО ДМИТРИЯ (задаёт вопрос) -->
   <div class="dmitry-speech">
     <div class="speech-text">
       В организации отсутствуют свидетельство о регистрации ОПО и сведения, характеризующие ОПО
@@ -279,6 +279,12 @@
     <div class="speech-question">
       Что вы сделаете в этой ситуации?
     </div>
+  </div>
+
+  <!-- ВИТАЛИК — правый столбец, на уровне облака и вариантов -->
+  <div class="vitalik">
+    <img src="vitalik.png" alt="Виталик"
+         onerror="this.style.display='none'; this.parentNode.textContent='Виталик';">
   </div>
 
   <!-- ВАРИАНТЫ -->
@@ -304,8 +310,10 @@
 
   </div>
 
+  <!-- КНОПКА -->
   <button class="check-btn" id="checkBtn" disabled>Проверить</button>
 
+  <!-- РЕЗУЛЬТАТ -->
   <div class="result" id="result"></div>
 
 </div>
