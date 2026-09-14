@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что вы сделаете в этой ситуации?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #2c3e50;
+    padding: 18px 14px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .scene {
+    width: 100%;
+    max-width: 620px;
+  }
+
+  /* ===== Облако с текстом ситуации и вопросом ===== */
+  .speech-block {
+    position: relative;
+    margin-bottom: 26px;
+    padding: 14px 18px 12px 20px;
+    border: 2px solid #c7d0da;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+
+  /* Хвостик облака — как будто кто-то говорит */
+  .speech-block::before {
+    content: "";
+    position: absolute;
+    left: 26px;
+    bottom: -12px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 12px solid #c7d0da;
+  }
+  .speech-block::after {
+    content: "";
+    position: absolute;
+    left: 28px;
+    bottom: -9px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #ffffff;
+  }
+
+  .speech-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #2c3e50;
+    margin-bottom: 8px;
+  }
+
+  /* Вопрос внутри облака */
+  .speech-question {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1a5c9e;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 2px dashed #c7d0da;
+  }
+
+  /* ===== Варианты ===== */
+  .options {
+    display: flex;
+    flex-direction: column;
+    margin-top: 32px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    border-bottom: 1.5px solid #dfe4ea;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: #2c3e50;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .option:last-child { border-bottom: none; }
+  .option:hover { background: #f8fafc; }
+
+  .option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .box {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border: 2px solid #b8c2cc;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    transition: all 0.2s ease;
+  }
+
+  .option.checked .box {
+    border-color: #1a7a4a;
+    background: #f0fdf4;
+  }
+  .option.checked .box::after {
+    content: "✔";
+    color: #1a7a4a;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .option.wrong .box {
+    border-color: #b91c1c;
+    background: #fef2f2;
+  }
+  .option.wrong .box::after {
+    content: "✘";
+    color: #b91c1c;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .option .text { flex: 1; line-height: 1.4; }
+
+  /* ===== Кнопка ===== */
+  .check-btn {
+    display: block;
+    margin: 20px auto 0;
+    background: #1a5c9e;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: inherit;
+  }
+  .check-btn:hover:not(:disabled) {
+    background: #12457a;
+    transform: scale(1.02);
+  }
+  .check-btn:disabled {
+    background: #c5d2e2;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ===== Результат ===== */
+  .result {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    display: none;
+    border-left: 4px solid #1a5c9e;
+  }
+  .result.show { display: block; }
+  .result.ok {
+    background: #f0fdf4;
+    border-left-color: #1a7a4a;
+    color: #14532d;
+  }
+  .result.bad {
+    background: #fef2f2;
+    border-left-color: #b91c1c;
+    color: #7f1d1d;
+  }
+
+  /* ===== Мобильная ===== */
+  @media (max-width: 560px) {
+    .speech-question { font-size: 13.5px; }
+    .option { font-size: 12.5px; }
+    .speech-text { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+
+  <!-- ОБЛАКО: ТЕКСТ СИТУАЦИИ + ВОПРОС -->
+  <div class="speech-block">
+    <div class="speech-text">
+      ООО «Альфа» продала свои ОПО АО «Дельта». При подготовке к регистрации на нового эксплуатирующую организацию выяснилось, что проектная и исполнительная документация утеряны. Какие из способов ниже помогут восстановить документы?
+    </div>
+    <div class="speech-question">
+      Что вы сделаете в этой ситуации?
+    </div>
+  </div>
+
+  <!-- ВАРИАНТЫ -->
+  <div class="options" id="options">
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="A">
+      <span class="box"></span>
+      <span class="text">Сделаю запрос в архив организации или госархив</span>
+    </label>
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="B">
+      <span class="box"></span>
+      <span class="text">Обращусь в проектную организацию</span>
+    </label>
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="C">
+      <span class="box"></span>
+      <span class="text">Обращусь в строительную организацию</span>
+    </label>
+
+    <label class="option" data-correct="false">
+      <input type="checkbox" name="answer" value="D">
+      <span class="box"></span>
+      <span class="text">Обращусь к первоначальному собственнику объекта</span>
+    </label>
+
+    <label class="option" data-correct="true">
+      <input type="checkbox" name="answer" value="E">
+      <span class="box"></span>
+      <span class="text">Можно использовать все предложенные выше способы</span>
+    </label>
+
+  </div>
+
+  <!-- КНОПКА -->
+  <button class="check-btn" id="checkBtn" disabled>Проверить</button>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div class="result" id="result"></div>
+
+</div>
+
+<script>
+(function () {
+  const options = document.querySelectorAll('.option');
+  const checkBtn = document.getElementById('checkBtn');
+  const result = document.getElementById('result');
+
+  options.forEach(opt => {
+    const cb = opt.querySelector('input[type="checkbox"]');
+    cb.addEventListener('change', () => {
+      opt.classList.toggle('checked', cb.checked);
+      const anyChecked = [...document.querySelectorAll('input[name="answer"]')].some(c => c.checked);
+      checkBtn.disabled = !anyChecked;
+    });
+  });
+
+  checkBtn.addEventListener('click', () => {
+    let correctCount = 0, wrongCount = 0;
+
+    options.forEach(opt => {
+      const cb = opt.querySelector('input[type="checkbox"]');
+      const isCorrect = opt.dataset.correct === 'true';
+      opt.classList.remove('wrong');
+
+      if (cb.checked && isCorrect) correctCount++;
+      else if (cb.checked && !isCorrect) { wrongCount++; opt.classList.add('wrong'); }
+    });
+
+    const totalCorrect = [...options].filter(o => o.dataset.correct === 'true').length;
+
+    if (correctCount === totalCorrect && wrongCount === 0) {
+      result.className = 'result show ok';
+      result.innerHTML = '<strong>✅ Верно!</strong> Можно использовать все предложенные способы: запрос в архив, обращение в проектную организацию, в строительную организацию и к первоначальному собственнику объекта.';
+    } else {
+      result.className = 'result show bad';
+      result.innerHTML = '<strong>❌ Не совсем так.</strong> Правильный вариант — «Можно использовать все предложенные выше способы». Восстановление утерянной документации требует комплексного подхода.';
+    }
+
+    options.forEach(opt => {
+      opt.querySelector('input').disabled = true;
+      opt.style.cursor = 'default';
+    });
+    checkBtn.disabled = true;
+    checkBtn.textContent = 'Проверено';
+  });
+})();
+</script>
+
+</body>
+</html>
