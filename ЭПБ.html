@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фильтр Ростехнадзора</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #f0f4fa;
+    color: #2c3e50;
+    min-height: 100vh;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e3c72;
+    text-align: center;
+    margin-bottom: 3px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 10.5px;
+    color: #7a8ba3;
+    margin-bottom: 8px;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 7px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .stats span { color: #2a5298; }
+  .stats .score { color: #1a7f37; }
+  .stats .errors { color: #d32f2f; }
+
+  .pool {
+    background: #fff;
+    border-radius: 8px;
+    padding: 7px 8px;
+    margin-bottom: 7px;
+    border: 2px solid #2a5298;
+  }
+  .pool-title {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #2a5298;
+    margin-bottom: 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  .deck {
+    position: relative;
+    height: 96px;
+  }
+
+  .deck .card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 96px;
+    margin: 0;
+    cursor: grab;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+  }
+
+  .deck .card:not(:first-child) {
+    pointer-events: none;
+  }
+
+  .deck .card:first-child:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(42,82,152,0.22);
+    z-index: 100;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #d9e2ec;
+    border-radius: 6px;
+    padding: 7px 9px;
+    font-size: 11px;
+    line-height: 1.35;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(30,60,114,0.06);
+    user-select: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .card.dragging { opacity: 0.4; }
+
+  .card.correct {
+    border-left: 3px solid #1a7f37;
+    background: #f0fdf4;
+  }
+  .card.wrong {
+    border-left: 3px solid #d32f2f;
+    background: #fef2f2;
+  }
+  .card .mark {
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .card .mark.ok { color: #1a7f37; }
+  .card .mark.no { color: #d32f2f; }
+
+  .card .hint {
+    display: none;
+    margin-top: 5px;
+    font-size: 10px;
+    color: #55657a;
+    font-style: italic;
+    padding-top: 4px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .card.revealed .hint { display: block; }
+
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 7px;
+  }
+
+  .zone {
+    background: #fff;
+    border-radius: 8px;
+    padding: 7px 8px;
+    min-height: 96px;
+    border: 2px dashed #cfd9e6;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .zone.dragover {
+    border-color: #2a5298;
+    background: #eef4ff;
+  }
+
+  .zone-title {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eef2f7;
+  }
+  .zone-title.accept { color: #1a7f37; }
+  .zone-title.reject { color: #d32f2f; }
+
+  .zone .card {
+    margin-bottom: 4px;
+    font-size: 10px;
+    padding: 5px 7px;
+  }
+  .zone .card:last-child { margin-bottom: 0; }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .btn-check {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(42,82,152,0.25);
+  }
+  .btn-check:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(42,82,152,0.35);
+  }
+  .btn-reset {
+    background: #e8eef6;
+    color: #2a5298;
+  }
+  .btn-reset:hover { background: #d9e2ec; }
+
+  .result {
+    text-align: center;
+    margin-top: 7px;
+    font-size: 11.5px;
+    font-weight: 700;
+    min-height: 16px;
+  }
+  .result.good { color: #1a7f37; }
+  .result.bad { color: #d32f2f; }
+
+  @media (max-width: 460px) {
+    .board { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🏭 Фильтр Ростехнадзора</h1>
+  <div class="subtitle">Берите верхнюю карточку и перетаскивайте в зону</div>
+
+  <div class="stats">
+    <div>Осталось: <span id="remaining">0</span></div>
+    <div>Верно: <span class="score" id="score">0</span></div>
+    <div>Ошибок: <span id="errors">0</span></div>
+  </div>
+
+  <div class="pool" id="pool">
+    <div class="pool-title">📋 Входящие заключения</div>
+    <div class="deck" id="poolCards"></div>
+  </div>
+
+  <div class="board">
+    <div class="zone" id="zoneAccept" data-zone="accept">
+      <div class="zone-title accept">✅ В реестр</div>
+      <div id="acceptCards"></div>
+    </div>
+    <div class="zone" id="zoneReject" data-zone="reject">
+      <div class="zone-title reject">❌ Отказ</div>
+      <div id="rejectCards"></div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn-check" onclick="checkAnswers()">Проверить</button>
+    <button class="btn-reset" onclick="resetGame()">Заново</button>
+  </div>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const CARDS = [
+  { id: 1, text: "Заявитель представил неполные или недостоверные сведения", correct: "reject", hint: "Основание для отказа." },
+  { id: 2, text: "Сведения в заявлении не соответствуют информации в заключении", correct: "reject", hint: "Основание для отказа." },
+  { id: 3, text: "Заявление или документы не соответствуют требованиям порядка", correct: "reject", hint: "Основание для отказа." },
+  { id: 4, text: "В заявлении или документах есть ошибки, нечитаемый текст, исправления или повреждения, которые мешают однозначно истолковать содержание", correct: "reject", hint: "Основание для отказа." },
+  { id: 5, text: "Экспертизу проводила организация без лицензии на дату подписания заключения", correct: "reject", hint: "Основание для отказа." },
+  { id: 6, text: "Лицензия организации не покрывает виды работ, относящиеся к объекту экспертизы", correct: "reject", hint: "Основание для отказа." },
+  { id: 7, text: "Заключение подписал эксперт, у которого нет свидетельства о квалификации", correct: "reject", hint: "Основание для отказа." },
+  { id: 8, text: "Свидетельство эксперта не распространяется на объект экспертизы", correct: "reject", hint: "Основание для отказа." },
+  { id: 9, text: "Эксперт не аттестован или отсутствует в реестре экспертов", correct: "reject", hint: "Основание для отказа." },
+  { id: 10, text: "Эксперт имеет другую категорию или область аттестации, которая не соответствует объекту", correct: "reject", hint: "Основание для отказа." },
+  { id: 11, text: "Объект экспертизы отсутствует в перечне объектов, установленном законом", correct: "reject", hint: "Основание для отказа." },
+  { id: 12, text: "Заключение представлено с нарушением 90-дневного срока подачи", correct: "reject", hint: "Основание для отказа." },
+  { id: 13, text: "Все данные заполнены, расхождений нет, лицензия действует, эксперт аттестован, срок соблюдён", correct: "accept", hint: "Нарушений нет — заключение регистрируется." },
+  { id: 14, text: "Заключение подано через 85 дней, все остальные данные корректны", correct: "accept", hint: "85 дней — в пределах 90-дневного срока." },
+  { id: 15, text: "Эксперт имеет категорию II, объект требует категории II, всё совпадает", correct: "accept", hint: "Категория соответствует объекту." }
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initGame() {
+  const pool = document.getElementById('poolCards');
+  const accept = document.getElementById('acceptCards');
+  const reject = document.getElementById('rejectCards');
+  pool.innerHTML = '';
+  accept.innerHTML = '';
+  reject.innerHTML = '';
+  document.getElementById('result').textContent = '';
+  document.getElementById('result').className = 'result';
+
+  shuffle(CARDS).forEach((card, index) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.draggable = true;
+    el.dataset.id = card.id;
+    el.style.zIndex = CARDS.length - index;
+    el.innerHTML = `<div>${card.text}</div><div class="hint">${card.hint}</div>`;
+
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', card.id);
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+
+    pool.appendChild(el);
+  });
+
+  updateStats();
+}
+
+function setupDropZones() {
+  document.querySelectorAll('.zone').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('dragover');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      const id = e.dataTransfer.getData('text/plain');
+      const card = document.querySelector(`.card[data-id="${id}"]`);
+      if (!card) return;
+      const target = zone.querySelector('div[id$="Cards"]');
+      target.appendChild(card);
+      card.style.zIndex = '';
+      card.style.height = '';
+      updateStats();
+    });
+  });
+
+  const pool = document.getElementById('poolCards');
+  pool.addEventListener('dragover', e => {
+    e.preventDefault();
+    pool.classList.add('dragover');
+  });
+  pool.addEventListener('dragleave', () => pool.classList.remove('dragover'));
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    pool.classList.remove('dragover');
+    const id = e.dataTransfer.getData('text/plain');
+    const card = document.querySelector(`.card[data-id="${id}"]`);
+    if (!card) return;
+    pool.appendChild(card);
+    card.style.zIndex = '';
+    updateStats();
+  });
+}
+
+function updateStats() {
+  const total = CARDS.length;
+  const inZones = document.querySelectorAll('.zone .card').length;
+  document.getElementById('remaining').textContent = total - inZones;
+
+  let score = 0, errors = 0;
+  document.querySelectorAll('.zone .card').forEach(card => {
+    const id = parseInt(card.dataset.id);
+    const cardData = CARDS.find(c => c.id === id);
+    const zone = card.closest('.zone').dataset.zone;
+    if (cardData.correct === zone) score++;
+    else errors++;
+  });
+  document.getElementById('score').textContent = score;
+  document.getElementById('errors').textContent = errors;
+}
+
+function checkAnswers() {
+  let allPlaced = true;
+  document.querySelectorAll('#poolCards .card').forEach(() => allPlaced = false);
+
+  if (!allPlaced) {
+    document.getElementById('result').textContent = '⚠️ Сначала распределите все карточки';
+    document.getElementById('result').className = 'result bad';
+    return;
+  }
+
+  let correct = 0;
+  document.querySelectorAll('.zone .card').forEach(card => {
+    const id = parseInt(card.dataset.id);
+    const cardData = CARDS.find(c => c.id === id);
+    const zone = card.closest('.zone').dataset.zone;
+
+    card.classList.remove('correct', 'wrong', 'revealed');
+    card.querySelector('.mark')?.remove();
+    card.classList.add('revealed');
+
+    const mark = document.createElement('span');
+    mark.className = 'mark';
+
+    if (cardData.correct === zone) {
+      card.classList.add('correct');
+      mark.classList.add('ok');
+      mark.textContent = '✓';
+      correct++;
+    } else {
+      card.classList.add('wrong');
+      mark.classList.add('no');
+      mark.textContent = '✗';
+    }
+    card.appendChild(mark);
+  });
+
+  const res = document.getElementById('result');
+  if (correct === CARDS.length) {
+    res.textContent = `🎉 Отлично! Все ${CARDS.length} заключений распределены верно.`;
+    res.className = 'result good';
+  } else {
+    res.textContent = `Правильно: ${correct} из ${CARDS.length}. Посмотрите подсказки.`;
+    res.className = 'result bad';
+  }
+}
+
+function resetGame() {
+  initGame();
+}
+
+initGame();
+setupDropZones();
+</script>
+
+</body>
+</html>
