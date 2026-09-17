@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кейс: Проверка перед вступлением в силу</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    line-height: 1.5;
+    margin: 0;
+    padding: 20px 16px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .case {
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border: 1px solid #e4e7eb;
+    border-radius: 12px;
+    padding: 24px 22px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .case__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .case__label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2563eb;
+  }
+
+  .case__count {
+    font-size: 12px;
+    color: #8b93a1;
+  }
+
+  .case__title {
+    font-size: 18px;
+    line-height: 1.3;
+    margin: 0 0 14px;
+    color: #1f2933;
+  }
+
+  .progress__bar {
+    height: 4px;
+    background: #e4e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .progress__fill {
+    height: 100%;
+    width: 0;
+    background: #2563eb;
+    border-radius: 2px;
+    transition: width 0.25s ease;
+  }
+
+  .situation {
+    background: #f8fafc;
+    border-left: 3px solid #2563eb;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #52606d;
+    max-height: 130px;
+    overflow-y: auto;
+  }
+
+  .situation p {
+    margin: 0 0 8px;
+  }
+
+  .situation p:last-child {
+    margin-bottom: 0;
+  }
+
+  .situation strong {
+    color: #1f2933;
+  }
+
+  .situation ol {
+    margin: 6px 0 0;
+    padding-left: 18px;
+  }
+
+  .situation li {
+    margin-bottom: 5px;
+  }
+
+  .situation li:last-child {
+    margin-bottom: 0;
+  }
+
+  .situation::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .situation::-webkit-scrollbar-thumb {
+    background: #cbd2d9;
+    border-radius: 2px;
+  }
+
+  .slide {
+    display: none;
+  }
+
+  .slide.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question__text {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    color: #1f2933;
+  }
+
+  .question__text span {
+    color: #2563eb;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid #d9dee3;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 14px;
+    color: #3e4c59;
+  }
+
+  .option:hover {
+    border-color: #93b4f5;
+    background: #f8fafc;
+  }
+
+  .option input {
+    margin: 3px 0 0;
+    accent-color: #2563eb;
+    flex-shrink: 0;
+  }
+
+  .option__letter {
+    font-weight: 600;
+    color: #8b93a1;
+    flex-shrink: 0;
+  }
+
+  .option.correct {
+    border-color: #16a34a;
+    background: #f0fdf4;
+    color: #14532d;
+  }
+
+  .option.correct .option__letter {
+    color: #16a34a;
+  }
+
+  .option.incorrect {
+    border-color: #dc2626;
+    background: #fef2f2;
+    color: #7f1d1d;
+  }
+
+  .option.incorrect .option__letter {
+    color: #dc2626;
+  }
+
+  .option.disabled {
+    cursor: default;
+  }
+
+  .explain {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .explain.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .explain--correct {
+    background: #f0fdf4;
+    border-left: 3px solid #16a34a;
+    color: #14532d;
+  }
+
+  .explain--incorrect {
+    background: #fef2f2;
+    border-left: 3px solid #dc2626;
+    color: #7f1d1d;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #e4e7eb;
+  }
+
+  .nav__right {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .btn {
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 18px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+  }
+
+  .btn--primary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+
+  .btn--primary:hover {
+    background: #1d4ed8;
+  }
+
+  .btn--secondary {
+    background: #e4e7eb;
+    color: #1f2933;
+  }
+
+  .btn--secondary:hover {
+    background: #d3d8dd;
+  }
+
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .finish {
+    display: none;
+    text-align: center;
+    padding: 8px 0 0;
+  }
+
+  .finish.show {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .finish__icon {
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .finish__title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: #1f2933;
+  }
+
+  .finish__text {
+    font-size: 13px;
+    color: #8b93a1;
+    margin: 0 0 16px;
+  }
+
+  .finish__summary {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #52606d;
+    text-align: left;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .finish__summary strong {
+    color: #1f2933;
+  }
+</style>
+</head>
+<body>
+
+<div class="case">
+  <div class="case__head">
+    <span class="case__label">Кейс</span>
+    <span class="case__count" id="caseCount">1 / 6</span>
+  </div>
+  <h1 class="case__title">Проверка перед вступлением в силу</h1>
+
+  <div class="progress__bar">
+    <div class="progress__fill" id="progressFill"></div>
+  </div>
+
+  <div class="situation">
+    <p><strong>Ситуация.</strong> Вы — ответственный за производственный контроль. На одной территории ведут работы и со спецпродукцией, и со взрывчатыми материалами промышленного назначения. До новых ФНП (30.12.2026) осталось несколько месяцев. Руководитель попросил проверить, что не так:</p>
+    <ol>
+      <li>Изделия хранятся на открытой площадке под навесом — так прописано в проекте.</li>
+      <li>Видеонаблюдение — только в цехе № 3. В цехе № 1 камер нет. Записи хранят 2 недели.</li>
+      <li>Анализ риска сделан только для ОПО I класса.</li>
+      <li>Планировка цеха № 2 не обновлялась три года, нет путей эвакуации и мест для снятия статики.</li>
+      <li>Комплексное обследование еще не проводили.</li>
+    </ol>
+  </div>
+
+  <form id="caseForm">
+
+    <div class="slide active" data-correct="b" data-explain="Хранение спецпродукции за пределами зданий, в том числе под навесами, новыми ФНП не допускается — независимо от того, что было в проекте.">
+      <p class="question__text"><span>1.</span> Какие требования нарушены в пункте 1?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q1" value="a">
+          <span><span class="option__letter">А.</span> Ничего — под навесом хранить можно, если так в проекте</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="b">
+          <span><span class="option__letter">Б.</span> Нарушено: за пределами зданий, в том числе под навесами, хранить нельзя</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="c">
+          <span><span class="option__letter">В.</span> Нарушено только из-за отсутствия видеонаблюдения</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="slide" data-correct="b" data-explain="Камеры нужны во всех зданиях с опасными и особо опасными операциями, записи хранят не менее 1 месяца, а место хранения защищают от взрыва.">
+      <p class="question__text"><span>2.</span> Что не так с видеонаблюдением?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q2" value="a">
+          <span><span class="option__letter">А.</span> Все в порядке — камеры есть там, где особо опасно</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q2" value="b">
+          <span><span class="option__letter">Б.</span> Камеры нужны во всех зданиях с опасными операциями, записи — не менее 1 месяца</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q2" value="c">
+          <span><span class="option__letter">В.</span> Нарушено только то, что записи хранят 2 недели</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="slide" data-correct="b" data-explain="По новым ФНП анализ риска нужен для всех ОПО без исключения, независимо от класса опасности.">
+      <p class="question__text"><span>3.</span> Анализ риска нужен только для ОПО I и II класса?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q3" value="a">
+          <span><span class="option__letter">А.</span> Да, для остальных не требуется</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q3" value="b">
+          <span><span class="option__letter">Б.</span> Нет, для всех ОПО без исключения</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q3" value="c">
+          <span><span class="option__letter">В.</span> Нет, только если объект реконструируется</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="slide" data-correct="b" data-explain="В планировке должны быть строительные элементы, оборудование, рабочие места, места защитных устройств и вентиляции, проходы, проезды, пути эвакуации, места для снятия статики и нормативные загрузки.">
+      <p class="question__text"><span>4.</span> Что обязательно должно быть в технологической планировке?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q4" value="a">
+          <span><span class="option__letter">А.</span> Только оборудование и рабочие места</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q4" value="b">
+          <span><span class="option__letter">Б.</span> Строительные элементы, оборудование, рабочие места, вентиляция, проходы, эвакуация, статика, загрузки</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q4" value="c">
+          <span><span class="option__letter">В.</span> Достаточно стен, колонн и выходов</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="slide" data-correct="b" data-explain="Сначала — комплексное обследование объекта и поиск расхождений, потом план, что исправить, и только затем обновление документации.">
+      <p class="question__text"><span>5.</span> Что сделать в первую очередь?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q5" value="a">
+          <span><span class="option__letter">А.</span> Сразу переписать все инструкции</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q5" value="b">
+          <span><span class="option__letter">Б.</span> Провести обследование, найти расхождения и запланировать, что исправить</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q5" value="c">
+          <span><span class="option__letter">В.</span> Дождаться проверки Ростехнадзора</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="slide" data-correct="b" data-explain="Если на одной территории ведут работы и со спецпродукцией, и со взрывчатыми материалами промышленного назначения, новые ФНП применяются к такому ОПО.">
+      <p class="question__text"><span>6.</span> Применяются ли новые ФНП к такому предприятию?</p>
+      <div class="options">
+        <label class="option">
+          <input type="radio" name="q6" value="a">
+          <span><span class="option__letter">А.</span> Нет, это разные объекты</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q6" value="b">
+          <span><span class="option__letter">Б.</span> Да, Правила прямо распространяются на такие ОПО</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q6" value="c">
+          <span><span class="option__letter">В.</span> Только если предприятие входит в ОПК</span>
+        </label>
+      </div>
+      <div class="explain"></div>
+    </div>
+
+    <div class="finish" id="finish">
+      <div class="finish__icon" id="finishIcon"></div>
+      <p class="finish__title" id="finishTitle"></p>
+      <p class="finish__text" id="finishText"></p>
+      <div class="finish__summary">
+        <strong>Главное из кейса.</strong> Новые ФНП требуют не точечных правок, а системной проверки всего объекта: обследование → поиск расхождений → план, что исправить → обновление документации и обучение персонала.
+      </div>
+    </div>
+
+    <div class="nav" id="nav">
+      <button type="button" class="btn btn--secondary" id="prevBtn" disabled>Назад</button>
+      <div class="nav__right">
+        <button type="button" class="btn btn--primary" id="nextBtn">Вперед</button>
+        <button type="button" class="btn btn--primary" id="finishBtn" style="display:none;">Завершить</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progressFill = document.getElementById('progressFill');
+  const caseCount = document.getElementById('caseCount');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const finishBtn = document.getElementById('finishBtn');
+  const nav = document.getElementById('nav');
+  const finish = document.getElementById('finish');
+  const finishIcon = document.getElementById('finishIcon');
+  const finishTitle = document.getElementById('finishTitle');
+  const finishText = document.getElementById('finishText');
+
+  function updateProgress() {
+    const percent = ((current + 1) / total) * 100;
+    progressFill.style.width = percent + '%';
+    caseCount.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function showSlide(index) {
+    slides.forEach(function (slide, i) {
+      slide.classList.toggle('active', i === index);
+    });
+
+    prevBtn.disabled = index === 0;
+
+    if (index === total - 1) {
+      nextBtn.style.display = 'none';
+      finishBtn.style.display = 'inline-block';
+    } else {
+      nextBtn.style.display = 'inline-block';
+      finishBtn.style.display = 'none';
+    }
+
+    updateProgress();
+  }
+
+  slides.forEach(function (slide) {
+    const options = slide.querySelectorAll('.option');
+    const explain = slide.querySelector('.explain');
+    const correctValue = slide.dataset.correct;
+
+    options.forEach(function (option) {
+      const input = option.querySelector('input');
+
+      input.addEventListener('change', function () {
+        if (slide.classList.contains('locked')) return;
+
+        const selected = input.value;
+
+        options.forEach(function (opt) {
+          const inp = opt.querySelector('input');
+          opt.classList.add('disabled');
+          inp.disabled = true;
+
+          if (inp.value === correctValue) {
+            opt.classList.add('correct');
+          }
+          if (inp.value === selected && selected !== correctValue) {
+            opt.classList.add('incorrect');
+          }
+        });
+
+        explain.textContent = slide.dataset.explain;
+        explain.className = 'explain show ' + (selected === correctValue ? 'explain--correct' : 'explain--incorrect');
+
+        slide.classList.add('locked');
+      });
+    });
+  });
+
+  prevBtn.addEventListener('click', function () {
+    if (current > 0) {
+      current--;
+      showSlide(current);
+    }
+  });
+
+  nextBtn.addEventListener('click', function () {
+    if (current < total - 1) {
+      current++;
+      showSlide(current);
+    }
+  });
+
+  finishBtn.addEventListener('click', function () {
+    let correct = 0;
+
+    slides.forEach(function (slide) {
+      const correctValue = slide.dataset.correct;
+      const options = slide.querySelectorAll('.option');
+
+      options.forEach(function (option) {
+        const input = option.querySelector('input');
+        if (input.checked && input.value === correctValue) {
+          correct++;
+        }
+      });
+    });
+
+    slides.forEach(function (slide) {
+      slide.classList.remove('active');
+    });
+
+    nav.style.display = 'none';
+    progressFill.style.width = '100%';
+    caseCount.textContent = 'Итог';
+
+    finish.classList.add('show');
+
+    if (correct === total) {
+      finishIcon.textContent = '🎉';
+      finishTitle.textContent = 'Все ответы верные';
+      finishText.textContent = 'Вы правильно определили все нарушения — ' + correct + ' из ' + total + '.';
+    } else if (correct >= total / 2) {
+      finishIcon.textContent = '👍';
+      finishTitle.textContent = 'Хороший результат: ' + correct + ' из ' + total;
+      finishText.textContent = 'Часть ответов не совпала. Вернитесь к уроку, чтобы закрепить материал.';
+    } else {
+      finishIcon.textContent = '📘';
+      finishTitle.textContent = 'Пока ' + correct + ' из ' + total;
+      finishText.textContent = 'Стоит вернуться к материалу урока и пройти кейс заново.';
+    }
+  });
+
+  showSlide(current);
+</script>
+
+</body>
+</html>
