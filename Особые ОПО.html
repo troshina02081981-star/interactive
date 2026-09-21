@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дополнительные требования для особых ОПО</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            color: #111111;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.55;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+        }
+
+        h1 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #333333;
+            margin-bottom: 32px;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-item {
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .accordion-item.active {
+            border-color: #2563eb;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 18px 22px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #111111;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            font-family: inherit;
+            transition: color 0.2s ease, background 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .accordion-header:hover {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .accordion-header:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: -2px;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .accordion-header .icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .accordion-header .icon::before,
+        .accordion-header .icon::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+            border-radius: 1px;
+            transition: transform 0.25s ease, opacity 0.2s ease;
+        }
+
+        .accordion-header .icon::before {
+            width: 14px;
+            height: 2px;
+            top: 9px;
+            left: 3px;
+        }
+
+        .accordion-header .icon::after {
+            width: 2px;
+            height: 14px;
+            top: 3px;
+            left: 9px;
+        }
+
+        .accordion-item.active .accordion-header .icon::after {
+            transform: rotate(90deg);
+            opacity: 0;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 1500px;
+        }
+
+        .accordion-content-inner {
+            padding: 0 22px 22px 22px;
+            font-size: 0.95rem;
+            color: #333333;
+        }
+
+        .accordion-content-inner p {
+            margin-bottom: 14px;
+        }
+
+        .accordion-content-inner p:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner ul {
+            list-style: none;
+            margin: 10px 0 14px 0;
+            padding-left: 0;
+        }
+
+        .accordion-content-inner ul:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 8px;
+        }
+
+        .accordion-content-inner li:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner li::before {
+            content: '•';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        .note {
+            margin-top: 24px;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: #333333;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 14px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.92rem;
+                margin-bottom: 24px;
+            }
+
+            .accordion-header {
+                padding: 15px 16px;
+                font-size: 0.97rem;
+            }
+
+            .accordion-content-inner {
+                padding: 0 16px 18px 16px;
+                font-size: 0.9rem;
+            }
+
+            .note {
+                padding: 14px 16px;
+                font-size: 0.88rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Проверяем дополнительные требования для особых ОПО</h1>
+        <p class="subtitle">К дополнительным требованиям относится наличие у ПАСС(Ф) лицензии на гостайну и дополнительная оснащенность.</p>
+
+        <div class="accordion" id="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    Лицензия на гостайну
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>Если на ОПО эксплуатируются здания, сооружения, техустройства и технологии, которые составляют гостайну, то при выборе ПАСС(Ф) это нужно учесть. В таком случае в договор нужно внести дополнительные требования к ПАСС(Ф) по наличию лицензии на гостайну, неразглашении информации, порядок предоставления данных по сотрудникам ПАСС(Ф) и запрете фото- и видеофиксации во время ликвидации аварий и тренировок.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    Дополнительная оснащенность
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>К некоторым ОПО установлены дополнительные требования по их оснащенности. Например, если при аварии на ОПО нужно будет ликвидировать разлив нефти и нефтепродуктов, тогда ПАСС(Ф) дополнительно должно соответствовать следующим требованиям:</p>
+                        <ul>
+                            <li>спасатели аттестованы на право ведения аварийно-спасательных работ по ликвидации разливов нефти и нефтепродуктов;</li>
+                            <li>формирование обеспечено специальной техникой, оборудованием, снаряжением, инструментами и материалами.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    ПАСС(Ф) для ликвидации разливов на континентальном шельфе
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>ПАСС(Ф), которые устраняют разливы нефти и нефтепродуктов на континентальном шельфе, должны иметь в своем составе:</p>
+                        <ul>
+                            <li>корабли, предназначенные для постановки заграждений, с мощностью двигателей не менее 100 кВт и грузоподъемностью не менее 3 тонн;</li>
+                            <li>рабочие корабли с мощностью двигателей не менее 232 кВт и грузоподъемностью кранов не менее 700 кг.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            Проверьте, соответствует ли выбранная ПАСС(Ф) этим требованиям, если ваш объект относится к особым ОПО.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const items = document.querySelectorAll('.accordion-item');
+
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    items.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+                            otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        }
+                    });
+
+                    if (isActive) {
+                        item.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                        content.style.maxHeight = null;
+                    } else {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                const activeItem = document.querySelector('.accordion-item.active');
+                if (activeItem) {
+                    const content = activeItem.querySelector('.accordion-content');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
