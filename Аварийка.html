@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виды аварийно-спасательных работ — листалка</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slider {
+            width: 420px;
+            max-width: 100%;
+        }
+
+        .slider-viewport {
+            overflow: hidden;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .slide-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111111;
+            line-height: 1.35;
+        }
+
+        .slide-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333333;
+        }
+
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .slider-btn {
+            background: none;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: #111111;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .slider-btn:hover:not(:disabled) {
+            background: #f3f6fa;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .slider-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 0.88rem;
+            color: #6b7280;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .slider-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #d0d7de;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .dot:hover {
+            background: #9aa5b1;
+        }
+
+        .dot.active {
+            background: #2563eb;
+            transform: scale(1.25);
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                padding: 18px;
+            }
+
+            .slide-title {
+                font-size: 1rem;
+            }
+
+            .slide-text {
+                font-size: 0.9rem;
+            }
+
+            .slider-btn {
+                padding: 7px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider" id="slider">
+        <div class="slider-viewport">
+            <div class="slider-track" id="track">
+                <div class="slide">
+                    <div class="slide-title">Горноспасательные работы</div>
+                    <div class="slide-text">Это спасательные работы в горных выработках на объектах ведения горных работ.</div>
+                </div>
+                <div class="slide">
+                    <div class="slide-title">Газоспасательные работы</div>
+                    <div class="slide-text">Это спасательные работы в зонах с повышенной концентрацией токсичных и взрывоопасных веществ.</div>
+                </div>
+                <div class="slide">
+                    <div class="slide-title">Противофонтанные работы</div>
+                    <div class="slide-text">Это спасательные работы на объектах добычи нефти и газа.</div>
+                </div>
+                <div class="slide">
+                    <div class="slide-title">Поисково-спасательные работы</div>
+                    <div class="slide-text">Это работы по поиску и спасению людей и ценностей на территориях, в акваториях и на транспорте.</div>
+                </div>
+                <div class="slide">
+                    <div class="slide-title">Аварийно-спасательные работы, связанные с тушением пожаров</div>
+                    <div class="slide-text">Это спасательные работы при тушении пожаров на объектах и территориях. В этот вид работ не входит тушение пожаров в горных выработках на объектах ведения горных работ.</div>
+                </div>
+                <div class="slide">
+                    <div class="slide-title">Работы по ликвидации медико-санитарных последствий чрезвычайных ситуаций</div>
+                    <div class="slide-text">Это работы по первой помощи и эвакуации населения. Также это работы во время эпидемий.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn" aria-label="Предыдущий слайд">←</button>
+            <span class="slide-counter" id="counter">1 / 6</span>
+            <button class="slider-btn" id="nextBtn" aria-label="Следующий слайд">→</button>
+        </div>
+
+        <div class="slider-dots" id="dots"></div>
+    </div>
+
+    <script>
+        (function() {
+            const track = document.getElementById('track');
+            const slides = track.querySelectorAll('.slide');
+            const dotsContainer = document.getElementById('dots');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const counter = document.getElementById('counter');
+
+            let current = 0;
+            const total = slides.length;
+
+            slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Слайд ' + (i + 1));
+                dot.addEventListener('click', () => goTo(i));
+                dotsContainer.appendChild(dot);
+            });
+
+            const dots = dotsContainer.querySelectorAll('.dot');
+
+            function update() {
+                track.style.transform = 'translateX(-' + (current * 100) + '%)';
+                dots.forEach((d, i) => d.classList.toggle('active', i === current));
+                counter.textContent = (current + 1) + ' / ' + total;
+                prevBtn.disabled = current === 0;
+                nextBtn.disabled = current === total - 1;
+            }
+
+            function goTo(index) {
+                current = Math.max(0, Math.min(index, total - 1));
+                update();
+            }
+
+            prevBtn.addEventListener('click', () => goTo(current - 1));
+            nextBtn.addEventListener('click', () => goTo(current + 1));
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') goTo(current - 1);
+                if (e.key === 'ArrowRight') goTo(current + 1);
+            });
+
+            let touchStartX = 0;
+            track.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            track.addEventListener('touchend', (e) => {
+                const diff = touchStartX - e.changedTouches[0].screenX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) goTo(current + 1);
+                    else goTo(current - 1);
+                }
+            }, { passive: true });
+
+            update();
+        })();
+    </script>
+
+</body>
+</html>
