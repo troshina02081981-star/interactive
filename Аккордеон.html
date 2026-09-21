@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка ПАСС(Ф) — полная версия</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            color: #111111;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.55;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #444444;
+            margin-bottom: 32px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-item {
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .accordion-item.active {
+            border-color: #2563eb;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 18px 22px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #111111;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            font-family: inherit;
+            transition: color 0.2s ease, background 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .accordion-header:hover {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .accordion-header:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: -2px;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .accordion-header .icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .accordion-header .icon::before,
+        .accordion-header .icon::after {
+            content: '';
+            position: absolute;
+            background: currentColor;
+            border-radius: 1px;
+            transition: transform 0.25s ease, opacity 0.2s ease;
+        }
+
+        .accordion-header .icon::before {
+            width: 14px;
+            height: 2px;
+            top: 9px;
+            left: 3px;
+        }
+
+        .accordion-header .icon::after {
+            width: 2px;
+            height: 14px;
+            top: 3px;
+            left: 9px;
+        }
+
+        .accordion-item.active .accordion-header .icon::after {
+            transform: rotate(90deg);
+            opacity: 0;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 4000px;
+        }
+
+        .accordion-content-inner {
+            padding: 0 22px 22px 22px;
+            font-size: 0.95rem;
+            color: #333333;
+        }
+
+        .accordion-content-inner p {
+            margin-bottom: 14px;
+        }
+
+        .accordion-content-inner p:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner ul {
+            list-style: none;
+            margin: 10px 0 14px 0;
+            padding-left: 0;
+        }
+
+        .accordion-content-inner ul:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 10px;
+        }
+
+        .accordion-content-inner li:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-content-inner li::before {
+            content: '•';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        .accordion-content-inner b {
+            color: #111111;
+            font-weight: 700;
+        }
+
+        .link {
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px solid #2563eb;
+        }
+
+        .link:hover {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 14px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.92rem;
+                margin-bottom: 24px;
+            }
+
+            .accordion-header {
+                padding: 15px 16px;
+                font-size: 0.97rem;
+            }
+
+            .accordion-content-inner {
+                padding: 0 16px 18px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Проверяем ПАСС(Ф)</h1>
+        <p class="subtitle">Три шага проверки: свидетельство, реестр МЧС и дополнительные требования для особых ОПО.</p>
+
+        <div class="accordion" id="accordion">
+            <!-- Страница 1 -->
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    1. Проверяем свидетельство ПАСС(Ф)
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>В свидетельстве указаны вид аварийно-спасательных работ, на которые аттестована ПАСС(Ф) и срок аттестации.</p>
+                        <p>Для заключения договора на обслуживание ОПО, организация выбирает ПАСС(Ф) в зависимости от вида аварийно-спасательных работ, которые необходимы для ликвидации аварии на ОПО.</p>
+                        <p>В статье 5 федерального закона от 22.08.1995 № 151-ФЗ указаны следующие виды аварийно-спасательных работ:</p>
+                        <ul>
+                            <li><b>Горноспасательные работы.</b> Это спасательные работы в горных выработках на объектах ведения горных работ. Например, для локализации аварии на шахтах, рудниках с подземным способом разработки, карьерах.</li>
+                            <li><b>Газоспасательные работы.</b> Это спасательные работы в зонах с повышенной концентрацией токсичных и взрывоопасных веществ. На такой вид работ нужна аттестация ПАСС(Ф) для ликвидации последствий аварий на ОПО с опасными веществами. Например, сеть газораспределения и газопотребления.</li>
+                            <li><b>Противофонтанные работы.</b> Это спасательные работы на объектах добычи нефти и газа. На такой вид работ нужна аттестация ПАСС(Ф) для ликвидации последствий аварий на участках геолого-разведочных работ, площадках морского нефтеналивного комплекса, площадках буровых установок.</li>
+                            <li><b>Поисково-спасательные работы.</b> Это работы по поиску и спасению людей и ценностей на территориях, в акваториях и на транспорте.</li>
+                            <li><b>Аварийно-спасательные работы, связанные с тушением пожаров.</b> Это спасательные работы при тушении пожаров на объектах и территориях. В этот вид работ не входит тушение пожаров в горных выработках на объектах ведения горных работ.</li>
+                            <li><b>Работы по ликвидации медико-санитарных последствий чрезвычайных ситуаций.</b> Это работы по первой помощи и эвакуации населения. Также это работы во время эпидемий.</li>
+                        </ul>
+                        <p><b>Перечень видов аварийно-спасательных работ может быть дополнен только решением Правительства.</b></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница 2 -->
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    2. Проверяем реестр МЧС
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>Чтобы получить информацию по ПАСС(Ф), нужно проверить данные реестра, который ведет МЧС России.</p>
+                        <p>В данном реестре указаны все организации, аттестованные на право проведения аварийно-спасательных работ.</p>
+                        <p>Чтобы проверить сведения о ПАСС(Ф) в реестре, необходимо зайти на официальный сайт МЧС <a class="link" href="https://mchs.gov.ru" target="_blank" rel="noopener">Аттестованные аварийно-спасательные службы и аварийно-спасательные формирования — Аттестация и аккредитация — МЧС России (mchs.gov.ru)</a>.</p>
+                        <p>На сайте можно выбрать необходимый федеральный округ, регион и получить отчёт обо всех спасательных формированиях в данном регионе. Из него можно получить информацию о ПАСС(Ф) — по количеству спасателей, оснащенности.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница 3 -->
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false">
+                    3. Проверяем дополнительные требования для особых ОПО
+                    <span class="icon" aria-hidden="true"></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p>К дополнительным требованиям относится наличие у ПАСС (Ф) лицензии на гостайну и дополнительная оснащенность.</p>
+
+                        <p><b>Лицензия на гостайну.</b><br>
+                        Если на ОПО эксплуатируются здания, сооружения, техустройства и технологии, которые составляют гостайну, то при выборе ПАСС(Ф) это нужно учесть. В таком случае в договор нужно внести дополнительные требования к ПАСС(Ф) по наличию лицензии на гостайну, неразглашении информации, порядок предоставления данных по сотрудникам ПАСС(Ф) и запрете фото- и видеофиксации во время ликвидации аварий и тренировок.</p>
+
+                        <p><b>Дополнительная оснащенность.</b><br>
+                        К некоторым ОПО установлены дополнительные требования по их оснащенности. Например, если при аварии на ОПО нужно будет ликвидировать разлив нефти и нефтепродуктов, тогда ПАСС(Ф) дополнительно должно соответствовать следующим требованиям:</p>
+                        <ul>
+                            <li>спасатели аттестованы на право ведения аварийно-спасательных работ по ликвидации разливов нефти и нефтепродуктов;</li>
+                            <li>формирование обеспечено специальной техникой, оборудованием, снаряжением, инструментами и материалами.</li>
+                        </ul>
+                        <p>ПАСС(Ф), которые устраняют разливы нефти и нефтепродуктов на континентальном шельфе, должны иметь в своем составе:</p>
+                        <ul>
+                            <li>корабли, предназначенные для постановки заграждений, с мощностью двигателей не менее 100 кВт и грузоподъемностью не менее 3 тонн;</li>
+                            <li>рабочие корабли с мощностью двигателей не менее 232 кВт и грузоподъемностью кранов не менее 700 кг.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const items = document.querySelectorAll('.accordion-item');
+
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    items.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+                            otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        }
+                    });
+
+                    if (isActive) {
+                        item.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                        content.style.maxHeight = null;
+                    } else {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                const activeItem = document.querySelector('.accordion-item.active');
+                if (activeItem) {
+                    const content = activeItem.querySelector('.accordion-content');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
