@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принципы правового регулирования в промбезопасности</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            color: #111111;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.55;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 780px;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.98rem;
+            color: #444444;
+            margin-bottom: 28px;
+        }
+
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .tile {
+            border: 1px solid #d0d7de;
+            border-radius: 12px;
+            padding: 20px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+            font-family: inherit;
+            font-size: 1rem;
+            color: #111111;
+            position: relative;
+        }
+
+        .tile:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .tile:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        .tile.active {
+            border-color: #2563eb;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .tile-num {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile-title {
+            font-weight: 700;
+            font-size: 1.02rem;
+            line-height: 1.35;
+            padding-top: 3px;
+        }
+
+        .tile-body {
+            font-size: 0.92rem;
+            color: #333333;
+            line-height: 1.6;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
+            opacity: 0;
+        }
+
+        .tile.active .tile-body {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        .tile-hint {
+            font-size: 0.82rem;
+            color: #6b7280;
+            transition: opacity 0.2s ease;
+        }
+
+        .tile.active .tile-hint {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        @media (max-width: 600px) {
+            .tiles {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .tile {
+                padding: 16px;
+            }
+
+            .tile-title {
+                font-size: 0.97rem;
+            }
+
+            .tile-body {
+                font-size: 0.88rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Принципы правового регулирования в промбезопасности</h1>
+        <p class="subtitle">Нажмите на любую плашку, чтобы раскрыть описание принципа.</p>
+
+        <div class="tiles" id="tiles">
+            <button class="tile" type="button" aria-expanded="false">
+                <div class="tile-header">
+                    <span class="tile-num">1</span>
+                    <span class="tile-title">Превентивные меры</span>
+                </div>
+                <span class="tile-hint">Нажмите, чтобы раскрыть</span>
+                <div class="tile-body">
+                    Правила нужны, чтобы аварии на ОПО случались как можно реже. Главная задача — защитить людей и природу от техногенных катастроф.
+                </div>
+            </button>
+
+            <button class="tile" type="button" aria-expanded="false">
+                <div class="tile-header">
+                    <span class="tile-num">2</span>
+                    <span class="tile-title">Комплексный подход к обеспечению безопасности</span>
+                </div>
+                <span class="tile-hint">Нажмите, чтобы раскрыть</span>
+                <div class="tile-body">
+                    Законы и НПА определяют требования для всех стадий жизненного цикла ОПО: проектирования, строительства, эксплуатации, реконструкции, капремонта, консервации, ликвидации.
+                </div>
+            </button>
+
+            <button class="tile" type="button" aria-expanded="false">
+                <div class="tile-header">
+                    <span class="tile-num">3</span>
+                    <span class="tile-title">Ответственность руководства</span>
+                </div>
+                <span class="tile-hint">Нажмите, чтобы раскрыть</span>
+                <div class="tile-body">
+                    Соблюдать законодательство обязаны не только организации, эксплуатирующие ОПО, но и проектировщики, строители, эксперты, подрядчики, обслуживающие организации и другие лица. За нарушение — дисциплинарная, гражданско-правовая, административная и уголовная ответственность.
+                </div>
+            </button>
+
+            <button class="tile" type="button" aria-expanded="false">
+                <div class="tile-header">
+                    <span class="tile-num">4</span>
+                    <span class="tile-title">Государственный надзор и контроль</span>
+                </div>
+                <span class="tile-hint">Нажмите, чтобы раскрыть</span>
+                <div class="tile-body">
+                    Промбезопасность регулируют закон №116-ФЗ, постановления Правительства, приказы Ростехнадзора, технические регламенты. Иерархия НПА — от федерального закона до локального документа организации.
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const tiles = document.querySelectorAll('.tile');
+
+            tiles.forEach(tile => {
+                tile.addEventListener('click', () => {
+                    const isActive = tile.classList.contains('active');
+
+                    tiles.forEach(other => {
+                        if (other !== tile && other.classList.contains('active')) {
+                            other.classList.remove('active');
+                            other.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    tile.classList.toggle('active', !isActive);
+                    tile.setAttribute('aria-expanded', String(!isActive));
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
