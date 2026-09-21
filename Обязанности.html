@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обязанности работников ОПО — аккордеон</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .accordion {
+            width: 100%;
+            max-width: 700px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #e9ecf0;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 18px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a2b3c;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s ease;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        .accordion-header:hover {
+            background: #f0f4f9;
+        }
+
+        .accordion-header:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: -2px;
+        }
+
+        .accordion-header .icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            transition: transform 0.25s ease;
+        }
+
+        .accordion-header .icon::before,
+        .accordion-header .icon::after {
+            content: '';
+            position: absolute;
+            background: #3b82f6;
+            border-radius: 2px;
+            transition: transform 0.25s ease, opacity 0.2s ease;
+        }
+
+        .accordion-header .icon::before {
+            width: 12px;
+            height: 2px;
+            top: 9px;
+            left: 4px;
+        }
+
+        .accordion-header .icon::after {
+            width: 2px;
+            height: 12px;
+            top: 4px;
+            left: 9px;
+        }
+
+        .accordion-item.active .accordion-header .icon::after {
+            transform: rotate(90deg);
+            opacity: 0;
+        }
+
+        .accordion-item.active .accordion-header .icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.25s ease;
+            background: #fafbfc;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            padding: 0 24px 20px 24px;
+        }
+
+        .accordion-content p {
+            color: #2d3e50;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            padding-top: 4px;
+            border-top: 1px solid #e9ecf0;
+            padding-top: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .accordion-header {
+                padding: 14px 16px;
+                font-size: 0.92rem;
+            }
+
+            .accordion-item.active .accordion-content {
+                padding: 0 16px 16px 16px;
+            }
+
+            .accordion-content p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="accordion" id="accordion">
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Соблюдать положения НПА
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <p>Все работники ОПО, от рабочего до руководителя, обязаны соблюдать требования законов, ФНП и технических регламентов. У каждого есть свой комплект документов: рабочие — инструкции по безопасности, руководители и специалисты — нормативные акты, законы и регламенты федерального уровня.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Проходить подготовку и аттестацию по промбезопасности
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <p>Обязанности по подготовке и аттестации работников ОПО зависят от их должностей и ответственности. Если кратко — руководители и специалисты ОПО обязаны проходить аттестацию, исключение сделали лишь для руководителей организаций, эксплуатирующих ОПО IV класса, а рабочие проходят проверку знаний производственных инструкций. Требования к подготовке различаются в зависимости от категории работника, объёма обязанностей и отраслевых особенностей. В случаях применения законодательных требований к обучению или проверке знаний работник обязан их соблюдать, иначе работодатель должен его отстранить или уволить.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Извещать руководство об аварии или инциденте на ОПО
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <p>Порядок извещения об аварии или инциденте обычно прописывается в ПМЛА или отдельной инструкции, которые хранятся на рабочих местах и требуют ознакомления персонала. Каждый работник обязан сообщить о пожаре, задымлении, взрыве, несчастном случае или иной нештатной ситуации в соответствующие службы и руководству.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Приостанавливать работы в случае аварии или инцидента на ОПО
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <p>Дать указание приостановить работы на ОПО может не каждый работник — это зона ответственности должностных лиц. Список таких работников, а также порядок их действий, как и в предыдущем случае, прописывают в производственных инструкциях или иных локальных документах организации.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Участвовать в локализации аварии на ОПО
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <p>Не каждый работник участвует в локализации аварии. Некоторым достаточно оперативно эвакуироваться с рабочего места. Порядок действий и списки работников, которые локализируют и ликвидируют аварии на ОПО, организация указывает в ПМЛА и других локальных документах.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const items = document.querySelectorAll('.accordion-item');
+
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Закрыть все открытые пункты
+                    items.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+                            otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        }
+                    });
+
+                    // Переключить текущий
+                    if (isActive) {
+                        item.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                        content.style.maxHeight = null;
+                    } else {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            });
+
+            // Пересчёт высоты при изменении размера окна
+            window.addEventListener('resize', () => {
+                const activeItem = document.querySelector('.accordion-item.active');
+                if (activeItem) {
+                    const content = activeItem.querySelector('.accordion-content');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
