@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виды аттестации — аккордеон</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .accordion {
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #d0d7de;
+        }
+
+        .accordion-item:first-child {
+            border-top: 1px solid #d0d7de;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 20px 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #111111;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            transition: color 0.2s ease;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        .accordion-header:hover {
+            color: #2563eb;
+        }
+
+        .accordion-header:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 4px;
+            border-radius: 2px;
+        }
+
+        .accordion-header .icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .accordion-header .icon::before,
+        .accordion-header .icon::after {
+            content: '';
+            position: absolute;
+            background: #111111;
+            border-radius: 1px;
+            transition: transform 0.25s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .accordion-header:hover .icon::before,
+        .accordion-header:hover .icon::after {
+            background: #2563eb;
+        }
+
+        .accordion-header .icon::before {
+            width: 14px;
+            height: 2px;
+            top: 9px;
+            left: 3px;
+        }
+
+        .accordion-header .icon::after {
+            width: 2px;
+            height: 14px;
+            top: 3px;
+            left: 9px;
+        }
+
+        .accordion-item.active .accordion-header .icon::after {
+            transform: rotate(90deg);
+            opacity: 0;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+        }
+
+        .accordion-content ul {
+            list-style: none;
+            padding-bottom: 20px;
+        }
+
+        .accordion-content li {
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .accordion-content li::before {
+            content: '•';
+            position: absolute;
+            left: 4px;
+            color: #333333;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            .accordion-header {
+                padding: 16px 0;
+                font-size: 0.98rem;
+            }
+
+            .accordion-content li {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="accordion" id="accordion">
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Первичная
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li>для вновь созданных АСС(Ф) или граждан, приобретающего статус спасателя</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Периодическая
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li>для действующих АСС(Ф) или спасателей 1 раз в 3 года</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                Внеочередная
+                <span class="icon" aria-hidden="true"></span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li>при реорганизации юридического лица — учредителя АСС(Ф)</li>
+                    <li>при изменении вида аварийно-спасательных работ, проводимых АСС(Ф)</li>
+                    <li>если контролирующий орган МЧС выявит нарушения обязательных требований к аттестации</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const items = document.querySelectorAll('.accordion-item');
+
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    items.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+                            otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        }
+                    });
+
+                    if (isActive) {
+                        item.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                        content.style.maxHeight = null;
+                    } else {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                const activeItem = document.querySelector('.accordion-item.active');
+                if (activeItem) {
+                    const content = activeItem.querySelector('.accordion-content');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
