@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пакет документов для регистрации ОПО</title>
+<style>
+  :root{
+    --bg:#eceff2;
+    --card:#f7f8fa;
+    --border:#d3d9df;
+    --text:#1c2733;
+    --muted:#5b6b7c;
+    --accent:#3a5a78;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:24px 12px;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .accordion{
+    max-width:720px;
+    margin:0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+  }
+
+  .accordion__title{
+    margin:0;
+    padding:12px 16px;
+    font-size:.95rem;
+    font-weight:700;
+    color:var(--text);
+    background:#e2e6ea;
+    border-bottom:1px solid var(--border);
+  }
+
+  .acc-item{border-top:1px solid var(--border);}
+  .acc-item:first-of-type{border-top:none;}
+
+  .acc-header{
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:10px 14px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    font:inherit;
+    color:var(--text);
+    transition:background .15s ease;
+  }
+
+  .acc-header:hover{background:#e9edf1;}
+  .acc-header:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+
+  .acc-num{
+    flex:0 0 22px;
+    height:22px;
+    display:grid;
+    place-items:center;
+    border-radius:4px;
+    background:#dde3e9;
+    color:var(--accent);
+    font-size:.75rem;
+    font-weight:700;
+    margin-top:1px;
+    transition:background .15s ease,color .15s ease;
+  }
+
+  .acc-item.open .acc-num{background:var(--accent);color:#fff;}
+
+  .acc-title{
+    flex:1;
+    font-weight:600;
+    font-size:.88rem;
+  }
+
+  .acc-icon{
+    flex:0 0 14px;
+    position:relative;
+    width:14px;
+    height:14px;
+    margin-top:4px;
+  }
+
+  .acc-icon::before,
+  .acc-icon::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    background:var(--accent);
+    border-radius:1px;
+    transform:translate(-50%,-50%);
+    transition:transform .2s ease,opacity .2s ease;
+  }
+
+  .acc-icon::before{width:10px;height:2px;}
+  .acc-icon::after{width:2px;height:10px;}
+
+  .acc-item.open .acc-icon::after{transform:translate(-50%,-50%) rotate(90deg);opacity:0;}
+
+  .acc-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+
+  .acc-body{
+    padding:0 14px 12px 46px;
+    color:var(--muted);
+    font-size:.83rem;
+  }
+
+  .acc-body p{margin:0 0 8px;}
+  .acc-body p:last-child{margin-bottom:0;}
+
+  .acc-body ul{
+    margin:6px 0 8px;
+    padding-left:18px;
+  }
+
+  .acc-body li{margin-bottom:3px;}
+
+  .acc-body strong{color:var(--text);}
+
+  .acc-body .note{
+    margin-top:10px;
+    padding:8px 12px;
+    background:#e9edf1;
+    border-left:2px solid var(--accent);
+    border-radius:0 4px 4px 0;
+    color:var(--text);
+    font-size:.8rem;
+  }
+
+  .acc-body .note p{margin:0 0 6px;}
+  .acc-body .note p:last-child{margin-bottom:0;}
+
+  @media (max-width:560px){
+    body{padding:12px 8px;font-size:13px;}
+    .acc-header{padding:9px 10px;gap:8px;}
+    .acc-body{padding:0 10px 10px 40px;}
+    .accordion__title{padding:10px 12px;font-size:.9rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="accordion">
+  <h1 class="accordion__title">Пакет документов для регистрации ОПО</h1>
+
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">1</span>
+      <span class="acc-title">Сведения, характеризующие ОПО</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Составляются на основе анализа проектной документации, результатов идентификации объекта и других имеющихся данных.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">2</span>
+      <span class="acc-title">Копии документов, подтверждающих наличие прав</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Подтверждают наличие у организации прав на земельные участки, здания, сооружения и технические устройства. Нужны, если права не зарегистрированы в ЕГРН.</p>
+        <p>Прикладывают копии документов, например:</p>
+        <ul>
+          <li>договор аренды земельного участка или здания;</li>
+          <li>свидетельство о собственности или выписка из ЕГРН.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">3</span>
+      <span class="acc-title">Реквизиты документов о правах на имущество</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Если права зарегистрированы в ЕГРН, достаточно предоставить:</p>
+        <ul>
+          <li>номер и дату записи в реестре;</li>
+          <li>кадастровый номер земельного участка (при наличии).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">4</span>
+      <span class="acc-title">Копия раздела «Технологические решения»</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Текстовая часть проектной документации с описанием технологического процесса, применяемого оборудования и мер безопасности.</p>
+        <div class="note">
+          <p>К копии приложить реквизиты заключения экспертизы проектной документации (номер, дату, кем выдано).</p>
+          <p>При техническом перевооружении вместо этого подают копию документации на техперевооружение с реквизитами заключения ЭПБ.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">5</span>
+      <span class="acc-title">Обоснование безопасности</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>С указанием реквизитов положительного заключения ЭПБ на него.</p>
+        <p>Предоставляется, когда на объекте отступают от стандартных норм промышленной безопасности, например используют нестандартное оборудование и технологии.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.acc-header').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.parentElement;
+      var panel = btn.nextElementSibling;
+      var isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.acc-item.open').forEach(function (openItem) {
+        openItem.classList.remove('open');
+        openItem.querySelector('.acc-header').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.acc-panel').style.maxHeight = null;
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.acc-item.open .acc-panel').forEach(function (panel) {
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
