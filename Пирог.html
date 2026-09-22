@@ -2,20 +2,20 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Признаки опасности ОПО — куски пирога</title>
+<title>Признаки опасности ОПО</title>
 <style>
   body {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
     background: #ffffff;
     margin: 0;
-    padding: 40px 20px;
+    padding: 10px;
     color: #3a4a5a;
   }
 
   .pie-wrapper {
     position: relative;
-    width: 640px;
-    height: 640px;
+    width: 480px;
+    height: 480px;
     margin: 0 auto;
   }
 
@@ -28,7 +28,7 @@
   .slice {
     cursor: pointer;
     transition: transform 0.4s ease, filter 0.25s;
-    transform-origin: 320px 320px;
+    transform-origin: 240px 240px;
   }
 
   .slice:hover {
@@ -37,7 +37,7 @@
 
   .slice text {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     fill: #2c3e50;
     text-anchor: middle;
@@ -45,12 +45,11 @@
   }
 
   .slice .icon {
-    font-size: 20px;
+    font-size: 17px;
     text-anchor: middle;
     pointer-events: none;
   }
 
-  /* Центр */
   .center-circle {
     fill: #ffffff;
     stroke: #b9d7f0;
@@ -60,7 +59,7 @@
 
   .center-text {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     fill: #2c6bb5;
     text-anchor: middle;
@@ -68,25 +67,24 @@
 
   .center-sub {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
-    font-size: 11px;
+    font-size: 9.5px;
     fill: #6b8bab;
     text-anchor: middle;
   }
 
-  /* Всплывающее пояснение */
   .pie-tooltip {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.95);
-    width: 240px;
+    width: 200px;
     background: #ffffff;
     border: 1px solid #d8e6f5;
-    border-radius: 14px;
-    padding: 16px 18px;
-    box-shadow: 0 8px 28px rgba(44, 107, 181, 0.18);
-    font-size: 12.5px;
-    line-height: 1.5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 24px rgba(44, 107, 181, 0.18);
+    font-size: 11.5px;
+    line-height: 1.45;
     color: #4a5568;
     z-index: 30;
     opacity: 0;
@@ -103,14 +101,14 @@
 
   .pie-tooltip .tt-title {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     color: #2c3e50;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .pie-tooltip .tt-close {
-    margin-top: 10px;
-    font-size: 11px;
+    margin-top: 8px;
+    font-size: 10.5px;
     color: #9bb3c9;
     cursor: pointer;
   }
@@ -120,73 +118,72 @@
 
 <div class="pie-wrapper">
 
-  <svg viewBox="0 0 640 640">
+  <svg viewBox="0 0 480 480">
     <g id="slicesGroup">
 
       <!-- Сектор 0: 0°–60° -->
       <g class="slice" data-index="0" data-angle="30">
-        <path d="M 320 320 L 320 40 A 280 280 0 0 1 562.4 180 Z"
-              fill="#eaf3fc" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="400" y="170">⚗️</text>
-        <text x="400" y="195">Опасные</text>
-        <text x="400" y="212">вещества</text>
+        <path d="M 240 240 L 240 30 A 210 210 0 0 1 421.9 135 Z"
+              fill="#eaf3fc" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="300" y="128">⚗️</text>
+        <text x="300" y="148">Опасные</text>
+        <text x="300" y="162">вещества</text>
       </g>
 
       <!-- Сектор 1: 60°–120° -->
       <g class="slice" data-index="1" data-angle="90">
-        <path d="M 320 320 L 562.4 180 A 280 280 0 0 1 562.4 460 Z"
-              fill="#e6f4ec" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="490" y="290">🔧</text>
-        <text x="490" y="315">Оборудование</text>
-        <text x="490" y="332">под давлением</text>
+        <path d="M 240 240 L 421.9 135 A 210 210 0 0 1 421.9 345 Z"
+              fill="#e6f4ec" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="368" y="218">🔧</text>
+        <text x="368" y="238">Оборудование</text>
+        <text x="368" y="252">под давлением</text>
       </g>
 
       <!-- Сектор 2: 120°–180° -->
       <g class="slice" data-index="2" data-angle="150">
-        <path d="M 320 320 L 562.4 460 A 280 280 0 0 1 320 600 Z"
-              fill="#fdf2e6" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="400" y="440">🏗️</text>
-        <text x="400" y="465">Подъемные</text>
-        <text x="400" y="482">сооружения</text>
+        <path d="M 240 240 L 421.9 345 A 210 210 0 0 1 240 450 Z"
+              fill="#fdf2e6" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="300" y="330">🏗️</text>
+        <text x="300" y="350">Подъемные</text>
+        <text x="300" y="364">сооружения</text>
       </g>
 
       <!-- Сектор 3: 180°–240° -->
       <g class="slice" data-index="3" data-angle="210">
-        <path d="M 320 320 L 320 600 A 280 280 0 0 1 77.6 460 Z"
-              fill="#f3ecfa" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="240" y="440">⛏️</text>
-        <text x="240" y="465">Горные</text>
-        <text x="240" y="482">работы</text>
+        <path d="M 240 240 L 240 450 A 210 210 0 0 1 58.1 345 Z"
+              fill="#f3ecfa" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="180" y="330">⛏️</text>
+        <text x="180" y="350">Горные</text>
+        <text x="180" y="364">работы</text>
       </g>
 
       <!-- Сектор 4: 240°–300° -->
       <g class="slice" data-index="4" data-angle="270">
-        <path d="M 320 320 L 77.6 460 A 280 280 0 0 1 77.6 180 Z"
-              fill="#fdecec" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="150" y="290">🔥</text>
-        <text x="150" y="315">Расплавы</text>
-        <text x="150" y="332">металлов</text>
+        <path d="M 240 240 L 58.1 345 A 210 210 0 0 1 58.1 135 Z"
+              fill="#fdecec" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="112" y="218">🔥</text>
+        <text x="112" y="238">Расплавы</text>
+        <text x="112" y="252">металлов</text>
       </g>
 
       <!-- Сектор 5: 300°–360° -->
       <g class="slice" data-index="5" data-angle="330">
-        <path d="M 320 320 L 77.6 180 A 280 280 0 0 1 320 40 Z"
-              fill="#e8f6f8" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
-        <text class="icon" x="240" y="170">🌾</text>
-        <text x="240" y="195">Растительное</text>
-        <text x="240" y="212">сырье</text>
+        <path d="M 240 240 L 58.1 135 A 210 210 0 0 1 240 30 Z"
+              fill="#e8f6f8" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <text class="icon" x="180" y="128">🌾</text>
+        <text x="180" y="148">Растительное</text>
+        <text x="180" y="162">сырье</text>
       </g>
 
     </g>
 
     <!-- Центр -->
-    <circle class="center-circle" cx="320" cy="320" r="75"/>
-    <text class="center-text" x="320" y="315">116-ФЗ</text>
-    <text class="center-sub" x="320" y="340">Признаки</text>
-    <text class="center-sub" x="320" y="356">опасности ОПО</text>
+    <circle class="center-circle" cx="240" cy="240" r="58"/>
+    <text class="center-text" x="240" y="236">116-ФЗ</text>
+    <text class="center-sub" x="240" y="254">Признаки</text>
+    <text class="center-sub" x="240" y="267">опасности ОПО</text>
   </svg>
 
-  <!-- Всплывающее пояснение -->
   <div class="pie-tooltip" id="tooltip">
     <div class="tt-title" id="ttTitle"></div>
     <div id="ttBody"></div>
@@ -225,15 +222,13 @@
     const index = slice.dataset.index;
 
     slice.addEventListener('click', () => {
-      // Сбросить все
       slices.forEach(s => {
         s.style.transform = 'translate(0, 0)';
       });
 
-      // Выдвинуть выбранный кусок в сторону от центра
       const rad = (angle - 90) * Math.PI / 180;
-      const dx = Math.cos(rad) * 18;
-      const dy = Math.sin(rad) * 18;
+      const dx = Math.cos(rad) * 14;
+      const dy = Math.sin(rad) * 14;
       slice.style.transform = `translate(${dx}px, ${dy}px)`;
 
       ttTitle.textContent = titles[index];
