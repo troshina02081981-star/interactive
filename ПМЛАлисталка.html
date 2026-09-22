@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Основания для пересмотра ПМЛА</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --border:#e4e6e9;
+    --text:#1e2328;
+    --muted:#6b7580;
+    --soft:#f6f7f8;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:24px 12px;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:13px;
+    line-height:1.45;
+  }
+
+  .slider{
+    max-width:680px;
+    margin:0 auto;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  .slider__head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 16px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .slider__label{
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#fff;
+    background:#1e2328;
+    padding:3px 8px;
+    border-radius:4px;
+  }
+
+  .slider__title{
+    margin:0;
+    flex:1;
+    font-size:.9rem;
+    font-weight:700;
+    line-height:1.3;
+  }
+
+  .slider__counter{
+    font-size:.75rem;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+
+  .slider__viewport{overflow:hidden;}
+
+  .slider__track{
+    display:flex;
+    transition:transform .35s ease;
+    align-items:flex-start;
+  }
+
+  .slide{
+    flex:0 0 100%;
+    padding:18px 20px 20px;
+  }
+
+  .slide__num{
+    display:inline-block;
+    width:22px;
+    height:22px;
+    margin-right:6px;
+    border-radius:50%;
+    background:#1e2328;
+    color:#fff;
+    font-size:.72rem;
+    line-height:22px;
+    text-align:center;
+    vertical-align:middle;
+  }
+
+  .slide__title{
+    margin:0 0 14px;
+    font-size:.9rem;
+    font-weight:700;
+    line-height:1.35;
+  }
+
+  /* Кнопка показать пример */
+  .toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 14px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:#fff;
+    font:inherit;
+    font-size:.8rem;
+    font-weight:600;
+    color:#1e2328;
+    cursor:pointer;
+    transition:background .15s ease,border-color .15s ease;
+  }
+
+  .toggle:hover{background:var(--soft);border-color:#1e2328;}
+
+  .toggle__icon{
+    position:relative;
+    width:10px;
+    height:10px;
+    flex:0 0 10px;
+  }
+
+  .toggle__icon::before,
+  .toggle__icon::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    background:#1e2328;
+    border-radius:1px;
+    transform:translate(-50%,-50%);
+    transition:transform .2s ease,opacity .2s ease;
+  }
+
+  .toggle__icon::before{width:10px;height:1.6px;}
+  .toggle__icon::after{width:1.6px;height:10px;}
+
+  .toggle.open .toggle__icon::after{transform:translate(-50%,-50%) rotate(90deg);opacity:0;}
+
+  /* Скрытый пример */
+  .example-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+
+  .example{
+    margin-top:12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px 16px;
+    background:#fafbfc;
+  }
+
+  .example__title{
+    margin:0 0 10px;
+    font-size:.82rem;
+    font-weight:700;
+  }
+
+  .example__text{
+    margin:0 0 10px;
+    font-size:.8rem;
+    color:#2b333b;
+  }
+
+  .example__text:last-child{margin-bottom:0;}
+
+  .example__list{
+    margin:6px 0 10px;
+    padding-left:18px;
+    font-size:.8rem;
+    color:#2b333b;
+  }
+
+  .example__list li{margin-bottom:3px;}
+
+  .example__note{
+    margin:12px 0 0;
+    padding:10px 14px;
+    background:#f0f2f4;
+    border-left:2px solid #1e2328;
+    border-radius:0 6px 6px 0;
+    font-size:.78rem;
+    color:#2b333b;
+  }
+
+  .slider__nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 16px 14px;
+    border-top:1px solid var(--border);
+  }
+
+  .dots{display:flex;gap:6px;}
+
+  .dot{
+    width:8px;
+    height:8px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:#cfd6dd;
+    cursor:pointer;
+    transition:background .15s ease,transform .15s ease;
+  }
+
+  .dot:hover{background:#9aa5b0;}
+  .dot.active{background:#1e2328;transform:scale(1.15);}
+
+  .arrow{
+    display:grid;
+    place-items:center;
+    width:30px;
+    height:30px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:#fff;
+    color:#1e2328;
+    cursor:pointer;
+    font-size:1rem;
+    line-height:1;
+    transition:background .15s ease,border-color .15s ease;
+  }
+
+  .arrow:hover{background:var(--soft);border-color:#1e2328;}
+  .arrow:disabled{opacity:.35;cursor:default;background:#fff;border-color:var(--border);}
+
+  @media (max-width:480px){
+    body{padding:12px 8px;font-size:13px;}
+    .slider__head{padding:10px 12px;}
+    .slider__title{font-size:.85rem;}
+    .slider__counter{display:none;}
+    .slide{padding:14px 14px 16px;}
+    .example{padding:12px;}
+    .slider__nav{padding:8px 12px 12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slider" id="slider">
+  <div class="slider__head">
+    <span class="slider__label">ПМЛА</span>
+    <h1 class="slider__title">Основания для пересмотра</h1>
+    <span class="slider__counter"><span id="cur">1</span> / 6</span>
+  </div>
+
+  <div class="slider__viewport">
+    <div class="slider__track" id="track">
+
+      <!-- 1 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">1</span>Изменились сведения, которые содержатся в общих или специальных разделах</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 1. Сведения об эксплуатирующей организации</p>
+            <p class="example__text">В разделе общих требований эксплуатирующие организации указывают свои сведения. Например:</p>
+            <ul class="example__list">
+              <li>полное и сокращенное наименование организации;</li>
+              <li>почтовый адрес;</li>
+              <li>ОГРН и ИНН;</li>
+              <li>адрес, телефон и электронную почту и т.д.</li>
+            </ul>
+            <p class="example__text">Когда организация эксплуатирует ОПО по договору аренды, в общем разделе она укажет информацию о собственнике ОПО.</p>
+            <p class="example__note">Если изменились любые сведения об организации — адрес регистрации юрлица, название, даже телефон — она должна внести актуальные данные в соответствующий раздел ПМЛА.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">2</span>Получили предостережение Ростехнадзора по результатам расследования аварии на аналогичном ОПО</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 2. Авария на аналогичном ОПО</p>
+            <p class="example__text">На ОПО III класса опасности произошла авария — разрушение трубопровода сети газопотребления с возгоранием природного газа.</p>
+            <p class="example__text">Согласно ПМЛА, работники вызвали пожарный расчет. Во время звонка диспетчер не уточнил, обесточила ли организация оборудование. А работники в суматохе об этом забыли. Тем более в ПМЛА про необходимость обесточивания не было указано.</p>
+            <p class="example__text">В результате пожарному расчету после прибытия еще около 20 минут пришлось ждать, когда организация обесточит объекты. Это привело к распространению огня на ближайшее здание АБК и нанесению ему значительного ущерба.</p>
+            <p class="example__text">Все факторы комиссия изложила в акте. Чтобы ситуация не повторилась, территориальный инспектор направил предостережение на аналогичные ОПО.</p>
+            <p class="example__note">Организации, получившие предостережение, обязаны проанализировать обстоятельства и при необходимости переработать свои ПМЛА.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">3</span>Провели реконструкцию, техперевооружение или изменили технологию производства</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 3. Техперевооружение ОПО</p>
+            <p class="example__text">В металлургическом цехе организация установила современный котел-утилизатор взамен старого.</p>
+            <p class="example__text">Порядок пуска в работу, эксплуатации и остановки нового котла отличается от прежнего.</p>
+            <p class="example__note">Организация должна актуализировать специальный раздел ПМЛА, в котором указан порядок действий персонала в случае аварийной ситуации на котле.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">4</span>Изменили систему управления технологическими процессами</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 4. Изменения в АСУ ТП котла</p>
+            <p class="example__text">В металлургическом цехе организация запланировала замену старого котла-утилизатора на современный.</p>
+            <p class="example__text">В новом котле применяется современная система автоматического управления и контроля параметров. Это влечет изменение порядка ведения производственного процесса в цехе.</p>
+            <p class="example__text">Теперь оператор котла будет управлять работой оборудования не по месту, а дистанционно, с щита контроля и управления в операторной.</p>
+            <p class="example__text">Из-за внедрения новой системы управления порядок действий оператора во время аварийных ситуаций изменится.</p>
+            <p class="example__note">Эти изменения организация должна отразить в разделах ПМЛА, где указаны эти сведения.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">5</span>Комиссия по техническому расследованию пришла к выводу, что ПМЛА нужно пересмотреть</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 5. Авария на ОПО</p>
+            <p class="example__text">В организации произошла авария — разрыв трубопровода сети ГРиГП.</p>
+            <p class="example__text">По результатам расследования комиссия пришла к выводу, что аварию можно было локализовать на начальном этапе развития.</p>
+            <p class="example__text">Это сделать не получилось из-за несогласованных действий персонала ОПО с АСФ.</p>
+            <p class="example__text">Изучив ПМЛА, члены комиссии пришли к выводу, что порядок взаимодействия указан общими фразами и не содержит конкретных действий.</p>
+            <p class="example__text">Выводы комиссия отразила в акте и указала о необходимости конкретизации действий работников ОПО.</p>
+            <p class="example__note">Организация обязана отредактировать ПМЛА и устранить недочеты, указанные в акте.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="slide">
+        <h2 class="slide__title"><span class="slide__num">6</span>Получили предписание Ростехнадзора о несоответствии сведений в ПМЛА</h2>
+        <button class="toggle" type="button">
+          <span class="toggle__icon" aria-hidden="true"></span>
+          Показать пример
+        </button>
+        <div class="example-panel">
+          <div class="example">
+            <p class="example__title">Пример 6. Предписание Ростехнадзора</p>
+            <p class="example__text">Организация эксплуатирует металлургический цех, который является ОПО I класса опасности.</p>
+            <p class="example__text">В ходе выездной проверки инспектор обратил внимание на новый котел-утилизатор, установленный в рамках техперевооружения ОПО.</p>
+            <p class="example__text">Инспектор проверил документацию по объекту, в том числе ПМЛА, и обратил внимание, что в общем разделе ПМЛА указаны сведения о прежнем котле.</p>
+            <p class="example__note">Инспектор отразил нарушение в акте проверки и выдал предписание пересмотреть ПМЛА с учетом проведенного техперевооружения.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="slider__nav">
+    <button class="arrow" id="prev" aria-label="Назад">‹</button>
+    <div class="dots" id="dots"></div>
+    <button class="arrow" id="next" aria-label="Вперед">›</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var track = document.getElementById('track');
+    var slides = track.children.length;
+    var dotsBox = document.getElementById('dots');
+    var cur = document.getElementById('cur');
+    var prev = document.getElementById('prev');
+    var next = document.getElementById('next');
+    var index = 0;
+
+    for (var i = 0; i < slides; i++) {
+      var d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Основание ' + (i + 1));
+      d.dataset.i = i;
+      d.addEventListener('click', function () {
+        go(parseInt(this.dataset.i, 10));
+      });
+      dotsBox.appendChild(d);
+    }
+
+    function go(i) {
+      index = Math.max(0, Math.min(slides - 1, i));
+      track.style.transform = 'translateX(' + (-index * 100) + '%)';
+      cur.textContent = index + 1;
+      prev.disabled = index === 0;
+      next.disabled = index === slides - 1;
+      var dots = dotsBox.children;
+      for (var k = 0; k < dots.length; k++) {
+        dots[k].classList.toggle('active', k === index);
+      }
+      // Пересчитать высоту открытых панелей на текущем слайде
+      var slide = track.children[index];
+      var openBtn = slide.querySelector('.toggle.open');
+      if (openBtn) {
+        openBtn.nextElementSibling.style.maxHeight = openBtn.nextElementSibling.scrollHeight + 'px';
+      }
+    }
+
+    // Кнопки «Показать пример»
+    document.querySelectorAll('.toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var isOpen = btn.classList.contains('open');
+        var panel = btn.nextElementSibling;
+
+        if (isOpen) {
+          btn.classList.remove('open');
+          btn.lastChild.textContent = ' Показать пример';
+          panel.style.maxHeight = null;
+        } else {
+          btn.classList.add('open');
+          btn.lastChild.textContent = ' Скрыть пример';
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+        }
+      });
+    });
+
+    prev.addEventListener('click', function () { go(index - 1); });
+    next.addEventListener('click', function () { go(index + 1); });
+
+    var startX = null;
+    track.addEventListener('touchstart', function (e) {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    track.addEventListener('touchend', function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') go(index - 1);
+      if (e.key === 'ArrowRight') go(index + 1);
+    });
+
+    go(0);
+  })();
+</script>
+
+</body>
+</html>
