@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Общие разделы ПМЛА — 13 подразделов</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --card:#ffffff;
+    --border:#e4e6e9;
+    --text:#1e2328;
+    --muted:#5b6672;
+    --soft:#f6f7f8;
+    --line:#eef0f2;
+    --accent:#c0392b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:24px 12px;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .slider{
+    max-width:760px;
+    margin:0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  /* Шапка */
+  .slider__head{
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+    background:#fff;
+  }
+
+  .slider__top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+  }
+
+  .slider__label{
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--accent);
+    padding:3px 8px;
+    border-radius:4px;
+  }
+
+  .slider__counter{
+    font-size:.75rem;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+
+  .slider__title{
+    margin:0 0 10px;
+    font-size:1rem;
+    font-weight:700;
+    line-height:1.3;
+  }
+
+  .slider__lead{
+    margin:0;
+    font-size:.82rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  .slider__lead b{color:var(--text);}
+
+  /* Область листалки */
+  .slider__viewport{overflow:hidden;}
+
+  .slider__track{
+    display:flex;
+    transition:transform .35s ease;
+    align-items:flex-start;
+  }
+
+  .slide{
+    flex:0 0 100%;
+    padding:14px 20px 18px;
+  }
+
+  /* Название раздела — кликабельная кнопка */
+  .acc-header{
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:10px 0;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    font:inherit;
+    color:var(--text);
+  }
+
+  .acc-num{
+    flex:0 0 24px;
+    height:24px;
+    display:grid;
+    place-items:center;
+    border-radius:6px;
+    background:#eef0f2;
+    color:#1e2328;
+    font-size:.75rem;
+    font-weight:700;
+    margin-top:1px;
+    transition:background .15s ease,color .15s ease;
+  }
+
+  .acc-header:hover .acc-num{background:#1e2328;color:#fff;}
+
+  .acc-title{
+    flex:1;
+    font-weight:700;
+    font-size:.92rem;
+    line-height:1.35;
+  }
+
+  .acc-icon{
+    flex:0 0 14px;
+    position:relative;
+    width:14px;
+    height:14px;
+    margin-top:5px;
+  }
+
+  .acc-icon::before,
+  .acc-icon::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    background:#1e2328;
+    border-radius:1px;
+    transform:translate(-50%,-50%);
+    transition:transform .2s ease,opacity .2s ease;
+  }
+
+  .acc-icon::before{width:10px;height:2px;}
+  .acc-icon::after{width:2px;height:10px;}
+
+  .acc-header.open .acc-icon::after{transform:translate(-50%,-50%) rotate(90deg);opacity:0;}
+
+  /* Разворачиваемая часть */
+  .panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+
+  .panel__inner{
+    padding:0 0 12px 34px;
+    font-size:.83rem;
+    color:#2b333b;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+
+  .panel__inner p{margin:0 0 10px;}
+  .panel__inner p:last-child{margin-bottom:0;}
+
+  .panel__inner ul{
+    margin:6px 0 10px;
+    padding-left:18px;
+  }
+
+  .panel__inner li{margin-bottom:4px;}
+
+  .panel__inner b{color:var(--text);font-weight:600;}
+
+  /* Навигация */
+  .slider__nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 20px 14px;
+    border-top:1px solid var(--border);
+  }
+
+  .dots{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    justify-content:center;
+    flex:1;
+  }
+
+  .dot{
+    width:8px;
+    height:8px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:#cfd6dd;
+    cursor:pointer;
+    transition:background .15s ease,transform .15s ease;
+  }
+
+  .dot:hover{background:#9aa5b0;}
+  .dot.active{background:#1e2328;transform:scale(1.15);}
+
+  .arrow{
+    display:grid;
+    place-items:center;
+    width:32px;
+    height:32px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:#fff;
+    color:#1e2328;
+    cursor:pointer;
+    font-size:1.05rem;
+    line-height:1;
+    transition:background .15s ease,border-color .15s ease;
+    flex:0 0 32px;
+  }
+
+  .arrow:hover{background:var(--soft);border-color:#1e2328;}
+  .arrow:disabled{opacity:.35;cursor:default;background:#fff;border-color:var(--border);}
+
+  @media (max-width:520px){
+    body{padding:14px 8px;font-size:13px;}
+    .slider__head{padding:14px 14px;}
+    .slider__title{font-size:.92rem;}
+    .slide{padding:12px 14px 14px;}
+    .panel__inner{font-size:.8rem;padding-left:34px;}
+    .slider__nav{padding:8px 14px 12px;}
+    .dots{gap:4px;}
+    .dot{width:7px;height:7px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slider" id="slider">
+  <div class="slider__head">
+    <div class="slider__top">
+      <span class="slider__label">ПМЛА · общие разделы</span>
+      <span class="slider__counter"><span id="cur">1</span> / 13</span>
+    </div>
+    <h1 class="slider__title">Общие разделы ПМЛА</h1>
+    <p class="slider__lead">
+      Общий раздел состоит из <b>13 подразделов</b>. Требования к их содержанию установлены в п. 11 Положения о разработке ПМЛА № 1437.
+      Нажмите на название раздела, чтобы раскрыть информацию.
+    </p>
+  </div>
+
+  <div class="slider__viewport">
+    <div class="slider__track" id="track">
+
+      <!-- 1 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">1</span>
+          <span class="acc-title">Характеристика объекта</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают сведения об ОПО и об организации, которая его эксплуатирует. Если ОПО в аренде — дополнительно указывают информацию о собственнике.</p>
+            <p>Заполнить раздел можно на основании:</p>
+            <ul>
+              <li>свидетельства о регистрации ОПО;</li>
+              <li>сведений, характеризующих ОПО;</li>
+              <li>выписки из ЕГРЮЛ или ЕГРИП;</li>
+              <li>проектной и эксплуатационной документации ОПО.</li>
+            </ul>
+            <p>В сведениях об организации и собственнике нужно указать: полное и сокращенное название, ОГРН и ИНН, данные о руководителе, адрес, телефон и электронную почту.</p>
+            <p>При описании ОПО приводят характеристики зданий, сооружений и технических устройств, а также ситуационные схемы.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">2</span>
+          <span class="acc-title">Сценарий наиболее вероятных и наиболее опасных аварий, источники их возникновения</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>В этом разделе организации указывают:</p>
+            <ul>
+              <li>причины возможных аварий;</li>
+              <li>технологическое оборудование, которое может стать источником аварий;</li>
+              <li>возможные сценарии возникновения и развития аварий;</li>
+              <li>поражающие факторы, которые возникнут при аварии;</li>
+              <li>сведения об объемах и площадях разливов опасных веществ;</li>
+              <li>зоны действия поражающих факторов.</li>
+            </ul>
+            <p>Используют сведения из декларации промышленной безопасности, обоснования безопасности и технологической документации.</p>
+            <p>К разработке обычно привлекают технологов, руководителей и наиболее опытных работников ОПО. Каждому месту и сценарию можно присвоить номер или код — это облегчит навигацию по документу.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">3</span>
+          <span class="acc-title">Характеристики аварийности и травматизма, типичные для ОПО</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Используют сведения из декларации промбезопасности, обоснования безопасности, а также материалов расследования аварий и травм.</p>
+            <p>К разработке можно привлечь работников аварийно-спасательных формирований, руководителей и наиболее опытных работников ОПО.</p>
+            <p>Информацию об авариях можно найти на официальном сайте Ростехнадзора — там приведена статистика аварийности и травматизма, например для сетей ГРИГП и объектов СУГ за 2017–2020 гг.</p>
+            <p>Организация должна проанализировать официальные источники и указать краткие сведения об авариях и травматизме на конкретном ОПО, а также на аналогичных объектах других организаций. Можно указать причины и последствия.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">4</span>
+          <span class="acc-title">Количество сил и средств для локализации и ликвидации последствий аварий</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают, какие силы и средства нужны для локализации и ликвидации аварий по конкретным сценариям.</p>
+            <p>За основу расчета берут сценарии аварий из раздела 2. По каждому сценарию определяют необходимое количество сил и средств.</p>
+            <p>К разработке можно привлечь работников аварийно-спасательных формирований, технологов и руководителей ОПО — это позволит учесть все возможные варианты развития событий.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">5</span>
+          <span class="acc-title">Организация взаимодействия сил и средств</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают зоны ответственности и порядок взаимодействия между участниками работ:</p>
+            <ul>
+              <li>зоны ответственности и уровни реагирования аварийно-спасательных формирований;</li>
+              <li>распределение обязанностей между производственными подразделениями, АСФ и ответственными лицами;</li>
+              <li>функции и полномочия оперативного штаба.</li>
+            </ul>
+            <p>Также указывают перечень организаций, которые будут участвовать в ликвидации аварий: производственные подразделения, АСФ, сторонние организации, органы исполнительной власти.</p>
+            <p>Приводят руководителей и ответственных работников с контактными телефонами, а также список должностных лиц госорганов для извещения об аварии.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">6</span>
+          <span class="acc-title">Состав и дислокация сил и средств</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают подразделения, технику и ресурсы, которые будут участвовать в ликвидации последствий аварий. Это могут быть:</p>
+            <ul>
+              <li>профессиональное аварийно-спасательное формирование по договору;</li>
+              <li>профессиональные и нештатные АСФ организации;</li>
+              <li>аварийные и ремонтные бригады;</li>
+              <li>другие подразделения из числа работников.</li>
+            </ul>
+            <p>Для подразделений указывают штатные места расположения, время и маршрут прибытия к месту аварии, сведения о руководителе и контактные данные.</p>
+            <p>Составляют перечни техники и оборудования с указанием конкретных единиц, мест хранения, ответственных за сохранность и работников, допущенных к эксплуатации.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">7</span>
+          <span class="acc-title">Порядок обеспечения постоянной готовности сил и средств</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают мероприятия, которые поддерживают силы и средства в постоянной готовности:</p>
+            <ul>
+              <li>актуализация документов;</li>
+              <li>обучение работников действиям при аварии;</li>
+              <li>подготовка спасателей, работников аварийных и ремонтных бригад;</li>
+              <li>аттестация аварийно-спасательных формирований;</li>
+              <li>оснащение АСФ;</li>
+              <li>тренировки по локализации и ликвидации последствий аварий;</li>
+              <li>проверка исправности техники и оборудования;</li>
+              <li>техобслуживание и ремонт техники и оборудования;</li>
+              <li>проверка сохранности материальных ресурсов;</li>
+              <li>обеспечение доступа к резервам финансовых средств.</li>
+            </ul>
+            <p>Для каждого мероприятия указывают должностных лиц и организации, ответственных за поддержание готовности.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">8</span>
+          <span class="acc-title">Организация управления, связи и оповещения при авариях</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают порядок и схему оповещения при аварии, контактные данные ответственных лиц и работников, которые оповещают об аварии.</p>
+            <p>Прописывают структуру и организацию управления при аварии, порядок передачи управления вышестоящим органам, каналы связи и их назначение.</p>
+            <p><b>Например.</b> Руководство работами по локализации и ликвидации аварий, спасению людей и снижению воздействия опасных факторов осуществляет ответственный руководитель по локализации и ликвидации аварий (ОРЛА).</p>
+            <p>Для принятия эффективных мер создается командный пункт (оперативный штаб). Вышестоящий руководитель имеет право заменить ОРЛА или принять руководство на себя.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">9</span>
+          <span class="acc-title">Система взаимного обмена информацией между участниками</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Описывают, кто, кому, когда и в каком виде предоставляет информацию. Указывают порядок обмена оперативными докладами об изменении обстановки и регулярными плановыми отчетами о ходе работ.</p>
+            <p><b>Например.</b> При возникновении аварии работник, обнаруживший ее, немедленно докладывает диспетчеру. Оповещение проводится немедленно по телефону или по другому доступному каналу связи по решению ОРЛА.</p>
+            <p>В ходе ликвидации связь поддерживается постоянно. Доклады должны быть четкими, достоверными и полными — чтобы принять наиболее правильные и исчерпывающие меры.</p>
+            <p>Система взаимного обмена информацией обеспечивается средствами радиосвязи и громкоговорящими устройствами.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">10</span>
+          <span class="acc-title">Первоочередные действия при получении сигнала об аварии</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Подробно указывают, какие действия должны предпринять работники при возникновении аварии. Организация должна:</p>
+            <ul>
+              <li>указать порядок получения и передачи информации о возникновении аварии;</li>
+              <li>составить перечень первоочередных действий при получении сигнала об аварии;</li>
+              <li>разработать мероприятия по оповещению, выводу работников из опасной зоны и предотвращению развития аварии и ее локализации.</li>
+            </ul>
+            <p>Можно составить базовый перечень мероприятий, необходимый при любом сценарии аварии, и дополнения к нему — с учетом особенностей конкретных сценариев.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">11</span>
+          <span class="acc-title">Действия производственного персонала и АСФ по локализации и ликвидации аварий</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Для каждого сценария возможной аварии указывают:</p>
+            <ul>
+              <li>состав задействованных сил и средств;</li>
+              <li>хронологический порядок действий;</li>
+              <li>маршруты следования к месту аварии;</li>
+              <li>методы локализации и ликвидации аварии.</li>
+            </ul>
+            <p>Указывают конкретные мероприятия и сроки для производственных подразделений, АСФ, диспетчерских и оперативных служб, ответственных лиц и персонала.</p>
+            <p>Мероприятия должны быть максимально подробными и понятными — от этого зависит эффективность действий персонала.</p>
+            <p>Также указывают последовательность отключения технических устройств, механизмов и коммуникаций. Всегда предусматривают мероприятия по эвакуации работников, ликвидирующих аварию.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">12</span>
+          <span class="acc-title">Мероприятия по обеспечению безопасности населения</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Указывают мероприятия по защите населения в районе расположения ОПО.</p>
+            <p>Описывают порядок взаимодействия с органами исполнительной власти субъекта и местного самоуправления при возникновении аварии.</p>
+            <p>Организация разрабатывает перечень мероприятий по защите населенных пунктов, спасению людей и материальных ценностей от последствий аварии. Также указывают мероприятия по оказанию медицинской помощи пострадавшим.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13 -->
+      <div class="slide">
+        <button class="acc-header" type="button">
+          <span class="acc-num">13</span>
+          <span class="acc-title">Организация материально-технического, инженерного и финансового обеспечения</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="panel">
+          <div class="panel__inner">
+            <p>Описывают порядок обеспечения работ: как организовано обеспечение и кто отвечает за выполнение мероприятий. Это должны быть взаимосвязанные мероприятия.</p>
+            <p>Для ликвидации аварии должны быть организованы:</p>
+            <ul>
+              <li><b>материально-техническое</b> — хранение, обслуживание, обновление и доставка к месту аварии техники, оборудования и ресурсов;</li>
+              <li><b>инженерное</b> — обеспечение инженерной техникой, создание инженерных заграждений;</li>
+              <li><b>финансовое</b> — создание резерва финансовых средств и оперативный доступ к ним;</li>
+              <li><b>противопожарное</b> — профилактика и организация тушения пожаров, как правило при участии пожарных команд МЧС;</li>
+              <li><b>транспортное</b> — своевременная подача транспорта для доставки людей и ресурсов, эвакуация пострадавших, вывоз отходов с места аварии;</li>
+              <li><b>медицинское</b> — организация медпомощи пострадавшим и работникам, ликвидирующим аварию.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="slider__nav">
+    <button class="arrow" id="prev" aria-label="Назад">‹</button>
+    <div class="dots" id="dots"></div>
+    <button class="arrow" id="next" aria-label="Вперед">›</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var track = document.getElementById('track');
+    var slides = track.children.length;
+    var dotsBox = document.getElementById('dots');
+    var cur = document.getElementById('cur');
+    var prev = document.getElementById('prev');
+    var next = document.getElementById('next');
+    var index = 0;
+
+    for (var i = 0; i < slides; i++) {
+      var d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Раздел ' + (i + 1));
+      d.dataset.i = i;
+      d.addEventListener('click', function () {
+        go(parseInt(this.dataset.i, 10));
+      });
+      dotsBox.appendChild(d);
+    }
+
+    function go(i) {
+      index = Math.max(0, Math.min(slides - 1, i));
+      track.style.transform = 'translateX(' + (-index * 100) + '%)';
+      cur.textContent = index + 1;
+      prev.disabled = index === 0;
+      next.disabled = index === slides - 1;
+      var dots = dotsBox.children;
+      for (var k = 0; k < dots.length; k++) {
+        dots[k].classList.toggle('active', k === index);
+      }
+    }
+
+    // Клик по названию раздела — раскрыть/скрыть информацию
+    document.querySelectorAll('.acc-header').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var isOpen = btn.classList.contains('open');
+        var panel = btn.nextElementSibling;
+
+        if (isOpen) {
+          btn.classList.remove('open');
+          panel.style.maxHeight = null;
+        } else {
+          btn.classList.add('open');
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+        }
+      });
+    });
+
+    prev.addEventListener('click', function () { go(index - 1); });
+    next.addEventListener('click', function () { go(index + 1); });
+
+    var startX = null;
+    track.addEventListener('touchstart', function (e) {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    track.addEventListener('touchend', function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') go(index - 1);
+      if (e.key === 'ArrowRight') go(index + 1);
+    });
+
+    go(0);
+  })();
+</script>
+
+</body>
+</html>
