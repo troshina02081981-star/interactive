@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ответственность за отсутствие ПМЛА</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --border:#e4e6e9;
+    --text:#1e2328;
+    --muted:#5b6672;
+    --red:#c0392b;
+    --soft:#fafbfc;
+    --head:#f2f4f6;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:24px 12px;
+    background:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .card{
+    max-width:720px;
+    margin:0 auto;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  .card__head{
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    background:#fff;
+  }
+
+  .card__label{
+    display:inline-block;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--red);
+    padding:3px 8px;
+    border-radius:4px;
+    margin-bottom:8px;
+  }
+
+  .card__title{
+    margin:0;
+    font-size:.98rem;
+    font-weight:700;
+    line-height:1.3;
+  }
+
+  .card__lead{
+    margin:10px 0 0;
+    font-size:.83rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.85rem;
+  }
+
+  thead th{
+    text-align:left;
+    padding:11px 20px;
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+    background:var(--head);
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+
+  tbody td{
+    padding:14px 20px;
+    vertical-align:top;
+    border-bottom:1px solid var(--border);
+  }
+
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--soft);}
+
+  .who{
+    font-weight:600;
+    color:var(--text);
+    white-space:nowrap;
+  }
+
+  .who span{
+    display:block;
+    margin-top:2px;
+    font-weight:400;
+    font-size:.75rem;
+    color:var(--muted);
+  }
+
+  .measure{
+    display:block;
+    margin-bottom:6px;
+    color:#2b333b;
+  }
+
+  .measure:last-child{margin-bottom:0;}
+
+  .measure b{
+    color:var(--red);
+    font-weight:700;
+    white-space:nowrap;
+  }
+
+  .card__foot{
+    padding:12px 20px;
+    font-size:.75rem;
+    color:var(--muted);
+    background:var(--head);
+    border-top:1px solid var(--border);
+  }
+
+  @media (max-width:520px){
+    body{padding:14px 8px;font-size:13px;}
+    .card__head{padding:12px 14px;}
+    thead th, tbody td{padding:10px 12px;}
+    table{font-size:.8rem;}
+    .who{white-space:normal;}
+    .measure b{white-space:normal;}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card__head">
+    <span class="card__label">Ответственность</span>
+    <h1 class="card__title">Если организация не разработала ПМЛА</h1>
+    <p class="card__lead">
+      Нарушение требований статьи 10 Закона о промышленной безопасности № 116-ФЗ.
+      Инспектор Ростехнадзора при проверке ОПО может привлечь организацию или ее должностное лицо
+      к административной ответственности по пункту 1 статьи 9.1 КоАП.
+    </p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Кто отвечает</th>
+        <th>Мера ответственности</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="who">Должностные лица<span>руководитель, специалист</span></td>
+        <td>
+          <span class="measure">штраф от <b>20 000 до 30 000 ₽</b></span>
+          <span class="measure">или дисквалификация на срок от 6 месяцев до <b>1 года</b></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="who">Юридические лица<span>организация, предприятие</span></td>
+        <td>
+          <span class="measure">штраф от <b>200 000 до 300 000 ₽</b></span>
+          <span class="measure">или приостановление деятельности до <b>90 суток</b></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card__foot">
+    Основание: ст. 10 № 116-ФЗ, п. 1 ст. 9.1 КоАП РФ.
+  </div>
+</div>
+
+</body>
+</html>
