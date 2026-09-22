@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Признаки опасности ОПО — куски пирога</title>
+<style>
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+    padding: 40px 20px;
+    color: #3a4a5a;
+  }
+
+  .pie-wrapper {
+    position: relative;
+    width: 640px;
+    height: 640px;
+    margin: 0 auto;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .slice {
+    cursor: pointer;
+    transition: transform 0.4s ease, filter 0.25s;
+    transform-origin: 320px 320px;
+  }
+
+  .slice:hover {
+    filter: brightness(1.05);
+  }
+
+  .slice text {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    fill: #2c3e50;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .slice .icon {
+    font-size: 20px;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  /* Центр */
+  .center-circle {
+    fill: #ffffff;
+    stroke: #b9d7f0;
+    stroke-width: 2;
+    filter: drop-shadow(0 2px 8px rgba(74, 144, 217, 0.12));
+  }
+
+  .center-text {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    fill: #2c6bb5;
+    text-anchor: middle;
+  }
+
+  .center-sub {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 11px;
+    fill: #6b8bab;
+    text-anchor: middle;
+  }
+
+  /* Всплывающее пояснение */
+  .pie-tooltip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 240px;
+    background: #ffffff;
+    border: 1px solid #d8e6f5;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 8px 28px rgba(44, 107, 181, 0.18);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #4a5568;
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    text-align: center;
+  }
+
+  .pie-tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+  }
+
+  .pie-tooltip .tt-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 6px;
+  }
+
+  .pie-tooltip .tt-close {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #9bb3c9;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="pie-wrapper">
+
+  <svg viewBox="0 0 640 640">
+    <g id="slicesGroup">
+
+      <!-- Сектор 0: 0°–60° -->
+      <g class="slice" data-index="0" data-angle="30">
+        <path d="M 320 320 L 320 40 A 280 280 0 0 1 562.4 180 Z"
+              fill="#eaf3fc" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="400" y="170">⚗️</text>
+        <text x="400" y="195">Опасные</text>
+        <text x="400" y="212">вещества</text>
+      </g>
+
+      <!-- Сектор 1: 60°–120° -->
+      <g class="slice" data-index="1" data-angle="90">
+        <path d="M 320 320 L 562.4 180 A 280 280 0 0 1 562.4 460 Z"
+              fill="#e6f4ec" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="490" y="290">🔧</text>
+        <text x="490" y="315">Оборудование</text>
+        <text x="490" y="332">под давлением</text>
+      </g>
+
+      <!-- Сектор 2: 120°–180° -->
+      <g class="slice" data-index="2" data-angle="150">
+        <path d="M 320 320 L 562.4 460 A 280 280 0 0 1 320 600 Z"
+              fill="#fdf2e6" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="400" y="440">🏗️</text>
+        <text x="400" y="465">Подъемные</text>
+        <text x="400" y="482">сооружения</text>
+      </g>
+
+      <!-- Сектор 3: 180°–240° -->
+      <g class="slice" data-index="3" data-angle="210">
+        <path d="M 320 320 L 320 600 A 280 280 0 0 1 77.6 460 Z"
+              fill="#f3ecfa" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="240" y="440">⛏️</text>
+        <text x="240" y="465">Горные</text>
+        <text x="240" y="482">работы</text>
+      </g>
+
+      <!-- Сектор 4: 240°–300° -->
+      <g class="slice" data-index="4" data-angle="270">
+        <path d="M 320 320 L 77.6 460 A 280 280 0 0 1 77.6 180 Z"
+              fill="#fdecec" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="150" y="290">🔥</text>
+        <text x="150" y="315">Расплавы</text>
+        <text x="150" y="332">металлов</text>
+      </g>
+
+      <!-- Сектор 5: 300°–360° -->
+      <g class="slice" data-index="5" data-angle="330">
+        <path d="M 320 320 L 77.6 180 A 280 280 0 0 1 320 40 Z"
+              fill="#e8f6f8" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        <text class="icon" x="240" y="170">🌾</text>
+        <text x="240" y="195">Растительное</text>
+        <text x="240" y="212">сырье</text>
+      </g>
+
+    </g>
+
+    <!-- Центр -->
+    <circle class="center-circle" cx="320" cy="320" r="75"/>
+    <text class="center-text" x="320" y="315">116-ФЗ</text>
+    <text class="center-sub" x="320" y="340">Признаки</text>
+    <text class="center-sub" x="320" y="356">опасности ОПО</text>
+  </svg>
+
+  <!-- Всплывающее пояснение -->
+  <div class="pie-tooltip" id="tooltip">
+    <div class="tt-title" id="ttTitle"></div>
+    <div id="ttBody"></div>
+    <div class="tt-close" id="ttClose">закрыть</div>
+  </div>
+
+</div>
+
+<script>
+  const texts = {
+    0: "Токсичные, взрывчатые, горючие и другие вещества, способные навредить людям и окружающей среде.",
+    1: "Сосуды, котлы, трубопроводы пара и горячей воды, работающие под избыточным давлением.",
+    2: "Краны, лифты, канатные дороги, эскалаторы и другие грузоподъемные механизмы.",
+    3: "Добыча полезных ископаемых, строительство подземных сооружений, буровые работы.",
+    4: "Процессы плавки, литья и обработки расплавленных металлов и сплавов.",
+    5: "Зерно, мука, сахар и другое сырье, способное к самовозгоранию или образованию взрывоопасной пыли."
+  };
+
+  const titles = {
+    0: "Опасные вещества",
+    1: "Оборудование под давлением",
+    2: "Подъемные сооружения",
+    3: "Горные работы",
+    4: "Расплавы металлов",
+    5: "Растительное сырье"
+  };
+
+  const slices = document.querySelectorAll('.slice');
+  const tooltip = document.getElementById('tooltip');
+  const ttTitle = document.getElementById('ttTitle');
+  const ttBody = document.getElementById('ttBody');
+  const ttClose = document.getElementById('ttClose');
+
+  slices.forEach(slice => {
+    const angle = parseFloat(slice.dataset.angle);
+    const index = slice.dataset.index;
+
+    slice.addEventListener('click', () => {
+      // Сбросить все
+      slices.forEach(s => {
+        s.style.transform = 'translate(0, 0)';
+      });
+
+      // Выдвинуть выбранный кусок в сторону от центра
+      const rad = (angle - 90) * Math.PI / 180;
+      const dx = Math.cos(rad) * 18;
+      const dy = Math.sin(rad) * 18;
+      slice.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      ttTitle.textContent = titles[index];
+      ttBody.textContent = texts[index];
+      tooltip.classList.add('visible');
+    });
+  });
+
+  ttClose.addEventListener('click', () => {
+    tooltip.classList.remove('visible');
+    slices.forEach(s => {
+      s.style.transform = 'translate(0, 0)';
+    });
+  });
+</script>
+
+</body>
+</html>
