@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обязанности владельцев ОПО по готовности к авариям</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --card:#ffffff;
+    --border:#e2e6ea;
+    --text:#1c2733;
+    --muted:#5b6b7c;
+    --accent:#2c5f8a;
+    --accent-soft:#eef3f8;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:24px 12px;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .accordion{
+    max-width:760px;
+    margin:0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  .accordion__title{
+    margin:0;
+    padding:14px 18px;
+    font-size:.95rem;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+  }
+
+  .accordion__lead{
+    margin:0;
+    padding:12px 18px;
+    font-size:.83rem;
+    color:var(--muted);
+    border-bottom:1px solid var(--border);
+  }
+
+  .acc-item{border-top:1px solid var(--border);}
+  .acc-item:first-of-type{border-top:none;}
+
+  .acc-header{
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:12px 18px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    font:inherit;
+    color:var(--text);
+    transition:background .15s ease;
+  }
+
+  .acc-header:hover{background:#f6f8fa;}
+  .acc-header:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+
+  .acc-num{
+    flex:0 0 24px;
+    height:24px;
+    display:grid;
+    place-items:center;
+    border-radius:6px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:.75rem;
+    font-weight:700;
+    margin-top:1px;
+    transition:background .15s ease,color .15s ease;
+  }
+
+  .acc-item.open .acc-num{background:var(--accent);color:#fff;}
+
+  .acc-title{
+    flex:1;
+    font-weight:600;
+    font-size:.88rem;
+  }
+
+  .acc-icon{
+    flex:0 0 14px;
+    position:relative;
+    width:14px;
+    height:14px;
+    margin-top:5px;
+  }
+
+  .acc-icon::before,
+  .acc-icon::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    background:var(--accent);
+    border-radius:1px;
+    transform:translate(-50%,-50%);
+    transition:transform .2s ease,opacity .2s ease;
+  }
+
+  .acc-icon::before{width:10px;height:2px;}
+  .acc-icon::after{width:2px;height:10px;}
+
+  .acc-item.open .acc-icon::after{transform:translate(-50%,-50%) rotate(90deg);opacity:0;}
+
+  .acc-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .28s ease;
+  }
+
+  .acc-body{
+    padding:0 18px 14px 54px;
+    color:var(--muted);
+    font-size:.83rem;
+  }
+
+  .acc-body p{margin:0 0 8px;}
+  .acc-body p:last-child{margin-bottom:0;}
+
+  .acc-body ul{
+    margin:6px 0 8px;
+    padding-left:18px;
+  }
+
+  .acc-body li{margin-bottom:4px;}
+
+  .acc-body strong{color:var(--text);}
+
+  .acc-body .tag{
+    display:inline-block;
+    padding:1px 7px;
+    margin-right:4px;
+    font-size:.72rem;
+    font-weight:700;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-radius:4px;
+  }
+
+  @media (max-width:520px){
+    body{padding:12px 8px;font-size:13px;}
+    .accordion__title{padding:12px 14px;font-size:.9rem;}
+    .accordion__lead{padding:10px 14px;}
+    .acc-header{padding:10px 14px;gap:10px;}
+    .acc-body{padding:0 14px 12px 48px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="accordion">
+  <h1 class="accordion__title">Что обязан сделать владелец ОПО для готовности к авариям</h1>
+  <p class="accordion__lead">
+    Перечень мероприятий установлен статьёй 10 Закона о промышленной безопасности № 116-ФЗ.
+  </p>
+
+  <!-- 1 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">1</span>
+      <span class="acc-title">Разрабатывать и осуществлять планы мероприятий по локализации и ликвидации последствий аварий (ПМЛА)</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>ПМЛА нужны на ОПО <strong>I, II и III классов опасности</strong>, на которых:</p>
+        <ul>
+          <li>получают, используют, перерабатывают, образуют, хранят, транспортируют, уничтожают опасные вещества;</li>
+          <li>получают, транспортируют, используют расплавы чёрных и цветных металлов, сплавы на основе этих расплавов;</li>
+          <li>ведут горные работы и работы по обогащению полезных ископаемых;</li>
+          <li>хранят или перерабатывают растительное сырьё.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">2</span>
+      <span class="acc-title">Заключать договоры с ПАСС(Ф) или создавать свои формирования</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Варианты на выбор:</p>
+        <ul>
+          <li>заключить договор с профессиональными аварийно-спасательными службами или формированиями <span class="tag">ПАСС(Ф)</span>;</li>
+          <li>создать собственные <span class="tag">ПАСС(Ф)</span>;</li>
+          <li>создать нештатные аварийно-спасательные формирования <span class="tag">НАСФ</span> из числа работников.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">3</span>
+      <span class="acc-title">Создавать вспомогательные горноспасательные команды (ВГК)</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Требуется на ОПО <strong>I и II классов опасности</strong>, на которых ведутся горные работы.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">4</span>
+      <span class="acc-title">Иметь резервы финансовых средств и материальных ресурсов</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Резервы нужны для локализации и ликвидации последствий аварий на ОПО.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">5</span>
+      <span class="acc-title">Обучать работников действиям при аварии или инциденте</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Все работники должны знать, как действовать в случае аварии или инцидента на ОПО.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="acc-item">
+    <button class="acc-header" aria-expanded="false">
+      <span class="acc-num">6</span>
+      <span class="acc-title">Создавать системы наблюдения, оповещения, связи и поддержки действий</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-body">
+        <p>Такие системы должны быть созданы и постоянно поддерживаться в пригодном к использованию состоянии.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.acc-header').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.parentElement;
+      var panel = btn.nextElementSibling;
+      var isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.acc-item.open').forEach(function (openItem) {
+        openItem.classList.remove('open');
+        openItem.querySelector('.acc-header').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.acc-panel').style.maxHeight = null;
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.acc-item.open .acc-panel').forEach(function (panel) {
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
