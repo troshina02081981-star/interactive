@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Не ОПО</title>
+<style>
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+    padding: 30px 20px;
+    color: #2c3e50;
+  }
+
+  .block {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .block h2 {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #c0392b;
+    margin: 0 0 26px;
+    letter-spacing: 0.5px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  /* Кружок с иконкой */
+  .icon-circle {
+    flex-shrink: 0;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 2px solid #e8b4b4;
+    background: #fdf2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    z-index: 2;
+  }
+
+  /* Красная плашка со стрелкой */
+  .banner {
+    flex: 1;
+    background: #c0392b;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    padding: 18px 26px 18px 44px;
+    margin-left: 0;
+    border-radius: 0 4px 4px 0;
+    clip-path: polygon(38px 0, 100% 0, 100% 100%, 38px 100%, 0 50%);
+  }
+
+  @media (max-width: 600px) {
+    .banner { font-size: 14px; padding: 14px 18px 14px 34px; }
+    .icon-circle { width: 60px; height: 60px; font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="block">
+  <h2>Не ОПО!</h2>
+
+  <div class="row">
+    <div class="icon-circle">👷</div>
+    <div class="banner">Объекты электросетевого хозяйства</div>
+  </div>
+
+  <div class="row">
+    <div class="icon-circle">🔥</div>
+    <div class="banner">Газовые сети под давлением природного газа или СУГ до 0,005 МПа включительно</div>
+  </div>
+
+</div>
+
+</body>
+</html>
