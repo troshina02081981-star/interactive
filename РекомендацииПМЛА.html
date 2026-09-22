@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рекомендации к ПМЛА для различных ОПО</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --text:#1a1a1a;
+    --border:#e2e2e2;
+    --line:#cccccc;
+    --chip-bg:#f2f2f2;
+    --chip-border:#dcdcdc;
+    --doc-bg:#fafafa;
+    --doc-border:#e6e6e6;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    padding:28px 12px;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    font-size:13px;
+    line-height:1.35;
+  }
+
+  .scheme{
+    position:relative;
+    max-width:900px;
+    margin:0 auto;
+    padding-left:150px;
+  }
+
+  .lines{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    overflow:visible;
+  }
+
+  .lines path{
+    fill:none;
+    stroke:var(--line);
+    stroke-width:1.4;
+  }
+
+  /* Корневой документ */
+  .root{
+    position:absolute;
+    left:0;
+    top:170px;
+    width:140px;
+    border:1.5px solid #1a1a1a;
+    border-radius:6px;
+    padding:12px 10px;
+    background:#fff;
+    text-align:center;
+    z-index:2;
+  }
+
+  .root__title{
+    margin:0 0 8px;
+    font-size:.75rem;
+    font-weight:700;
+    line-height:1.3;
+    color:#1a1a1a;
+  }
+
+  .root__lines{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .root__lines span{
+    display:block;
+    height:1.5px;
+    background:#d5d5d5;
+    border-radius:2px;
+  }
+
+  .root__lines span:nth-child(1){width:100%;}
+  .root__lines span:nth-child(2){width:92%;}
+  .root__lines span:nth-child(3){width:78%;}
+  .root__lines span:nth-child(4){width:96%;}
+  .root__lines span:nth-child(5){width:60%;}
+
+  /* Список отраслей */
+  .branches{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .branch{
+    display:grid;
+    grid-template-columns:36px 1fr 22px 1.3fr;
+    align-items:center;
+    gap:10px;
+  }
+
+  .branch:nth-child(1){margin-left:0;}
+  .branch:nth-child(2){margin-left:6px;}
+  .branch:nth-child(3){margin-left:14px;}
+  .branch:nth-child(4){margin-left:10px;}
+  .branch:nth-child(5){margin-left:4px;}
+  .branch:nth-child(6){margin-left:0;}
+
+  .branch__icon{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#f5f5f5;
+    color:#1a1a1a;
+    border:1px solid #e6e6e6;
+  }
+
+  .branch__icon svg{width:20px;height:20px;}
+
+  .branch__label{
+    background:var(--chip-bg);
+    color:#1a1a1a;
+    border:1px solid var(--chip-border);
+    padding:8px 11px;
+    border-radius:4px;
+    font-size:.78rem;
+    font-weight:600;
+    line-height:1.25;
+    min-height:36px;
+    display:flex;
+    align-items:center;
+    transition:background .15s ease;
+  }
+
+  .branch__label:hover{background:#eaeaea;}
+
+  .branch__plus{
+    text-align:center;
+    color:#1a1a1a;
+    font-size:1.15rem;
+    font-weight:700;
+    line-height:1;
+  }
+
+  .branch__docs{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+
+  .doc{
+    background:var(--doc-bg);
+    border:1px solid var(--doc-border);
+    border-radius:6px;
+    padding:7px 10px;
+    font-size:.74rem;
+    color:#1a1a1a;
+    line-height:1.3;
+  }
+
+  /* Мобильная версия */
+  @media (max-width:680px){
+    .scheme{padding-left:0;padding-top:0;}
+    .lines{display:none;}
+    .root{position:static;width:auto;max-width:220px;margin:0 auto 16px;}
+    .branch{
+      grid-template-columns:32px 1fr;
+      grid-template-areas:
+        "icon label"
+        "docs docs"
+        "plus plus";
+      gap:6px;
+      padding-bottom:10px;
+      border-bottom:1px dashed var(--border);
+      margin-left:0 !important;
+    }
+    .branch:last-child{border-bottom:none;padding-bottom:0;}
+    .branch__icon{grid-area:icon;width:32px;height:32px;}
+    .branch__icon svg{width:18px;height:18px;}
+    .branch__label{grid-area:label;font-size:.75rem;min-height:32px;padding:6px 9px;}
+    .branch__plus{grid-area:plus;text-align:left;padding-left:38px;font-size:.95rem;}
+    .branch__docs{grid-area:docs;}
+  }
+</style>
+</head>
+<body>
+
+<div class="scheme" id="scheme">
+
+  <svg class="lines" id="lines" preserveAspectRatio="none"></svg>
+
+  <div class="root" id="root">
+    <p class="root__title">Положение о разработке ПМЛА № 1437</p>
+    <div class="root__lines">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="branches" id="branches">
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/>
+          <path d="M7.5 15h9"/>
+        </svg>
+      </div>
+      <div class="branch__label">При эксплуатации ВПХОПО</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Рекомендации по разработке ПЛА № 781</div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21V8l7-5 7 5v13"/>
+          <path d="M3 21h18"/>
+          <path d="M9 21v-6h4v6"/>
+        </svg>
+      </div>
+      <div class="branch__label">При эксплуатации ОПО растительного сырья</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Рекомендации по готовности к авариям на ВПОПО и ОХПРС № 287</div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18"/>
+          <path d="M5 20V12a7 7 0 0 1 14 0v8"/>
+          <path d="M9 20v-5a3 3 0 0 1 6 0v5"/>
+        </svg>
+      </div>
+      <div class="branch__label">При строительстве подземных сооружений</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Правила безопасности при строительстве подземных сооружений № 49</div>
+        <div class="doc">Рекомендации по составлению ПМЛА в подземных условиях № 364</div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18"/>
+          <path d="M6 20v-6h6v6"/>
+          <path d="M12 14l7-9 2 2-6 7"/>
+          <path d="M9 14V9"/>
+        </svg>
+      </div>
+      <div class="branch__label">При ведении горных работ</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Инструкция по локализации аварий в горных выработках № 520</div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20l4-10 4 6 3-5 5 9z"/>
+        </svg>
+      </div>
+      <div class="branch__label">При эксплуатации угольной шахты</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Инструкция по разработке ПЛА № 467</div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 18h16"/>
+          <path d="M7 18V10h4v8"/>
+          <path d="M7 10l2-4h2l2 4"/>
+          <path d="M15 18V8h4v10"/>
+          <path d="M15 8h4"/>
+        </svg>
+      </div>
+      <div class="branch__label">При эксплуатации магистральных нефтепроводов и нефтепродуктопроводов</div>
+      <div class="branch__plus">+</div>
+      <div class="branch__docs">
+        <div class="doc">Рекомендации по разработке ПМЛА на нефтепроводах № 415</div>
+        <div class="doc">Инструкция по ликвидации аварий на подводных нефтепроводах № 169</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var scheme = document.getElementById('scheme');
+    var root = document.getElementById('root');
+    var branches = document.querySelectorAll('#branches .branch');
+    var svg = document.getElementById('lines');
+
+    function draw() {
+      var sRect = scheme.getBoundingClientRect();
+      var rRect = root.getBoundingClientRect();
+
+      svg.setAttribute('viewBox', '0 0 ' + sRect.width + ' ' + sRect.height);
+      svg.innerHTML = '';
+
+      var sx = rRect.right - sRect.left;
+      var sy = rRect.top - sRect.top + rRect.height / 2;
+
+      branches.forEach(function (b) {
+        var icon = b.querySelector('.branch__icon');
+        var iRect = icon.getBoundingClientRect();
+        var ex = iRect.left - sRect.left;
+        var ey = iRect.top - sRect.top + iRect.height / 2;
+
+        var dx = ex - sx;
+        var c1x = sx + dx * 0.5;
+        var c1y = sy;
+        var c2x = sx + dx * 0.5;
+        var c2y = ey;
+
+        var d = 'M ' + sx + ' ' + sy +
+                ' C ' + c1x + ' ' + c1y + ', ' +
+                        c2x + ' ' + c2y + ', ' +
+                        ex + ' ' + ey;
+
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        svg.appendChild(path);
+
+        var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', ex);
+        dot.setAttribute('cy', ey);
+        dot.setAttribute('r', 2.5);
+        dot.setAttribute('fill', '#cccccc');
+        svg.appendChild(dot);
+      });
+
+      var startDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      startDot.setAttribute('cx', sx);
+      startDot.setAttribute('cy', sy);
+      startDot.setAttribute('r', 3);
+      startDot.setAttribute('fill', '#1a1a1a');
+      svg.appendChild(startDot);
+    }
+
+    window.addEventListener('load', draw);
+    window.addEventListener('resize', draw);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(draw);
+    }
+  })();
+</script>
+
+</body>
+</html>
