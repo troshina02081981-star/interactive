@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Памятка: ответственность по ч. 1 ст. 9.1 КоАП РФ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .memo {
+            width: 100%;
+            max-width: 680px;
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 20px;
+            padding: 28px 32px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .memo-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
+        }
+
+        .memo-sub {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .memo-sub strong {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        /* Блок наказания */
+        .penalty {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .penalty-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 18px;
+            background: #fafafa;
+            border-radius: 14px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .penalty-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #1a1a1a;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .penalty-body {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .penalty-who {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 6px;
+        }
+
+        .penalty-text {
+            font-size: 0.84rem;
+            color: #2c2c2c;
+            line-height: 1.55;
+            margin-bottom: 4px;
+        }
+
+        .penalty-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .penalty-text strong {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            color: #555;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+
+        .tag--fine {
+            border-color: #d0d0d0;
+            color: #1a1a1a;
+        }
+
+        .tag--alt {
+            border-color: #d0d0d0;
+            color: #1a1a1a;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.78rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .note strong {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .memo {
+                padding: 20px 18px;
+                border-radius: 16px;
+            }
+
+            .memo-title {
+                font-size: 1rem;
+            }
+
+            .penalty-row {
+                padding: 14px 14px;
+                gap: 12px;
+            }
+
+            .penalty-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.68rem;
+            }
+
+            .penalty-who {
+                font-size: 0.82rem;
+            }
+
+            .penalty-text {
+                font-size: 0.78rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="memo">
+        <div class="memo-title">Ответственность за нарушение требований промышленной безопасности</div>
+        <div class="memo-sub">Часть 1 статьи 9.1 КоАП РФ — <strong>наказание</strong></div>
+
+        <div class="penalty">
+            <!-- Должностные лица -->
+            <div class="penalty-row">
+                <div class="penalty-icon">ДЛ</div>
+                <div class="penalty-body">
+                    <div class="penalty-who">Для должностных лиц организации</div>
+                    <div class="penalty-text">
+                        <span class="tag tag--fine">Штраф</span>
+                        <strong>от 20 000 до 30 000 руб.</strong>
+                    </div>
+                    <div class="penalty-text">
+                        <span class="tag tag--alt">Или</span>
+                        <strong>дисквалификация</strong> на срок от 6 месяцев до 1 года
+                    </div>
+                </div>
+            </div>
+
+            <!-- Юридические лица -->
+            <div class="penalty-row">
+                <div class="penalty-icon">ЮЛ</div>
+                <div class="penalty-body">
+                    <div class="penalty-who">Для юридических лиц</div>
+                    <div class="penalty-text">
+                        <span class="tag tag--fine">Штраф</span>
+                        <strong>от 200 000 до 300 000 руб.</strong>
+                    </div>
+                    <div class="penalty-text">
+                        <span class="tag tag--alt">Или</span>
+                        <strong>административное приостановление деятельности</strong> на срок до 90 суток
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Основание:</strong> часть 1 статьи 9.1 КоАП РФ — нарушение требований промышленной безопасности или условий лицензий на осуществление видов деятельности в области промышленной безопасности опасных производственных объектов.
+        </div>
+    </div>
+
+</body>
+</html>
