@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгоритм страхования ОПО — аккордеон</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+            color: #1a1a1a;
+            line-height: 1.45;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 620px;
+            height: auto;
+            max-height: 75vh;
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid #eee;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+            padding: 16px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app h1 {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #000;
+            margin-bottom: 2px;
+            flex-shrink: 0;
+        }
+
+        .app .sub {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Аккордеон — без лишнего пространства снизу */
+        .accordion {
+            flex: 0 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #fff;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .accordion::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .accordion::-webkit-scrollbar-track {
+            background: #fff;
+        }
+
+        .accordion::-webkit-scrollbar-thumb {
+            background: #d8d8d8;
+            border-radius: 8px;
+        }
+
+        .item {
+            flex-shrink: 0;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            background: #ffffff;
+            transition: border-color 0.15s ease;
+            overflow: hidden;
+        }
+
+        .item:hover {
+            border-color: #c0c0c0;
+        }
+
+        .item.open {
+            border-color: #1a1a1a;
+        }
+
+        .item-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s ease;
+        }
+
+        .item-head:hover {
+            background: #fafafa;
+        }
+
+        .item.open .item-head {
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-num {
+            width: 24px;
+            height: 24px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .item-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            flex: 1 1 auto;
+            line-height: 1.25;
+        }
+
+        .item-arrow {
+            font-size: 0.6rem;
+            color: #bbb;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .item.open .item-arrow {
+            transform: rotate(180deg);
+        }
+
+        .item-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .item.open .item-body {
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #fafafa;
+        }
+
+        .item-body::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .item-body::-webkit-scrollbar-track {
+            background: #fafafa;
+        }
+
+        .item-body::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 8px;
+        }
+
+        .item-body-inner {
+            padding: 12px 14px;
+        }
+
+        .item-body p {
+            font-size: 0.76rem;
+            margin-bottom: 7px;
+            color: #2c2c2c;
+            line-height: 1.5;
+        }
+
+        .item-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-body ul {
+            margin: 5px 0 8px 18px;
+            font-size: 0.76rem;
+        }
+
+        .item-body li {
+            margin-bottom: 3px;
+        }
+
+        .item-body strong {
+            font-weight: 600;
+            color: #000;
+        }
+
+        @media (max-width: 600px) {
+            .app {
+                padding: 12px 12px 14px 12px;
+                max-height: none;
+            }
+
+            body {
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .app h1 {
+                font-size: 0.9rem;
+            }
+
+            .item-head {
+                padding: 9px 11px;
+                gap: 8px;
+            }
+
+            .item-title {
+                font-size: 0.75rem;
+            }
+
+            .item-num {
+                width: 22px;
+                height: 22px;
+                font-size: 0.65rem;
+            }
+
+            .item.open .item-body {
+                max-height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Алгоритм страхования для владельца ОПО</h1>
+    <div class="sub">Нажмите на полоску, чтобы раскрыть информацию</div>
+
+    <div class="accordion" id="accordion">
+        <!-- 1 -->
+        <div class="item" data-index="0">
+            <div class="item-head">
+                <div class="item-num">1</div>
+                <div class="item-title">Выбираем страховую компанию</div>
+                <div class="item-arrow">▼</div>
+            </div>
+            <div class="item-body">
+                <div class="item-body-inner">
+                    <p>Главное требование к страховой компании – она должна иметь <strong>лицензию</strong> на осуществление обязательного страхования и <strong>членство</strong> в профессиональном объединении страховщиков (ст. 24 Закона об обязательном страховании ОПО № 225-ФЗ).</p>
+                    <p>Проверить у страховой фирмы лицензию на осуществление обязательного страхования можно с помощью <strong>реестра Банка России</strong>.</p>
+                    <p>Членство в <strong>Национальном союзе страховщиков ответственности (НССО)</strong> можно проверить с помощью реестра членов НССО.</p>
+                    <p>Рекомендуем выбирать страховую компанию, у которой есть <strong>представительства в вашем регионе</strong>. При аварии это облегчит коммуникацию со страховщиком. Представитель страховой компании сможет участвовать в заседаниях комиссии по расследованию возможных аварий.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="item" data-index="1">
+            <div class="item-head">
+                <div class="item-num">2</div>
+                <div class="item-title">Направляем заявление и документы</div>
+                <div class="item-arrow">▼</div>
+            </div>
+            <div class="item-body">
+                <div class="item-body-inner">
+                    <p>Чтобы заключить договор страхования, в страховую компанию нужно направить:</p>
+                    <ul>
+                        <li>заявление установленной формы;</li>
+                        <li>сведения об опасном объекте.</li>
+                    </ul>
+                    <p>В заявлении указывают срок, на который заключают договор страхования. Срок страхования <strong>не должен быть менее одного года</strong> (ч. 1 ст. 10 Закона об обязательном страховании ОПО № 225-ФЗ). Максимальный срок для договоров страхования не установлен. Решение принимает страховая компания, но обычно она ставит срок один год.</p>
+                    <p>Если организация заключает договор с новой страховой компанией, тогда она должна приложить к заявлению <strong>сведения о страховых случаях</strong> (п. 1.3. Положения № 574-П).</p>
+                    <p>Формы заявлений для страхования и сведений о страховых случаях установлены в приложениях 2–5 Положения № 574-П.</p>
+                    <p>Сведения об опасном объекте указаны в документах о регистрации опасного объекта. К заявлению прикладывают копии таких документов. Перечень документов зависит от опасного объекта, для которого заключаете договор страхования, мы перечислили в таблице 1.</p>
+                    <p>Страховая компания проанализирует пакет документов и рассчитает страховую премию. На это потребуется <strong>не более 30 рабочих дней</strong> (п. 3 Указания № 6138-У).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="item" data-index="2">
+            <div class="item-head">
+                <div class="item-num">3</div>
+                <div class="item-title">Оплачиваем страховую премию</div>
+                <div class="item-arrow">▼</div>
+            </div>
+            <div class="item-body">
+                <div class="item-body-inner">
+                    <p>После того, как премия будет рассчитана, страховая компания направит страхователю <strong>счёт на уплату страховой премии</strong>. Его необходимо оплатить. Можно оплатить страховую премию <strong>несколькими платежами</strong>, но об этом нужно указать в заявлении о страховании.</p>
+                    <p>После того как счёт оплачен, страховая компания вручит страхователю <strong>страховой полис</strong>. Его нужно проверить на ошибки и неточности в сведениях об организации, опасном объекте, сроках страхования и оплате. Далее страховой полис нужно подписать у руководителя организации и поставить печать.</p>
+                    <p>Страховой полис подтверждает заключение договора страхования. Дополнительно оформлять и подписывать отдельный договор не нужно. Фактически страховой полис — это договор страхования. Это следует из пункта 1.1 Положения № 574-П.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="item" data-index="3">
+            <div class="item-head">
+                <div class="item-num">4</div>
+                <div class="item-title">Отчитываемся в Ростехнадзор</div>
+                <div class="item-arrow">▼</div>
+            </div>
+            <div class="item-body">
+                <div class="item-body-inner">
+                    <p>Да, в Ростехнадзор нужно отчитаться и сделать это нужно в регламентированный срок. Для этого организация должна направить <strong>письмо в произвольной форме</strong> в территориальное управление Ростехнадзора и приложить к нему копию страхового полиса.</p>
+                    <p>Направить письмо и документы нужно <strong>в течение пяти рабочих дней</strong> со дня оформления страхового полиса (п. 3 ч. 2 ст. 11 Закона об обязательном страховании ОПО № 225-ФЗ). Если нарушить срок, Ростехнадзор может привлечь организацию, которая эксплуатирует опасный объект, к <strong>административной ответственности</strong>.</p>
+                    <p>Направьте письмо в территориальное управление Ростехнадзора <strong>по почте с уведомлением о вручении и описью вложения</strong>. Это позволит подтвердить, что ваша организация выполнила требование закона.</p>
+                    <p>Также можно продублировать это письмо <strong>по электронной почте</strong>. Это нужно потому, что почта может не успеть доставить письмо в течение пяти рабочих дней.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const items = document.querySelectorAll('.item');
+
+        items.forEach(item => {
+            const head = item.querySelector('.item-head');
+            head.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+
+                // Закрываем все
+                items.forEach(i => i.classList.remove('open'));
+
+                // Если был закрыт — открываем
+                if (!isOpen) {
+                    item.classList.add('open');
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>
