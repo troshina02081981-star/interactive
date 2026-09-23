@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгоритм страхования для владельца ОПО</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 1100px;
+            height: 90vh;
+            max-height: 750px;
+            background: #ffffff;
+            border-radius: 28px;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #000;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .app .sub {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Карточки алгоритма — квадратные плашки */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            flex-shrink: 0;
+            margin-bottom: 18px;
+        }
+
+        .step {
+            aspect-ratio: 1 / 1;
+            background: #ffffff;
+            border: 2px solid #e8e8e8;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .step:hover {
+            border-color: #b0b0b0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .step.active {
+            border-color: #1a1a1a;
+            background: #fafafa;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .step-num {
+            width: 34px;
+            height: 34px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.25;
+        }
+
+        /* Область с подробной информацией */
+        .info {
+            flex: 1 1 auto;
+            min-height: 0;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 18px;
+            position: relative;
+        }
+
+        .info-panel {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #fff;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .info-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .info-panel::-webkit-scrollbar-track {
+            background: #fff;
+        }
+
+        .info-panel::-webkit-scrollbar-thumb {
+            background: #d8d8d8;
+            border-radius: 8px;
+        }
+
+        .info-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-panel h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #000;
+        }
+
+        .info-panel p {
+            font-size: 0.92rem;
+            margin-bottom: 10px;
+            color: #2c2c2c;
+        }
+
+        .info-panel ul {
+            margin: 8px 0 14px 22px;
+            font-size: 0.92rem;
+        }
+
+        .info-panel li {
+            margin-bottom: 6px;
+        }
+
+        .info-panel strong {
+            font-weight: 600;
+            color: #000;
+        }
+
+        @media (max-width: 800px) {
+            .app {
+                padding: 22px 18px;
+                height: auto;
+                max-height: none;
+            }
+
+            .steps {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .step {
+                border-radius: 14px;
+            }
+
+            .step-num {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .step-title {
+                font-size: 0.78rem;
+            }
+
+            body {
+                align-items: flex-start;
+                padding: 12px;
+            }
+
+            .info-panel {
+                max-height: 260px;
+            }
+
+            .app h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Алгоритм страхования для владельца ОПО</h1>
+    <div class="sub">Нажмите на карточку, чтобы увидеть подробности</div>
+
+    <!-- Карточки алгоритма -->
+    <div class="steps" id="steps">
+        <div class="step" data-index="0">
+            <div class="step-num">1</div>
+            <div class="step-title">Выбираем страховую компанию</div>
+        </div>
+        <div class="step" data-index="1">
+            <div class="step-num">2</div>
+            <div class="step-title">Направляем заявление и документы</div>
+        </div>
+        <div class="step" data-index="2">
+            <div class="step-num">3</div>
+            <div class="step-title">Оплачиваем страховую премию</div>
+        </div>
+        <div class="step" data-index="3">
+            <div class="step-num">4</div>
+            <div class="step-title">Отчитываемся в Ростехнадзор</div>
+        </div>
+    </div>
+
+    <!-- Подробная информация -->
+    <div class="info">
+        <!-- Шаг 1 -->
+        <div class="info-panel" data-panel="0">
+            <h2>1. Выбираем страховую компанию</h2>
+            <p>Главное требование к страховой компании — она должна иметь <strong>лицензию</strong> на осуществление обязательного страхования и <strong>членство</strong> в профессиональном объединении страховщиков (ст. 24 Закона об обязательном страховании ОПО № 225-ФЗ).</p>
+            <p>Проверить у страховой фирмы лицензию на осуществление обязательного страхования можно с помощью <strong>реестра Банка России</strong>.</p>
+            <p>Членство в <strong>Национальном союзе страховщиков ответственности (НССО)</strong> можно проверить с помощью реестра членов НССО.</p>
+            <p>Рекомендуем выбирать страховую компанию, у которой есть <strong>представительства в вашем регионе</strong>. При аварии это облегчит коммуникацию со страховщиком. Представитель страховой компании сможет участвовать в заседаниях комиссии по расследованию возможных аварий.</p>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="info-panel" data-panel="1">
+            <h2>2. Направляем заявление и документы</h2>
+            <p>Чтобы заключить договор страхования, в страховую компанию нужно направить:</p>
+            <ul>
+                <li>заявление установленной формы;</li>
+                <li>сведения об опасном объекте.</li>
+            </ul>
+            <p>В заявлении указывают срок, на который заключают договор страхования. Срок страхования <strong>не должен быть менее одного года</strong> (ч. 1 ст. 10 Закона об обязательном страховании ОПО № 225-ФЗ). Максимальный срок для договоров страхования не установлен. Решение принимает страховая компания, но обычно она ставит срок один год.</p>
+            <p>Если организация заключает договор с <strong>новой страховой компанией</strong>, тогда она должна приложить к заявлению <strong>сведения о страховых случаях</strong> (п. 1.3. Положения № 574-П).</p>
+            <p>Формы заявлений для страхования и сведений о страховых случаях установлены в приложениях 2–5 Положения № 574-П.</p>
+            <p>Сведения об опасном объекте указаны в документах о регистрации опасного объекта. К заявлению прикладывают копии таких документов. Перечень документов зависит от опасного объекта, для которого заключаете договор страхования, мы перечислили в таблице 1.</p>
+            <p>Страховая компания проанализирует пакет документов и рассчитает страховую премию. На это потребуется <strong>не более 30 рабочих дней</strong> (п. 3 Указания № 6138-У).</p>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="info-panel" data-panel="2">
+            <h2>3. Оплачиваем страховую премию</h2>
+            <p>После того как премия будет рассчитана, страховая компания направит страхователю <strong>счёт на уплату страховой премии</strong>. Его необходимо оплатить.</p>
+            <p>Можно оплатить страховую премию <strong>несколькими платежами</strong>, но об этом нужно указать в заявлении о страховании.</p>
+            <p>После того как счёт оплачен, страховая компания вручит страхователю <strong>страховой полис</strong>. Его нужно проверить на ошибки и неточности в сведениях об организации, опасном объекте, сроках страхования и оплате. Далее страховой полис нужно подписать у руководителя организации и поставить печать.</p>
+            <p>Страховой полис подтверждает заключение договора страхования. Дополнительно оформлять и подписывать отдельный договор не нужно. Фактически страховой полис — это договор страхования. Это следует из пункта 1.1 Положения № 574-П.</p>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="info-panel" data-panel="3">
+            <h2>4. Отчитываемся в Ростехнадзор</h2>
+            <p>Да, в Ростехнадзор нужно отчитаться и сделать это нужно в регламентированный срок. Для этого организация должна направить <strong>письмо в произвольной форме</strong> в территориальное управление Ростехнадзора и приложить к нему копию страхового полиса.</p>
+            <p>Направить письмо и документы нужно <strong>в течение пяти рабочих дней</strong> со дня оформления страхового полиса (п. 3 ч. 2 ст. 11 Закона об обязательном страховании ОПО № 225-ФЗ).</p>
+            <p>Если нарушить срок, Ростехнадзор может привлечь организацию, которая эксплуатирует опасный объект, к <strong>административной ответственности</strong>.</p>
+            <p>Направьте письмо в территориальное управление Ростехнадзора <strong>по почте с уведомлением о вручении и описью вложения</strong>. Это позволит подтвердить, что ваша организация выполнила требование закона.</p>
+            <p>Также можно продублировать это письмо <strong>по электронной почте</strong>. Это нужно потому, что почта может не успеть доставить письмо в течение пяти рабочих дней.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const steps = document.querySelectorAll('.step');
+        const panels = document.querySelectorAll('.info-panel');
+        let activeIndex = -1;
+
+        function closeAll() {
+            steps.forEach(s => s.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+            activeIndex = -1;
+        }
+
+        steps.forEach((step, index) => {
+            step.addEventListener('click', () => {
+                if (step.classList.contains('active')) {
+                    closeAll();
+                } else {
+                    closeAll();
+                    step.classList.add('active');
+                    panels[index].classList.add('active');
+                    activeIndex = index;
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>
