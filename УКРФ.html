@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Уголовная ответственность за нарушения промбезопасности</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #1a1a1a;
+  }
+
+  .slider {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .slider__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .slider__block {
+    font-weight: 600;
+    color: #c0392b;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #e6e9ee;
+    border-radius: 16px;
+    padding: 32px;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card__article {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #c0392b;
+    margin-bottom: 12px;
+  }
+
+  .card__title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 20px;
+    color: #111;
+  }
+
+  .card__label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+
+  .card__list {
+    list-style: none;
+    margin-bottom: 16px;
+  }
+
+  .card__list li {
+    position: relative;
+    padding: 8px 0 8px 20px;
+    font-size: 15px;
+    line-height: 1.45;
+    color: #333;
+    border-bottom: 1px solid #f0f2f5;
+  }
+
+  .card__list li:last-child { border-bottom: none; }
+
+  .card__list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c0392b;
+  }
+
+  .card__note {
+    margin-top: auto;
+    padding-top: 16px;
+    font-size: 14px;
+    font-style: italic;
+    color: #777;
+    border-top: 1px dashed #e0e4ea;
+  }
+
+  .slider__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 12px;
+  }
+
+  .btn {
+    flex: 0 0 auto;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #c0392b;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+
+  .btn:hover { background: #a93226; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e0e4ea;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .dot.active {
+    background: #c0392b;
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; min-height: 300px; }
+    .card__title { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slider">
+  <div class="slider__header">
+    <span class="slider__block" id="blockName"></span>
+    <span id="counter"></span>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card__article" id="article"></div>
+    <div class="card__title" id="title"></div>
+    <div class="card__label" id="label"></div>
+    <ul class="card__list" id="list"></ul>
+    <div class="card__note" id="note"></div>
+  </div>
+
+  <div class="slider__controls">
+    <button class="btn" id="prev">← Назад</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn" id="next">Вперед →</button>
+  </div>
+</div>
+
+<script>
+  const cards = [
+    {
+      block: "Уголовная ответственность",
+      article: "Часть 1 ст. 217 УК РФ",
+      title: "Нарушение требований промышленной безопасности опасных производственных объектов, повлекшее по неосторожности причинение тяжкого вреда здоровью человека либо крупного ущерба",
+      label: "Наказание",
+      items: [
+        "Штраф до 400 тысяч рублей или в размере заработной платы или иного дохода осужденного за период до 18 месяцев",
+        "Принудительные работы на срок до 3 лет с лишением права занимать определенные должности или заниматься определенной деятельностью на срок до 3 лет или без такового",
+        "Лишение свободы на срок до 3 лет с лишением права занимать определенные должности или заниматься определенной деятельностью на срок до 3 лет или без такового"
+      ],
+      note: "Крупным ущербом признается ущерб на сумму свыше 500 тысяч рублей. Пример: нарушение требований промбезопасности привело к тяжкому травмированию работника."
+    },
+    {
+      block: "Уголовная ответственность",
+      article: "Часть 2 ст. 217 УК РФ",
+      title: "Нарушение требований промбезопасности, повлекшее по неосторожности смерть человека",
+      label: "Наказание",
+      items: [
+        "До 5 лет принудительных работ",
+        "До 5 лет лишения свободы"
+      ],
+      note: "Суд дополнительно может лишить виновника права занимать определенные должности в течение трех лет после исполнения основного наказания. Пример: эксплуатация кранов с запредельными нагрузками, превышающими паспортные значения, привела к гибели человека."
+    },
+    {
+      block: "Уголовная ответственность",
+      article: "Часть 3 ст. 217 УК РФ",
+      title: "Нарушение требований промбезопасности, повлекшее по неосторожности смерть двух или более лиц",
+      label: "Наказание",
+      items: [
+        "До 5 лет принудительных работ",
+        "До 7 лет лишения свободы"
+      ],
+      note: "Суд дополнительно может лишить виновника права занимать определенные должности в течение трех лет после исполнения основного наказания. Пример: эксплуатация неисправного котла привела к гибели трех работников, еще двое оказались в реанимации."
+    }
+  ];
+
+  let current = 0;
+
+  const el = {
+    blockName: document.getElementById("blockName"),
+    counter: document.getElementById("counter"),
+    article: document.getElementById("article"),
+    title: document.getElementById("title"),
+    label: document.getElementById("label"),
+    list: document.getElementById("list"),
+    note: document.getElementById("note"),
+    dots: document.getElementById("dots"),
+    prev: document.getElementById("prev"),
+    next: document.getElementById("next")
+  };
+
+  function renderDots() {
+    el.dots.innerHTML = "";
+    cards.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.className = "dot" + (i === current ? " active" : "");
+      dot.addEventListener("click", () => goTo(i));
+      el.dots.appendChild(dot);
+    });
+  }
+
+  function render() {
+    const c = cards[current];
+    el.blockName.textContent = c.block;
+    el.counter.textContent = (current + 1) + " / " + cards.length;
+    el.article.textContent = c.article;
+    el.title.textContent = c.title;
+    el.label.textContent = c.label;
+
+    el.list.innerHTML = "";
+    c.items.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      el.list.appendChild(li);
+    });
+
+    el.note.textContent = c.note || "";
+    el.note.style.display = c.note ? "block" : "none";
+
+    el.prev.disabled = current === 0;
+    el.next.disabled = current === cards.length - 1;
+
+    renderDots();
+  }
+
+  function goTo(index) {
+    current = index;
+    render();
+  }
+
+  el.prev.addEventListener("click", () => { if (current > 0) goTo(current - 1); });
+  el.next.addEventListener("click", () => { if (current < cards.length - 1) goTo(current + 1); });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" && current > 0) goTo(current - 1);
+    if (e.key === "ArrowRight" && current < cards.length - 1) goTo(current + 1);
+  });
+
+  render();
+</script>
+
+</body>
+</html>
