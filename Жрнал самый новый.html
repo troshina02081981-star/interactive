@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Журнал учета документов по промбезопасности</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    background: #fff;
+    padding: 24px 16px;
+    margin: 0;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 20px 28px;
+    border: 1px solid #eef2f6;
+    border-radius: 18px;
+  }
+  h1 {
+    font-size: 22px;
+    color: #0b2b4a;
+    margin: 0 0 4px 0;
+  }
+  .subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fafcff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 720px;
+  }
+  th {
+    background: #f1f5f9;
+    padding: 10px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #1e293b;
+    border-bottom: 2px solid #d1d9e6;
+    white-space: nowrap;
+  }
+  td {
+    padding: 5px 7px;
+    border-bottom: 1px solid #eef2f6;
+    vertical-align: middle;
+  }
+  td input, td select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #d1d9e6;
+    border-radius: 7px;
+    font-size: 12.5px;
+    background: #fff;
+  }
+  td input:focus, td select:focus {
+    outline: 2px solid #2563eb;
+    border-color: transparent;
+  }
+  td input[readonly] {
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: default;
+  }
+  .col-status { text-align: center; font-size: 18px; width: 44px; }
+  .col-del { width: 32px; text-align: center; }
+  .btn-del-row {
+    background: none; border: none; color: #94a3b8;
+    font-size: 16px; cursor: pointer; padding: 3px 6px;
+    border-radius: 6px;
+  }
+  .btn-del-row:hover { background: #fee2e2; color: #dc2626; }
+
+  .btn-add {
+    margin-top: 12px;
+    padding: 10px;
+    width: 100%;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+  }
+  .btn-add:hover { background: #eef2ff; border-color: #2563eb; color: #1e40af; }
+
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+  }
+  .actions .left { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13.5px;
+    cursor: pointer;
+    background: #f1f5f9;
+    color: #1e293b;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(0,0,0,0.08); }
+  .btn-success { background: #16a34a; color: #fff; }
+  .btn-success:hover { background: #15803d; }
+  .btn-danger { background: #dc2626; color: #fff; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-outline { background: transparent; border: 2px solid #cbd5e1; }
+  .btn-outline:hover { border-color: #94a3b8; background: #f8fafc; }
+  .hint { font-size: 12.5px; color: #94a3b8; margin-top: 8px; }
+
+  .checklist-box {
+    margin-top: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px 18px;
+    border: 1px solid #e2e8f0;
+  }
+  .checklist-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none; gap: 10px;
+  }
+  .checklist-header h2 {
+    font-size: 15px; margin: 0; color: #0b2b4a;
+    display: flex; align-items: center; gap: 8px; flex: 1;
+  }
+  .checklist-header .arrow {
+    font-size: 13px; color: #94a3b8; transition: transform 0.25s; flex-shrink: 0;
+  }
+  .checklist-box.open .checklist-header .arrow { transform: rotate(180deg); color: #2563eb; }
+  .checklist-header .count-badge {
+    font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 30px; flex-shrink: 0;
+  }
+  .count-badge.ok { background: #dcfce7; color: #15803d; }
+  .count-badge.miss { background: #fee2e2; color: #b91c1c; }
+  .checklist-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .checklist-box.open .checklist-body { max-height: 700px; margin-top: 12px; }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid #eef2f6; font-size: 13px;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item .icon { font-size: 15px; width: 20px; }
+  .check-item .name { flex: 1; color: #1e293b; }
+  .check-item .badge {
+    font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 30px; white-space: nowrap;
+  }
+  .badge.present { background: #dcfce7; color: #15803d; }
+  .badge.missing { background: #fee2e2; color: #b91c1c; }
+  .checklist-legend {
+    margin-top: 10px; font-size: 11.5px; color: #64748b;
+    background: #eef2ff; padding: 8px 12px; border-radius: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 16px 12px; }
+    .actions, .actions .left { flex-direction: column; }
+    .btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📋 Журнал учета документов по промбезопасности</h1>
+  <div class="subtitle">Лицензии и свидетельства — бессрочные. Для срочных документов система подсветит просрочку.</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width:160px;">Название документа</th>
+          <th style="min-width:110px;">Дата утверждения</th>
+          <th style="min-width:130px;">Срок действия</th>
+          <th style="min-width:110px;">Ответственный</th>
+          <th style="width:44px;">Статус</th>
+          <th style="width:30px;"></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <button class="btn-add" id="addRowBtn">➕ Добавить строку</button>
+
+  <div class="actions">
+    <div class="left">
+      <button class="btn btn-danger" id="clearBtn">🗑 Очистить</button>
+      <button class="btn btn-outline" id="exampleBtn">📂 Загрузить пример</button>
+    </div>
+    <button class="btn btn-success" id="exportBtn">⬇ Скачать Excel</button>
+  </div>
+  <div class="hint">💾 Данные сохраняются автоматически в браузере.</div>
+
+  <div class="checklist-box" id="checklistBox">
+    <div class="checklist-header" id="checklistHeader">
+      <h2>📌 Минимальный перечень документов</h2>
+      <span class="count-badge miss" id="checklistCount">0/0</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="checklist-body">
+      <div id="checklistContainer"></div>
+      <div class="checklist-legend">✅ Зеленый — документ есть &nbsp;|&nbsp; ❌ Красный — не хватает</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// 1. СПРАВОЧНИК: бессрочные документы
+// ================================================================
+// Бессрочные: только лицензии и свидетельства.
+// Страховой полис — срочный, продлевается ежегодно.
+const PERPETUAL_DOCS = [
+  'лицензия',
+  'свидетельство'
+];
+
+function isPerpetual(name) {
+  if (!name) return false;
+  const n = name.toLowerCase().trim();
+  return PERPETUAL_DOCS.some(d => n.includes(d));
+}
+
+// ================================================================
+// 2. МИНИМАЛЬНЫЙ ПЕРЕЧЕНЬ
+// ================================================================
+const MINIMAL_DOCS = [
+  'Свидетельство о регистрации ОПО',
+  'Сведения, характеризующие ОПО',
+  'Страховой полис',
+  'Лицензия на эксплуатацию',
+  'Декларация промышленной безопасности',
+  'Заключение ЭПБ на документацию',
+  'Технологический регламент',
+  'Производственные инструкции',
+  'Паспорта на техустройства',
+  'Приказ о назначении ответственных'
+];
+
+// ================================================================
+// 3. ДАННЫЕ
+// ================================================================
+const STORAGE_KEY = 'pb_journal_data_v3';
+
+function getDefaultData() {
+  return [
+    { name: 'Свидетельство о регистрации ОПО', date: '2024-01-15', expiry: '', responsible: 'Иванов И.И.' },
+    { name: 'Лицензия на эксплуатацию', date: '2023-06-01', expiry: '', responsible: 'Петров П.П.' },
+    { name: 'Декларация ПБ', date: '2021-12-01', expiry: '2030-11-30', responsible: 'Сидоров С.С.' },
+    { name: 'Страховой полис', date: '2025-01-10', expiry: '2026-01-09', responsible: 'Кузнецова А.А.' },
+  ];
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return getDefaultData();
+}
+function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+// ================================================================
+// 4. СТАТУС
+// ================================================================
+function getStatusInfo(row) {
+  if (isPerpetual(row.name)) return { icon: '🟢', cls: 'ok', label: 'Бессрочно' };
+  if (!row.expiry) return { icon: '⚪', cls: '', label: 'Не указан' };
+  const now = new Date();
+  const exp = new Date(row.expiry);
+  const diff = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return { icon: '🔴', cls: 'danger', label: 'Просрочен' };
+  if (diff < 30) return { icon: '🟡', cls: 'warning', label: 'Истекает' };
+  return { icon: '🟢', cls: 'ok', label: 'Действует' };
+}
+
+// ================================================================
+// 5. ТАБЛИЦА
+// ================================================================
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  data.forEach((row, idx) => {
+    const status = getStatusInfo(row);
+    const perpetual = isPerpetual(row.name);
+
+    const expiryCell = perpetual
+      ? `<input type="text" class="f-expiry" value="Бессрочно" data-idx="${idx}" readonly>`
+      : `<input type="date" class="f-expiry" value="${row.expiry || ''}" data-idx="${idx}">`;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" class="f-name" value="${escapeHtml(row.name)}" data-idx="${idx}" placeholder="Введите название"></td>
+      <td><input type="date" class="f-date" value="${row.date || ''}" data-idx="${idx}"></td>
+      <td>${expiryCell}</td>
+      <td><input type="text" class="f-responsible" value="${escapeHtml(row.responsible)}" data-idx="${idx}" placeholder="ФИО"></td>
+      <td class="col-status" title="${status.label}">${status.icon}</td>
+      <td class="col-del"><button class="btn-del-row" data-idx="${idx}">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', function() {
+      const idx = parseInt(this.dataset.idx);
+      const data = loadData();
+      if (isNaN(idx) || idx < 0 || idx >= data.length) return;
+      const field = this.classList.contains('f-name') ? 'name' :
+                    this.classList.contains('f-date') ? 'date' :
+                    this.classList.contains('f-expiry') ? 'expiry' :
+                    this.classList.contains('f-responsible') ? 'responsible' : null;
+      if (field) {
+        data[idx][field] = this.value;
+        saveData(data);
+        renderTable(data);
+      }
+    });
+  });
+
+  tbody.querySelectorAll('.btn-del-row').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.idx);
+      const data = loadData();
+      if (!isNaN(idx) && idx >= 0 && idx < data.length) {
+        data.splice(idx, 1);
+        saveData(data);
+        renderTable(data);
+      }
+    });
+  });
+
+  updateChecklist(data);
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ================================================================
+// 6. ЧЕК-ЛИСТ
+// ================================================================
+function updateChecklist(data) {
+  const container = document.getElementById('checklistContainer');
+  const countEl = document.getElementById('checklistCount');
+  const names = data.map(r => r.name.trim()).filter(n => n.length > 0);
+  let present = 0;
+  let html = '';
+  MINIMAL_DOCS.forEach(doc => {
+    const found = names.some(n => n.toLowerCase().includes(doc.toLowerCase()) || doc.toLowerCase().includes(n.toLowerCase()));
+    if (found) present++;
+    html += `
+      <div class="check-item">
+        <span class="icon">${found ? '📄' : '📭'}</span>
+        <span class="name">${doc}</span>
+        <span class="badge ${found ? 'present' : 'missing'}">${found ? '✅ Есть' : '❌ Нет'}</span>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  const total = MINIMAL_DOCS.length;
+  countEl.textContent = `${present}/${total}`;
+  countEl.className = 'count-badge ' + (present === total ? 'ok' : 'miss');
+}
+
+// ================================================================
+// 7. ЭКСПОРТ
+// ================================================================
+function exportExcel() {
+  const data = loadData();
+  if (!data.length) { alert('Таблица пуста. Добавьте хотя бы одну строку.'); return; }
+
+  let html = `
+    <html><head><meta charset="UTF-8"><style>
+      th { background:#d1d9e6; font-weight:bold; }
+      td, th { border:1px solid #999; padding:6px 10px; font-size:12px; }
+      .danger { background:#ffcccc; }
+      .warning { background:#ffeb99; }
+      .ok { background:#ccffcc; }
+    </style></head><body>
+    <h2>Журнал учета документов по промбезопасности</h2>
+    <table>
+      <tr><th>Название документа</th><th>Дата утверждения</th><th>Срок действия</th><th>Ответственный</th><th>Статус</th></tr>
+  `;
+
+  data.forEach(row => {
+    const status = getStatusInfo(row);
+    html += `
+      <tr class="${status.cls}">
+        <td>${escapeHtml(row.name)}</td>
+        <td>${row.date || ''}</td>
+        <td>${isPerpetual(row.name) ? 'Бессрочно' : (row.expiry || '')}</td>
+        <td>${escapeHtml(row.responsible)}</td>
+        <td>${status.label}</td>
+      </tr>
+    `;
+  });
+
+  html += `</table><p><em>Экспорт из онлайн-журнала. Красные — просрочены, желтые — менее 30 дней, зеленые — бессрочные.</em></p></body></html>`;
+
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Журнал_документов_ПБ_${new Date().toISOString().slice(0,10)}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ================================================================
+// 8. ИНИЦИАЛИЗАЦИЯ
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+  renderTable(loadData());
+
+  document.getElementById('checklistHeader').addEventListener('click', function() {
+    document.getElementById('checklistBox').classList.toggle('open');
+  });
+
+  document.getElementById('addRowBtn').addEventListener('click', function() {
+    const data = loadData();
+    data.push({ name: '', date: '', expiry: '', responsible: '' });
+    saveData(data);
+    renderTable(data);
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    if (confirm('Удалить все записи из журнала?')) {
+      saveData([]);
+      renderTable([]);
+    }
+  });
+
+  document.getElementById('exampleBtn').addEventListener('click', function() {
+    if (confirm('Заменить текущие данные на пример?')) {
+      saveData(getDefaultData());
+      renderTable(loadData());
+    }
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', exportExcel);
+});
+</script>
+</body>
+</html>
