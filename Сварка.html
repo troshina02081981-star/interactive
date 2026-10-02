@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что делать специалисту по промбезопасности уже сейчас</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #ffffff;
+    color: #1a1a2e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border: 2px solid #1a1a2e;
+    border-radius: 14px;
+    padding: 22px 24px 18px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Заголовок ── */
+  .header {
+    padding: 0 0 14px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .header h1 {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1a1a2e;
+  }
+
+  /* ── Прогресс ── */
+  .progress-track {
+    height: 2px;
+    background: #f0f0f0;
+    margin-top: 14px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #f59e0b;
+    transition: width 0.35s ease;
+  }
+
+  /* ── Слайды ── */
+  .slides {
+    padding: 26px 0 10px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .slide.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .slide-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    margin-bottom: 12px;
+  }
+
+  .slide h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .slide p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 10px;
+  }
+
+  .slide ul {
+    margin: 0 0 10px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+  .slide li { margin-bottom: 5px; }
+
+  .slide strong { color: #111827; }
+
+  .sub-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    margin: 14px 0 6px;
+  }
+  .sub-title:first-of-type { margin-top: 4px; }
+
+  /* ── Навигация ── */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 0;
+    gap: 10px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+    background: #ffffff;
+    color: #4b5563;
+  }
+  .btn-prev { color: #9ca3af; }
+  .btn-prev:hover { color: #4b5563; }
+  .btn-prev:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .btn-next {
+    background: #1a1a2e;
+    color: #fff;
+  }
+  .btn-next:hover { background: #16213e; }
+  .btn-next:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .dot.active {
+    background: #f59e0b;
+    width: 20px;
+    border-radius: 99px;
+  }
+  .dot.done { background: #10b981; }
+
+  .counter {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #9ca3af;
+    min-width: 42px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>Что делать специалисту по промбезопасности уже сейчас</h1>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="slides" id="slides">
+
+    <div class="slide active">
+      <span class="slide-tag">Шаг 1</span>
+      <h2>Проверьте документы работников</h2>
+      <p>Составьте список тех, кому потребуется проверка готовности. Контролируйте наличие:</p>
+      <ul>
+        <li>свидетельства о готовности организации к применению аттестованных технологий;</li>
+        <li>удостоверений НАКС сварщиков и руководителей;</li>
+        <li>выписок из протоколов аттестации по области Б.1.11;</li>
+        <li>удостоверений специалистов по контролю качества.</li>
+      </ul>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">Шаг 2</span>
+      <h2>План мероприятий и финансирование</h2>
+      <p>Внесите получение допуска в план мероприятий по промбезопасности.</p>
+      <p>При необходимости запланируйте финансирование.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">Шаг 3</span>
+      <h2>Изучите рабочую документацию</h2>
+
+      <div class="sub-title">Технологические карты</div>
+      <ul>
+        <li>порядок ведения работ;</li>
+        <li>оборудование;</li>
+        <li>материалы;</li>
+        <li>меры безопасности.</li>
+      </ul>
+
+      <div class="sub-title">Наряды-допуски</div>
+      <ul>
+        <li>даты;</li>
+        <li>подписи;</li>
+        <li>инструктажи.</li>
+      </ul>
+
+      <div class="sub-title">Документация на оборудование и инструменты</div>
+      <ul>
+        <li>заводской номер должен соответствовать фактическому;</li>
+        <li>сертификаты на сварочные материалы.</li>
+      </ul>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">Шаг 4</span>
+      <h2>Осмотрите места проведения работ</h2>
+      <p>Оцените:</p>
+      <ul>
+        <li>исправность оборудования;</li>
+        <li>защиту от влаги и повреждений;</li>
+        <li>ограждение опасной зоны;</li>
+        <li>наличие огнетушителей и знаков безопасности;</li>
+        <li>использование средств индивидуальной защиты.</li>
+      </ul>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">Шаг 5</span>
+      <h2>Проверьте итоговую документацию</h2>
+      <ul>
+        <li>журналы сварочных работ;</li>
+        <li>акты и заключения по неразрушающему контролю;</li>
+        <li>протоколы испытаний;</li>
+        <li>акты входного контроля материалов;</li>
+        <li>исполнительную документацию по результатам операционного и приемочного контроля.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-prev" id="btnPrev">← Назад</button>
+    <div class="dots" id="dots"></div>
+    <span class="counter" id="counter">1 / 5</span>
+    <button class="btn btn-next" id="btnNext">Далее →</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const progressFill = document.getElementById('progressFill');
+  const counter = document.getElementById('counter');
+  const dotsContainer = document.getElementById('dots');
+  const slidesArea = document.getElementById('slides');
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Слайд ' + (i + 1));
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+  const dots = document.querySelectorAll('.dot');
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+      d.classList.toggle('done', i < current);
+    });
+
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+    btnNext.textContent = current === total - 1 ? 'Готово ✓' : 'Далее →';
+
+    counter.textContent = (current + 1) + ' / ' + total;
+    progressFill.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+
+  let touchStartX = 0;
+  slidesArea.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  slidesArea.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  btnPrev.disabled = true;
+  counter.textContent = '1 / ' + total;
+  progressFill.style.width = (1 / total * 100) + '%';
+</script>
+
+</body>
+</html>
