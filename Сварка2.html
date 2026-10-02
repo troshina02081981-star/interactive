@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что разработает и утвердит Ростехнадзор</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #ffffff;
+    color: #1a1a2e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border: 2px solid #1a1a2e;
+    border-radius: 14px;
+    padding: 22px 24px 18px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    padding: 0 0 14px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .header h1 {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1a1a2e;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: #f0f0f0;
+    margin-top: 14px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #f59e0b;
+    transition: width 0.35s ease;
+  }
+
+  .slides {
+    padding: 26px 0 10px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .slide.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .slide-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    margin-bottom: 12px;
+  }
+
+  .slide h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.35;
+  }
+
+  .slide p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 0;
+    gap: 10px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+    background: #ffffff;
+    color: #4b5563;
+  }
+  .btn-prev { color: #9ca3af; }
+  .btn-prev:hover { color: #4b5563; }
+  .btn-prev:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .btn-next {
+    background: #1a1a2e;
+    color: #fff;
+  }
+  .btn-next:hover { background: #16213e; }
+  .btn-next:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .dot.active {
+    background: #f59e0b;
+    width: 20px;
+    border-radius: 99px;
+  }
+  .dot.done { background: #10b981; }
+
+  .counter {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #9ca3af;
+    min-width: 42px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>Согласно постановлению, Ростехнадзор разработает и утвердит:</h1>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="slides" id="slides">
+
+    <div class="slide active">
+      <span class="slide-tag">1 из 9</span>
+      <h2>Порядок ведения государственного реестра СРО</h2>
+      <p>Порядок ведения государственного реестра СРО в сфере проверки готовности сварочного производства.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">2 из 9</span>
+      <h2>Требования к аттестационным центрам</h2>
+      <p>Требования к аттестационным центрам, входящим в состав СРО.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">3 из 9</span>
+      <h2>Оценка соответствия СРО</h2>
+      <p>Порядок оценки соответствия СРО установленным обязательным требованиям.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">4 из 9</span>
+      <h2>Правила проверки готовности</h2>
+      <p>Правила проверки готовности к выполнению сварочных работ на опасных производственных объектах.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">5 из 9</span>
+      <h2>Методика расчёта стоимости</h2>
+      <p>Методика расчёта стоимости услуг по проведению проверки готовности.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">6 из 9</span>
+      <h2>Регистрационные номера</h2>
+      <p>Порядок присвоения регистрационных номеров в соответствующих реестрах.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">7 из 9</span>
+      <h2>Типовые формы выписок</h2>
+      <p>Типовые формы выписок из реестров.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">8 из 9</span>
+      <h2>Перечень сведений в реестрах</h2>
+      <p>Перечень сведений, включаемых в реестры СРО.</p>
+    </div>
+
+    <div class="slide">
+      <span class="slide-tag">9 из 9</span>
+      <h2>Соглашение об информационном взаимодействии</h2>
+      <p>Типовая форма соглашения об информационном взаимодействии между СРО и Ростехнадзором.</p>
+    </div>
+
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-prev" id="btnPrev">← Назад</button>
+    <div class="dots" id="dots"></div>
+    <span class="counter" id="counter">1 / 9</span>
+    <button class="btn btn-next" id="btnNext">Далее →</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const progressFill = document.getElementById('progressFill');
+  const counter = document.getElementById('counter');
+  const dotsContainer = document.getElementById('dots');
+  const slidesArea = document.getElementById('slides');
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Слайд ' + (i + 1));
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+  const dots = document.querySelectorAll('.dot');
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+      d.classList.toggle('done', i < current);
+    });
+
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+    btnNext.textContent = current === total - 1 ? 'Готово ✓' : 'Далее →';
+
+    counter.textContent = (current + 1) + ' / ' + total;
+    progressFill.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+
+  let touchStartX = 0;
+  slidesArea.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  slidesArea.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  btnPrev.disabled = true;
+  counter.textContent = '1 / ' + total;
+  progressFill.style.width = (1 / total * 100) + '%';
+</script>
+
+</body>
+</html>
