@@ -1,215 +1,215 @@
-!DOCTYPE html
-html lang=ru
-head
-meta charset=UTF-8
-meta name=viewport content=width=device-width, initial-scale=1.0
-titleКак снизить штраф четыре шагаtitle
-style
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как снизить штраф: четыре шага</title>
+<style>
   body {
-    font-family -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial, sans-serif;
-    background #fff;
-    color #1c2530;
-    margin 0;
-    padding 24px 16px;
-    line-height 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #fff;
+    color: #1c2530;
+    margin: 0;
+    padding: 24px 16px;
+    line-height: 1.5;
   }
   .widget {
-    max-width 680px;
-    margin 0 auto;
-    background #fff;
-    border 1px solid #dfe5ec;
-    border-radius 14px;
-    padding 20px;
+    max-width: 680px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #dfe5ec;
+    border-radius: 14px;
+    padding: 20px;
   }
   .widget h2 {
-    font-size 17px;
-    margin 0 0 6px;
+    font-size: 17px;
+    margin: 0 0 6px;
   }
   .widget .sub {
-    font-size 13.5px;
-    color #5b6673;
-    margin 0 0 18px;
+    font-size: 13.5px;
+    color: #5b6673;
+    margin: 0 0 18px;
   }
 
-  .steps { display flex; flex-direction column; gap 10px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
 
   .step {
-    border 1px solid #e3e8ee;
-    border-radius 11px;
-    overflow hidden;
+    border: 1px solid #e3e8ee;
+    border-radius: 11px;
+    overflow: hidden;
   }
   .step-head {
-    display flex;
-    align-items center;
-    gap 12px;
-    padding 13px 15px;
-    cursor pointer;
-    user-select none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    cursor: pointer;
+    user-select: none;
   }
-  .step-headhover { background #fafbfd; }
+  .step-head:hover { background: #fafbfd; }
 
   .num {
-    flex none;
-    width 26px;
-    height 26px;
-    border-radius 50%;
-    background #e7f0fd;
-    color #0b6bcb;
-    font-size 13px;
-    font-weight 600;
-    display flex;
-    align-items center;
-    justify-content center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e7f0fd;
+    color: #0b6bcb;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .step-title {
-    font-size 14px;
-    font-weight 600;
-    flex 1;
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
   }
   .step-tag {
-    font-size 10.5px;
-    text-transform uppercase;
-    letter-spacing .04em;
-    color #8a94a0;
-    flex none;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #8a94a0;
+    flex: none;
   }
   .arrow {
-    flex none;
-    color #8a94a0;
-    font-size 12px;
-    transition transform .2s;
+    flex: none;
+    color: #8a94a0;
+    font-size: 12px;
+    transition: transform .2s;
   }
-  .step.open .arrow { transform rotate(90deg); }
+  .step.open .arrow { transform: rotate(90deg); }
 
   .step-body {
-    display none;
-    padding 0 15px 15px 53px;
-    font-size 13.5px;
-    color #3a4552;
+    display: none;
+    padding: 0 15px 15px 53px;
+    font-size: 13.5px;
+    color: #3a4552;
   }
-  .step.open .step-body { display block; }
+  .step.open .step-body { display: block; }
 
   .step-body ul {
-    margin 8px 0 0;
-    padding-left 18px;
+    margin: 8px 0 0;
+    padding-left: 18px;
   }
-  .step-body li { margin-bottom 5px; }
+  .step-body li { margin-bottom: 5px; }
 
   .note {
-    margin-top 10px;
-    padding 10px 12px;
-    border-radius 8px;
-    font-size 12.5px;
-    background #f7f9fc;
-    border-left 3px solid #0b6bcb;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    background: #f7f9fc;
+    border-left: 3px solid #0b6bcb;
   }
-  .note.warn { border-color #b3541e; background #fdf3ec; }
+  .note.warn { border-color: #b3541e; background: #fdf3ec; }
 
   .reset {
-    margin-top 14px;
-    font-size 12.5px;
-    color #5b6673;
-    background #fff;
-    border 1px solid #d5dce4;
-    border-radius 7px;
-    padding 7px 13px;
-    cursor pointer;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: #5b6673;
+    background: #fff;
+    border: 1px solid #d5dce4;
+    border-radius: 7px;
+    padding: 7px 13px;
+    cursor: pointer;
   }
-  .resethover { background #f4f6f9; }
-style
-head
-body
+  .reset:hover { background: #f4f6f9; }
+</style>
+</head>
+<body>
 
-div class=widget
-  h2Как снизить штраф четыре шагаh2
-  p class=subНажмите на каждый шаг, чтобы раскрыть детали. Двигайтесь по порядку — от досудебных аргументов до суда.p
+<div class="widget">
+  <h2>Как снизить штраф: четыре шага</h2>
+  <p class="sub">Нажмите на каждый шаг, чтобы раскрыть детали. Двигайтесь по порядку — от досудебных аргументов до суда.</p>
 
-  div class=steps id=steps
+  <div class="steps" id="steps">
 
-    div class=step data-step=1
-      div class=step-head
-        span class=num1span
-        span class=step-titleУбедить инспектора обстоятельства и принятые мерыspan
-        span class=step-tagдосудебноspan
-        span class=arrow›span
-      div
-      div class=step-body
+    <div class="step" data-step="1">
+      <div class="step-head">
+        <span class="num">1</span>
+        <span class="step-title">Убедить инспектора: обстоятельства и принятые меры</span>
+        <span class="step-tag">досудебно</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="step-body">
         Покажите инспектору, что нарушение вызвано объективными причинами, а организация уже приняла меры и устранит вопрос в ближайшее время.
-        div class=note
-          bПримерb неработающий котёл выведен из эксплуатации приказом, есть договор на поставку запчасти и чек об авансе — инспектор вправе не наказывать.
-        div
-      div
-    div
+        <div class="note">
+          <b>Пример:</b> неработающий котёл выведен из эксплуатации приказом, есть договор на поставку запчасти и чек об авансе — инспектор вправе не наказывать.
+        </div>
+      </div>
+    </div>
 
-    div class=step data-step=2
-      div class=step-head
-        span class=num2span
-        span class=step-titleПопросить предупреждение вместо штрафаspan
-        span class=step-tagдосудебноspan
-        span class=arrow›span
-      div
-      div class=step-body
+    <div class="step" data-step="2">
+      <div class="step-head">
+        <span class="num">2</span>
+        <span class="step-title">Попросить предупреждение вместо штрафа</span>
+        <span class="step-tag">досудебно</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="step-body">
         Предупреждение — официальное порицание (ст. 3.4 КоАП). Доступно не всем.
-        ul
-          liмалому и среднему бизнесу;li
-          liнекоммерческим организациям.li
-        ul
-        Условия применения
-        ul
-          liнарушение совершено впервые;li
-          liне создало угрозы и не причинило вреда;li
-          liне нанесло имущественного ущерба.li
-        ul
-      div
-    div
+        <ul>
+          <li>малому и среднему бизнесу;</li>
+          <li>некоммерческим организациям.</li>
+        </ul>
+        Условия применения:
+        <ul>
+          <li>нарушение совершено впервые;</li>
+          <li>не создало угрозы и не причинило вреда;</li>
+          <li>не нанесло имущественного ущерба.</li>
+        </ul>
+      </div>
+    </div>
 
-    div class=step data-step=3
-      div class=step-head
-        span class=num3span
-        span class=step-titleОбжаловать в Ростехнадзореspan
-        span class=step-tagведомственноspan
-        span class=arrow›span
-      div
-      div class=step-body
+    <div class="step" data-step="3">
+      <div class="step-head">
+        <span class="num">3</span>
+        <span class="step-title">Обжаловать в Ростехнадзоре</span>
+        <span class="step-tag">ведомственно</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="step-body">
         Если договориться с проверяющим не удалось — подайте жалобу в Ростехнадзор. Сделать это можно через портал Госуслуги.
-        div class=note
-          bСрок рассмотрения жалобыb 20 рабочих дней.
-        div
-      div
-    div
+        <div class="note">
+          <b>Срок рассмотрения жалобы:</b> 20 рабочих дней.
+        </div>
+      </div>
+    </div>
 
-    div class=step data-step=4
-      div class=step-head
-        span class=num4span
-        span class=step-titleОбратиться в судspan
-        span class=step-tagсудебноspan
-        span class=arrow›span
-      div
-      div class=step-body
+    <div class="step" data-step="4">
+      <div class="step-head">
+        <span class="num">4</span>
+        <span class="step-title">Обратиться в суд</span>
+        <span class="step-tag">судебно</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="step-body">
         Идите в суд только если уверены в своей правоте и готовы подтвердить доводы аргументами и доказательствами.
-        div class=note warn
-          bПримерb суд отменил штраф, потому что организация не сдала отчёт в срок из-за ДТП с сотрудником, а подача на следующий рабочий день не повлияла ни на работу ведомства, ни на безопасность ОПО.
-        div
-      div
-    div
+        <div class="note warn">
+          <b>Пример:</b> суд отменил штраф, потому что организация не сдала отчёт в срок из-за ДТП с сотрудником, а подача на следующий рабочий день не повлияла ни на работу ведомства, ни на безопасность ОПО.
+        </div>
+      </div>
+    </div>
 
-  div
+  </div>
 
-  button class=reset id=resetСвернуть всеbutton
-div
+  <button class="reset" id="reset">Свернуть все</button>
+</div>
 
-script
+<script>
   const steps = document.querySelectorAll('.step');
 
-  steps.forEach(step = {
-    step.querySelector('.step-head').addEventListener('click', () = {
+  steps.forEach(step => {
+    step.querySelector('.step-head').addEventListener('click', () => {
       step.classList.toggle('open');
     });
   });
 
-  document.getElementById('reset').onclick = () = {
-    steps.forEach(s = s.classList.remove('open'));
+  document.getElementById('reset').onclick = () => {
+    steps.forEach(s => s.classList.remove('open'));
   };
-script
-body
-html
+</script>
+</body>
+</html>
