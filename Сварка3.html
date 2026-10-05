@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Две аттестации по новым правилам</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #fff;
+    color: #1c2530;
+    margin: 0;
+    padding: 24px 16px;
+    line-height: 1.45;
+  }
+  .widget {
+    max-width: 620px;
+    margin: 0 auto;
+    background: #f2f5f9;
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .widget h2 {
+    font-size: 16px;
+    margin: 0 0 14px;
+    text-align: center;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 11px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(20,40,70,.07);
+    display: flex;
+    flex-direction: column;
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 9px;
+    align-self: flex-start;
+  }
+  .card.a .tag { background: #e7f0fd; color: #0b6bcb; }
+  .card.b .tag { background: #fdeee3; color: #b3541e; }
+
+  .card h3 {
+    font-size: 13.5px;
+    margin: 0 0 10px;
+    line-height: 1.3;
+    min-height: 35px;
+  }
+  .card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .card li {
+    padding: 5px 0;
+    border-top: 1px solid #eef1f5;
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .card li:first-child { border-top: none; }
+  .card li b {
+    font-weight: 400;
+    color: #8a94a0;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    margin-bottom: 1px;
+  }
+
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
+    .card h3 { min-height: 0; }
+    .card li { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="widget">
+  <h2>Две аттестации по новым правилам</h2>
+
+  <div class="cards">
+    <div class="card a">
+      <span class="tag">Основная</span>
+      <h3>Проверка готовности к сварочным работам на ОПО</h3>
+      <ul>
+        <li><b>Вместо</b>аттестации НАКС</li>
+        <li><b>Основание</b>ст. 8.1 ФЗ-116, ФЗ № 94-ФЗ</li>
+        <li><b>Этапы</b>документы + практика</li>
+        <li><b>Фиксация</b>фото, видео, реестр</li>
+        <li><b>Кто ведет</b>центры в составе СРО</li>
+      </ul>
+    </div>
+
+    <div class="card b">
+      <span class="tag">Отдельная</span>
+      <h3>Аттестация по промышленной безопасности</h3>
+      <ul>
+        <li><b>Что это</b>проверка знаний</li>
+        <li><b>Основание</b>постановление № 13 с изм. постановлением № 1182</li>
+        <li><b>Этапы</b>тестирование</li>
+        <li><b>Практика</b>нет</li>
+        <li><b>Для сварщика</b>может не понадобиться</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
