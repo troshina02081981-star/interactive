@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Хронология защиты: от инспектора до суда</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #fff;
+    color: #1c2530;
+    margin: 0;
+    padding: 24px 16px;
+    line-height: 1.5;
+  }
+  .widget {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #dfe5ec;
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .widget h2 { font-size: 17px; margin: 0 0 6px; }
+  .widget .sub { font-size: 13.5px; color: #5b6673; margin: 0 0 22px; }
+
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: #e3e8ee;
+  }
+
+  .point { position: relative; margin-bottom: 4px; }
+  .point::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 14px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #cfd8e3;
+    transition: all .2s;
+    z-index: 1;
+  }
+  .point.active::before {
+    border-color: #0b6bcb;
+    background: #0b6bcb;
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+  }
+  .head:hover { background: #f7faff; }
+  .head .title { font-size: 14px; font-weight: 600; flex: 1; }
+  .head .term {
+    font-size: 11.5px;
+    color: #0b6bcb;
+    background: #e7f0fd;
+    padding: 3px 9px;
+    border-radius: 20px;
+    flex: none;
+  }
+  .head .arrow {
+    color: #8a94a0;
+    font-size: 12px;
+    transition: transform .2s;
+  }
+  .point.open .head .arrow { transform: rotate(90deg); }
+
+  .body {
+    display: none;
+    padding: 0 13px 14px 13px;
+    font-size: 13.5px;
+    color: #3a4552;
+  }
+  .point.open .body { display: block; }
+
+  .body ul { margin: 6px 0 0; padding-left: 18px; }
+  .body li { margin-bottom: 4px; }
+
+  .reset {
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: #5b6673;
+    background: #fff;
+    border: 1px solid #d5dce4;
+    border-radius: 7px;
+    padding: 7px 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reset:hover { background: #f4f6f9; }
+</style>
+</head>
+<body>
+
+<div class="widget">
+  <h2>Хронология защиты: от инспектора до суда</h2>
+  <p class="sub">Четыре этапа. Нажмите на каждый, чтобы увидеть сроки и что подготовить.</p>
+
+  <div class="timeline" id="timeline">
+
+    <div class="point" data-step="1">
+      <div class="head">
+        <span class="title">Проверка и решение инспектора</span>
+        <span class="term">сразу</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="body">
+        Инспектор фиксирует нарушение и определяет наказание.
+        <ul>
+          <li>покажите документы об объективных причинах;</li>
+          <li>подтвердите, что меры уже приняты;</li>
+          <li>ходатайствуйте о предупреждении вместо штрафа.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="point" data-step="2">
+      <div class="head">
+        <span class="title">Жалоба в Ростехнадзор</span>
+        <span class="term">20 рабочих дней</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="body">
+        Если договориться с проверяющим не удалось — подайте жалобу.
+        <ul>
+          <li>способ подачи — портал Госуслуги;</li>
+          <li>срок рассмотрения — 20 рабочих дней;</li>
+          <li>приложите документы и доказательства.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="point" data-step="3">
+      <div class="head">
+        <span class="title">Решение по жалобе</span>
+        <span class="term">по итогам</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="body">
+        Ведомство либо отменяет, либо оставляет решение в силе.
+        <ul>
+          <li>если отменили — вопрос закрыт;</li>
+          <li>если оставили — переходите к суду.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="point" data-step="4">
+      <div class="head">
+        <span class="title">Суд</span>
+        <span class="term">по готовности</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="body">
+        Обращайтесь, только если уверены в правоте.
+        <ul>
+          <li>подготовьте аргументы и доказательства;</li>
+          <li>пример: ДТП с сотрудником, из-за которого отчёт сдали на следующий рабочий день, — штраф отменён.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="reset" id="reset">Свернуть все</button>
+</div>
+
+<script>
+  const points = document.querySelectorAll('.point');
+
+  points.forEach(p => {
+    p.querySelector('.head').addEventListener('click', () => {
+      p.classList.toggle('open');
+      p.classList.toggle('active');
+    });
+  });
+
+  document.getElementById('reset').onclick = () => {
+    points.forEach(p => {
+      p.classList.remove('open', 'active');
+    });
+  };
+</script>
+</body>
+</html>
