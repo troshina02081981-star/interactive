@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конструктор реестра ЛНА</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 24px 14px;
+    line-height: 1.5;
+  }
+
+  .wrap { width: 100%; max-width: 760px; }
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .lead {
+    font-size: 0.8rem;
+    color: #7a8ba3;
+    margin-bottom: 18px;
+  }
+
+  .form {
+    border: 1px solid #e4e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #fafcfe;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 1fr 1.2fr auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #7a8ba3;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 7px 9px;
+    border: 1px solid #d5dce4;
+    border-radius: 7px;
+    color: #1f2933;
+    background: #ffffff;
+    transition: border-color 0.15s;
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: #2c5f8a;
+  }
+
+  .add-btn {
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: 1px solid #2c5f8a;
+    background: #2c5f8a;
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.15s;
+    height: 34px;
+  }
+  .add-btn:hover { background: #1f4a6d; }
+
+  .table-wrap {
+    border: 1px solid #e4e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  thead th {
+    background: #f5f8fb;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #52606d;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e4e7eb;
+  }
+
+  tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f3f7;
+    color: #3e4c59;
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafcfe; }
+
+  .empty {
+    text-align: center;
+    padding: 28px 16px;
+    font-size: 0.8rem;
+    color: #9aa5b1;
+  }
+
+  .del {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #b8c6d6;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: 0.15s;
+  }
+  .del:hover { color: #c72a2a; background: #fef2f2; }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .btn-copy {
+    background: #fff;
+    color: #2c5f8a;
+    border: 1px solid #c7d9ed;
+  }
+  .btn-copy:hover { background: #f0f6fc; }
+  .btn-clear {
+    background: #fff;
+    color: #7a8ba3;
+    border: 1px solid #d5dce4;
+  }
+  .btn-clear:hover { background: #f7f8fa; }
+
+  .toast {
+    font-size: 0.75rem;
+    color: #1e8e3e;
+    font-weight: 600;
+    align-self: center;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 700px) {
+    .row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .add-btn { grid-column: span 2; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 560px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2>Конструктор реестра ЛНА</h2>
+  <p class="lead">Добавьте документы — таблица соберется автоматически</p>
+
+  <div class="form">
+    <div class="row">
+      <div class="field">
+        <label>Наименование</label>
+        <input type="text" id="f-name" placeholder="Положение о производственном контроле">
+      </div>
+      <div class="field">
+        <label>Вид</label>
+        <select id="f-type">
+          <option>Положение</option>
+          <option>Инструкция</option>
+          <option>Приказ</option>
+          <option>Перечень</option>
+          <option>Программа</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Подразделение</label>
+        <input type="text" id="f-dept" placeholder="Цех № 1">
+      </div>
+      <div class="field">
+        <label>Срок</label>
+        <input type="text" id="f-date" placeholder="до 01.09.2027">
+      </div>
+      <div class="field">
+        <label>Ответственный</label>
+        <input type="text" id="f-owner" placeholder="Иванов И.И.">
+      </div>
+      <button class="add-btn" id="addBtn">+ Добавить</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Наименование</th>
+          <th>Вид</th>
+          <th>Подразделение</th>
+          <th>Срок</th>
+          <th>Ответственный</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="6" class="empty">Пока пусто. Добавьте первый документ.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-copy" id="copyBtn">Скопировать таблицу</button>
+    <button class="btn btn-clear" id="clearBtn">Очистить все</button>
+    <span class="toast" id="toast">Скопировано</span>
+  </div>
+</div>
+
+<script>
+  let docs = [];
+
+  const tbody = document.getElementById('tbody');
+  const toast = document.getElementById('toast');
+
+  function render() {
+    if (docs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Пока пусто. Добавьте первый документ.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = docs.map((d, i) => `
+      <tr>
+        <td>${d.name}</td>
+        <td>${d.type}</td>
+        <td>${d.dept || '—'}</td>
+        <td>${d.date || '—'}</td>
+        <td>${d.owner || '—'}</td>
+        <td><button class="del" data-i="${i}" title="Удалить">✕</button></td>
+      </tr>
+    `).join('');
+
+    tbody.querySelectorAll('.del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        docs.splice(parseInt(btn.dataset.i), 1);
+        render();
+      });
+    });
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => {
+    const name = document.getElementById('f-name').value.trim();
+    const type = document.getElementById('f-type').value;
+    const dept = document.getElementById('f-dept').value.trim();
+    const date = document.getElementById('f-date').value.trim();
+    const owner = document.getElementById('f-owner').value.trim();
+
+    if (!name) {
+      document.getElementById('f-name').focus();
+      return;
+    }
+
+    docs.push({ name, type, dept, date, owner });
+    render();
+
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-dept').value = '';
+    document.getElementById('f-date').value = '';
+    document.getElementById('f-owner').value = '';
+    document.getElementById('f-name').focus();
+  });
+
+  document.getElementById('f-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('addBtn').click();
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    if (docs.length === 0) return;
+
+    const header = ['Наименование', 'Вид', 'Подразделение', 'Срок', 'Ответственный'];
+    const rows = docs.map(d => [d.name, d.type, d.dept || '', d.date || '', d.owner || '']);
+    const text = [header, ...rows].map(r => r.join('\t')).join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if (docs.length && confirm('Удалить все документы из реестра?')) {
+      docs = [];
+      render();
+    }
+  });
+
+  render();
+</script>
+
+</body>
+</html>
