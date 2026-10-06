@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что дает автоматизация ЛНА</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 14px;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .lead {
+    font-size: 0.78rem;
+    color: #7a8ba3;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .circle-wrap {
+    position: relative;
+    width: 460px;
+    height: 460px;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .slice {
+    cursor: pointer;
+    transition: transform 0.35s ease, filter 0.2s;
+    transform-origin: 230px 230px;
+  }
+  .slice:hover { filter: brightness(1.05); }
+
+  .slice text {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    fill: #2c3e50;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .slice .ico {
+    font-size: 18px;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #d8e3ee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px 14px;
+    z-index: 5;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 4px 16px rgba(44, 95, 138, 0.08);
+  }
+  .center.active {
+    border-color: #2c5f8a;
+    box-shadow: 0 4px 20px rgba(44, 95, 138, 0.15);
+  }
+
+  .center .default {
+    font-size: 0.75rem;
+    color: #9aa5b1;
+    line-height: 1.45;
+  }
+
+  .center .title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #2c5f8a;
+    margin-bottom: 6px;
+    line-height: 1.2;
+    display: none;
+  }
+
+  .center .desc {
+    font-size: 0.68rem;
+    color: #3e4c59;
+    line-height: 1.45;
+    display: none;
+  }
+
+  .center.active .default { display: none; }
+  .center.active .title,
+  .center.active .desc { display: block; }
+
+  @media (max-width: 520px) {
+    .circle-wrap { width: 340px; height: 340px; }
+    .center { width: 120px; height: 120px; padding: 10px 8px; }
+    .center .title { font-size: 0.7rem; margin-bottom: 4px; }
+    .center .desc { font-size: 0.62rem; line-height: 1.35; }
+    .slice text { font-size: 9.5px; }
+    .slice .ico { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<h2>Что дает автоматизация</h2>
+<p class="lead">Нажмите на сектор, чтобы увидеть подробности</p>
+
+<div class="circle-wrap">
+  <svg viewBox="0 0 460 460">
+    <!-- Сектор 0: 0°–90° -->
+    <g class="slice" data-index="0" data-angle="45">
+      <path d="M 230 230 L 230 30 A 200 200 0 0 1 430 230 Z"
+              fill="#eaf3fc" stroke="#ffffff" stroke-width="2.5"/>
+      <text class="ico" x="330" y="115">⏱️</text>
+      <text x="330" y="140">Снижение</text>
+      <text x="330" y="155">трудозатрат</text>
+    </g>
+
+    <!-- Сектор 1: 90°–180° -->
+    <g class="slice" data-index="1" data-angle="135">
+      <path d="M 230 230 L 430 230 A 200 200 0 0 1 230 430 Z"
+              fill="#e6f4ec" stroke="#ffffff" stroke-width="2.5"/>
+      <text class="ico" x="330" y="330">👁️</text>
+      <text x="330" y="355">Прозрачность</text>
+    </g>
+
+    <!-- Сектор 2: 180°–270° -->
+    <g class="slice" data-index="2" data-angle="225">
+      <path d="M 230 230 L 230 430 A 200 200 0 0 1 30 230 Z"
+              fill="#fdf2e6" stroke="#ffffff" stroke-width="2.5"/>
+      <text class="ico" x="130" y="330">🛡️</text>
+      <text x="130" y="355">Защита</text>
+      <text x="130" y="370">от рисков</text>
+    </g>
+
+    <!-- Сектор 3: 270°–360° -->
+    <g class="slice" data-index="3" data-angle="315">
+      <path d="M 230 230 L 30 230 A 200 200 0 0 1 230 30 Z"
+              fill="#f3ecfa" stroke="#ffffff" stroke-width="2.5"/>
+      <text class="ico" x="130" y="115">📊</text>
+      <text x="130" y="140">Отчеты</text>
+      <text x="130" y="155">для проверок</text>
+    </g>
+  </svg>
+
+  <div class="center" id="center">
+    <div class="default">Выберите<br>сектор</div>
+    <div class="title" id="ct"></div>
+    <div class="desc" id="cd"></div>
+  </div>
+</div>
+
+<script>
+  const data = {
+    0: {
+      title: 'Снижение трудозатрат',
+      desc: 'Работа с документами занимает на 60% меньше времени. Отчеты готовятся быстрее.'
+    },
+    1: {
+      title: 'Прозрачность',
+      desc: 'Видно, где документ, кто не ознакомился, какие сроки нарушены.'
+    },
+    2: {
+      title: 'Защита от рисков',
+      desc: 'Без подписи документ не имеет силы. Система закрывает пробел.'
+    },
+    3: {
+      title: 'Отчеты для проверок',
+      desc: 'Все данные в одном месте. Отчет формируется за минуты.'
+    }
+  };
+
+  const slices = document.querySelectorAll('.slice');
+  const center = document.getElementById('center');
+  const ct = document.getElementById('ct');
+  const cd = document.getElementById('cd');
+
+  slices.forEach(slice => {
+    const angle = parseFloat(slice.dataset.angle);
+    const index = slice.dataset.index;
+
+    slice.addEventListener('click', () => {
+      slices.forEach(s => s.style.transform = 'translate(0, 0)');
+
+      const rad = (angle - 90) * Math.PI / 180;
+      const dx = Math.cos(rad) * 10;
+      const dy = Math.sin(rad) * 10;
+      slice.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      ct.textContent = data[index].title;
+      cd.textContent = data[index].desc;
+      center.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
