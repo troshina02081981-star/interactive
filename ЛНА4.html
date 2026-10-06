@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Внешние НПА и внутренние ЛНА</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 28px 14px;
+    line-height: 1.5;
+  }
+
+  .wrap { width: 100%; max-width: 620px; }
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .lead {
+    font-size: 0.8rem;
+    color: #7a8ba3;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .col {
+    border: 1px solid #e4e7eb;
+    border-radius: 12px;
+    padding: 14px 14px 16px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+
+  .col:hover {
+    border-color: #b8c6d6;
+    box-shadow: 0 4px 14px rgba(44, 95, 138, 0.08);
+  }
+
+  .col.active {
+    border-color: #2c5f8a;
+    background: #f7fafd;
+    box-shadow: 0 4px 18px rgba(44, 95, 138, 0.12);
+  }
+
+  .col.outer.active { border-color: #2c5f8a; }
+  .col.inner.active { border-color: #1e8e3e; background: #f5fbf7; }
+
+  .col-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .col-ico {
+    font-size: 1.2rem;
+  }
+
+  .col-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1f2933;
+  }
+  .col.outer.active .col-title { color: #2c5f8a; }
+  .col.inner.active .col-title { color: #1e8e3e; }
+
+  .col-sub {
+    font-size: 0.72rem;
+    color: #9aa5b1;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .col-list {
+    list-style: none;
+    font-size: 0.78rem;
+    color: #3e4c59;
+  }
+
+  .col-list li {
+    padding: 5px 0 5px 16px;
+    position: relative;
+    line-height: 1.4;
+    border-bottom: 1px solid #f0f3f7;
+  }
+  .col-list li:last-child { border-bottom: none; }
+
+  .col-list li::before {
+    content: "•";
+    position: absolute;
+    left: 4px;
+    color: #b8c6d6;
+    font-weight: 700;
+  }
+  .col.outer.active .col-list li::before { color: #2c5f8a; }
+  .col.inner.active .col-list li::before { color: #1e8e3e; }
+
+  .hint {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #dde6ef;
+    font-size: 0.72rem;
+    color: #7a8ba3;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .col.active .hint { opacity: 1; }
+
+  @media (max-width: 480px) {
+    .cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2>Что задает требования, а что вы разрабатываете сами</h2>
+  <p class="lead">Нажмите на столбец, чтобы увидеть примеры</p>
+
+  <div class="cols">
+
+    <div class="col outer" data-type="outer">
+      <div class="col-head">
+        <span class="col-ico">📘</span>
+        <span class="col-title">Внешние НПА</span>
+      </div>
+      <div class="col-sub">Задают обязательные требования</div>
+      <ul class="col-list">
+        <li>Законы</li>
+        <li>Технические регламенты</li>
+        <li>Правила безопасности</li>
+        <li>Приказы Ростехнадзора</li>
+      </ul>
+      <div class="hint">Их нужно соблюдать — вы на них опираетесь</div>
+    </div>
+
+    <div class="col inner" data-type="inner">
+      <div class="col-head">
+        <span class="col-ico">📄</span>
+        <span class="col-title">Внутренние ЛНА</span>
+      </div>
+      <div class="col-sub">Разрабатываете сами</div>
+      <ul class="col-list">
+        <li>Положение о производственном контроле</li>
+        <li>Инструкции по безопасности</li>
+        <li>Приказы о назначении ответственных</li>
+        <li>Программы обучения</li>
+      </ul>
+      <div class="hint">Создаются на основе внешних требований</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const cols = document.querySelectorAll('.col');
+
+  cols.forEach(col => {
+    col.addEventListener('click', () => {
+      const isActive = col.classList.contains('active');
+      cols.forEach(c => c.classList.remove('active'));
+      if (!isActive) col.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
