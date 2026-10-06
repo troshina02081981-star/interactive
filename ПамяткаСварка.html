@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Памятка: постановление № 790</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 24px 14px;
+    line-height: 1.5;
+  }
+
+  .memo {
+    width: 100%;
+    max-width: 560px;
+    border: 1px solid #e4e7eb;
+    border-radius: 14px;
+    padding: 18px 20px 16px;
+  }
+
+  .memo h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .dates {
+    background: #f5f8fb;
+    border-left: 3px solid #2c5f8a;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: #3e4c59;
+    margin-bottom: 16px;
+  }
+  .dates b { color: #1f2933; }
+
+  .progress-wrap {
+    margin-bottom: 14px;
+  }
+  .bar {
+    height: 5px;
+    background: #eef2f7;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar > div {
+    height: 100%;
+    width: 0;
+    background: #2c5f8a;
+    border-radius: 3px;
+    transition: width 0.25s ease, background 0.25s ease;
+  }
+  .bar.done > div { background: #1e8e3e; }
+  .count {
+    font-size: 0.72rem;
+    color: #7a8ba3;
+    margin-top: 5px;
+  }
+
+  label.item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f3f7;
+    cursor: pointer;
+  }
+  label.item:last-child { border-bottom: none; }
+
+  label.item input {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: #2c5f8a;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .item .txt {
+    font-size: 0.83rem;
+    color: #1f2933;
+  }
+  .item .txt .sub {
+    display: block;
+    font-size: 0.73rem;
+    color: #7a8ba3;
+    margin-top: 2px;
+  }
+
+  label.item.done .txt {
+    color: #9aa5b1;
+    text-decoration: line-through;
+  }
+  label.item.done .txt .sub {
+    text-decoration: none;
+    color: #b0b8c1;
+  }
+
+  @media (max-width: 480px) {
+    .memo { padding: 14px; }
+    .item .txt { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="memo">
+  <h2>📌 Памятка: постановление № 790</h2>
+
+  <div class="dates">
+    <b>1 сентября 2026</b> — запрет аутстаффинга на ОПО I и II классов (действует)<br>
+    <b>1 марта 2027</b> — реестр СРО, надзор и девять актов Ростехнадзора
+  </div>
+
+  <div class="progress-wrap">
+    <div class="bar" id="bar"><div id="fill"></div></div>
+    <div class="count" id="count">Готово: 0 из 4</div>
+  </div>
+
+  <form id="list">
+    <label class="item">
+      <input type="checkbox">
+      <span class="txt">
+        Проверить подрядчиков и агентства занятости
+        <span class="sub">Есть ли частные агентства, на каких работах, входят ли в перечень для I и II классов</span>
+      </span>
+    </label>
+
+    <label class="item">
+      <input type="checkbox">
+      <span class="txt">
+        Уточнить, в какой СРО состоит организация или подрядчик
+        <span class="sub">С 1 марта 2027 года СРО без записи в реестре Ростехнадзора работать не сможет</span>
+      </span>
+    </label>
+
+    <label class="item">
+      <input type="checkbox">
+      <span class="txt">
+        Начать готовить документы для проверки готовности
+        <span class="sub">Аттестация уходит в прошлое — формы утвердят девять актов Ростехнадзора</span>
+      </span>
+    </label>
+
+    <label class="item">
+      <input type="checkbox">
+      <span class="txt">
+        Следить за публикацией девяти актов
+        <span class="sub">Без них новая система не заработает, а сроки поджимают</span>
+      </span>
+    </label>
+  </form>
+</div>
+
+<script>
+  const boxes = document.querySelectorAll('#list input');
+  const fill = document.getElementById('fill');
+  const bar = document.getElementById('bar');
+  const count = document.getElementById('count');
+  const total = boxes.length;
+
+  boxes.forEach(b => b.addEventListener('change', () => {
+    b.closest('label').classList.toggle('done', b.checked);
+    const done = document.querySelectorAll('#list input:checked').length;
+    fill.style.width = (done / total * 100) + '%';
+    bar.classList.toggle('done', done === total);
+    count.textContent = done === total
+      ? 'Все пункты выполнены'
+      : `Готово: ${done} из ${total}`;
+  }));
+</script>
+
+</body>
+</html>
