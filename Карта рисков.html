@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта рисков ОПО</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 20px 12px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 620px;
+    background: #ffffff;
+    border: 1px solid #e4e7eb;
+    border-radius: 14px;
+    padding: 16px 18px 14px;
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .head h1 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2933;
+  }
+  .badge {
+    font-size: 0.6rem;
+    background: #eef2f7;
+    padding: 2px 8px;
+    border-radius: 20px;
+    color: #52606d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .board {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .q {
+    border: 1px solid #e4e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: border-color 0.15s, background 0.15s;
+    background: #fff;
+  }
+  .q.ok { border-color: #1e8e3e; background: #f4fbf6; }
+  .q.no { border-color: #c72a2a; background: #fef6f6; }
+
+  .q-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1f2933;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .q-title .ico { margin-right: 4px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #3e4c59;
+    padding: 4px 0;
+    cursor: pointer;
+  }
+  .opt input {
+    width: 15px;
+    height: 15px;
+    accent-color: #2c5f8a;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Круг в центре */
+  .center-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    background: #8a97a6;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(44, 95, 138, 0.18);
+    z-index: 5;
+    pointer-events: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .center-circle .big {
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .center-circle .small {
+    font-size: 0.45rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+  .center-circle.green {
+    background: #1e8e3e;
+    box-shadow: 0 4px 14px rgba(30, 142, 62, 0.35);
+  }
+  .center-circle.red {
+    background: #c72a2a;
+    box-shadow: 0 4px 14px rgba(199, 42, 42, 0.35);
+  }
+
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #eef2f7;
+    flex-wrap: wrap;
+  }
+
+  .buttons { display: flex; gap: 8px; }
+
+  button {
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .btn-check {
+    background: #2c5f8a;
+    color: #fff;
+    border: 1px solid #2c5f8a;
+  }
+  .btn-check:hover { background: #1f4a6d; }
+  .btn-reset {
+    background: #fff;
+    color: #3e4c59;
+    border: 1px solid #d5dce4;
+  }
+  .btn-reset:hover { background: #f5f7fa; }
+
+  .score {
+    font-size: 0.78rem;
+    color: #52606d;
+    font-weight: 600;
+  }
+  .score b { color: #1e8e3e; }
+
+  @media (max-width: 520px) {
+    .board { grid-template-columns: 1fr; }
+    .center-circle { width: 56px; height: 56px; }
+    .center-circle .big { font-size: 0.68rem; }
+    .foot { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <h1>⚡ Карта рисков</h1>
+    <span class="badge">ОПО</span>
+  </div>
+
+  <div class="board">
+    <div class="q" data-answer="225">
+      <div class="q-title"><span class="ico">📄</span>На какой акт опираемся при страховании ОПО?</div>
+      <label class="opt"><input type="radio" name="q1" value="116"> 116-ФЗ</label>
+      <label class="opt"><input type="radio" name="q1" value="225"> 225-ФЗ</label>
+      <label class="opt"><input type="radio" name="q1" value="463"> 463-ФЗ</label>
+    </div>
+
+    <div class="q" data-answer="01.09.2027">
+      <div class="q-title"><span class="ico">⏱️</span>До какой даты можно работать без лицензии (с уведомлением)?</div>
+      <label class="opt"><input type="radio" name="q2" value="01.01.2026"> 01.01.2026</label>
+      <label class="opt"><input type="radio" name="q2" value="01.09.2027"> 01.09.2027</label>
+      <label class="opt"><input type="radio" name="q2" value="31.12.2027"> 31.12.2027</label>
+    </div>
+
+    <div class="q" data-answer="227">
+      <div class="q-title"><span class="ico">🔍</span>Какой документ устанавливает особый порядок проверок?</div>
+      <label class="opt"><input type="radio" name="q3" value="227"> Постановление № 227</label>
+      <label class="opt"><input type="radio" name="q3" value="463"> Постановление № 463</label>
+      <label class="opt"><input type="radio" name="q3" value="873"> Постановление № 873</label>
+    </div>
+
+    <div class="q" data-answer="yes">
+      <div class="q-title"><span class="ico">⚠️</span>Эксплуатация объектов I–III класса попадает под временные требования?</div>
+      <label class="opt"><input type="radio" name="q4" value="yes"> Да</label>
+      <label class="opt"><input type="radio" name="q4" value="no"> Нет</label>
+      <label class="opt"><input type="radio" name="q4" value="only1"> Только I класс</label>
+    </div>
+
+    <div class="center-circle" id="centerCircle">
+      <div class="big" id="circleBig">ОПО</div>
+      <div class="small" id="circleSmall">риски</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="buttons">
+      <button class="btn-check" id="checkBtn">🔍 Проверить все ответы</button>
+      <button class="btn-reset" id="resetBtn">Сброс</button>
+    </div>
+    <div class="score" id="score">Решено: <b>0</b> / 4</div>
+  </div>
+</div>
+
+<script>
+  const questions = document.querySelectorAll('.q');
+  const scoreEl = document.getElementById('score');
+  const circle = document.getElementById('centerCircle');
+  const circleBig = document.getElementById('circleBig');
+  const circleSmall = document.getElementById('circleSmall');
+
+  function resetCircle() {
+    circle.classList.remove('green', 'red');
+    circleBig.textContent = 'ОПО';
+    circleSmall.textContent = 'риски';
+  }
+
+  function updateScore() {
+    let done = 0;
+    questions.forEach(q => {
+      if (q.querySelector('input:checked')) done++;
+    });
+    scoreEl.innerHTML = `Решено: <b>${done}</b> / ${questions.length}`;
+  }
+
+  document.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const q = r.closest('.q');
+      q.classList.remove('ok', 'no');
+      resetCircle();
+      updateScore();
+    });
+  });
+
+  document.getElementById('checkBtn').addEventListener('click', () => {
+    let correct = 0;
+    let answered = 0;
+
+    questions.forEach(q => {
+      const answer = q.dataset.answer;
+      const checked = q.querySelector('input:checked');
+      q.classList.remove('ok', 'no');
+      if (!checked) return;
+      answered++;
+      if (checked.value === answer) {
+        q.classList.add('ok');
+        correct++;
+      } else {
+        q.classList.add('no');
+      }
+    });
+
+    resetCircle();
+    if (answered === questions.length && correct === questions.length) {
+      circle.classList.add('green');
+      circleBig.textContent = 'ОК';
+      circleSmall.textContent = 'рисков нет';
+    } else if (answered > 0) {
+      circle.classList.add('red');
+      circleBig.textContent = '!';
+      circleSmall.textContent = 'есть риск';
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    questions.forEach(q => q.classList.remove('ok', 'no'));
+    resetCircle();
+    updateScore();
+  });
+
+  updateScore();
+</script>
+
+</body>
+</html>
