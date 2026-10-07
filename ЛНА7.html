@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как составить реестр ЛНА</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 28px 14px;
+    line-height: 1.5;
+  }
+
+  .wrap { width: 100%; max-width: 600px; }
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .lead {
+    font-size: 0.8rem;
+    color: #7a8ba3;
+    margin-bottom: 18px;
+  }
+
+  .item {
+    border: 1px solid #e4e7eb;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .item.open {
+    border-color: #2c5f8a;
+    box-shadow: 0 2px 10px rgba(44, 95, 138, 0.08);
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 16px;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #1f2933;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .head:hover { background: #f7fafd; }
+  .item.open .head { background: #f7fafd; color: #2c5f8a; }
+
+  .num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #eef3f8;
+    color: #2c5f8a;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .item.open .num { background: #2c5f8a; color: #fff; }
+
+  .txt { flex: 1; }
+
+  .icon {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    position: relative;
+  }
+  .icon::before,
+  .icon::after {
+    content: "";
+    position: absolute;
+    background: #8b93a1;
+    border-radius: 1px;
+    transition: background 0.15s, transform 0.25s, opacity 0.2s;
+  }
+  .icon::before { top: 6px; left: 0; width: 14px; height: 2px; }
+  .icon::after { top: 0; left: 6px; width: 2px; height: 14px; }
+  .item.open .icon::before,
+  .item.open .icon::after { background: #2c5f8a; }
+  .item.open .icon::after { transform: rotate(90deg); opacity: 0; }
+
+  .body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .inner {
+    padding: 0 16px 14px 48px;
+    font-size: 0.8rem;
+    color: #3e4c59;
+    line-height: 1.55;
+  }
+  .inner .note {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f7fafd;
+    border-left: 3px solid #2c5f8a;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #52606d;
+  }
+
+  @media (max-width: 480px) {
+    .head { font-size: 0.8rem; padding: 10px 14px; }
+    .inner { padding: 0 14px 12px 42px; font-size: 0.76rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2>Как составить реестр ЛНА</h2>
+  <p class="lead">Четыре шага, чтобы реестр работал, а не лежал в папке</p>
+
+  <div class="item">
+    <button class="head" type="button">
+      <span class="num">1</span>
+      <span class="txt">Назначить ответственных</span>
+      <span class="icon"></span>
+    </button>
+    <div class="body">
+      <div class="inner">
+        Приказом определите, кто ведет реестр. Как правило, это специалист по промышленной безопасности — часто с участием юриста.
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <button class="head" type="button">
+      <span class="num">2</span>
+      <span class="txt">Собрать базу внешних НПА по промбезопасности</span>
+      <span class="icon"></span>
+    </button>
+    <div class="body">
+      <div class="inner">
+        Основа реестра — ФЗ-116 «О промышленной безопасности опасных производственных объектов» и федеральные нормы и правила (ФНП) по вашему типу ОПО. Добавьте технические регламенты и отраслевые правила безопасности. Отберите из них то, что относится к вашей специфике и региону.
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <button class="head" type="button">
+      <span class="num">3</span>
+      <span class="txt">Зафиксировать внутренние ЛНА</span>
+      <span class="icon"></span>
+    </button>
+    <div class="body">
+      <div class="inner">
+        Включите в реестр все действующие документы организации: положения о производственном контроле, приказы о назначении ответственных, инструкции, ПЛА, перечни. Для каждого укажите наименование, номер и дату утверждения, версию, срок действия и ответственного за актуализацию.
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <button class="head" type="button">
+      <span class="num">4</span>
+      <span class="txt">Определить порядок ведения</span>
+      <span class="icon"></span>
+    </button>
+    <div class="body">
+      <div class="inner">
+        В приказе об утверждении реестра пропишите способ ведения (бумажный или электронный), порядок внесения изменений и доступа работников к актуальным редакциям. Система должна хранить неизменяемую историю ознакомлений и показывать доказуемый статус каждого документа: действует или утратил силу, кто и с какой версией ознакомлен.
+        <div class="note">Без этого реестр быстро устареет и перестанет отражать реальность.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const items = document.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const head = item.querySelector('.head');
+    const body = item.querySelector('.body');
+
+    head.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+
+      items.forEach(other => {
+        if (other !== item) {
+          other.classList.remove('open');
+          other.querySelector('.body').style.maxHeight = null;
+        }
+      });
+
+      if (isOpen) {
+        item.classList.remove('open');
+        body.style.maxHeight = null;
+      } else {
+        item.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
