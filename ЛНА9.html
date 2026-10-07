@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ручной процесс vs Автоматизация</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #1f2933;
+    display: flex;
+    justify-content: center;
+    padding: 28px 14px;
+    line-height: 1.5;
+  }
+
+  .wrap { width: 100%; max-width: 680px; }
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  /* Сетка: критерий + две колонки */
+  .grid {
+    display: grid;
+    grid-template-columns: 110px 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Шапка */
+  .head {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .head.manual {
+    background: #fdf0ee;
+    color: #b04a3a;
+  }
+  .head.auto {
+    background: #eaf3fa;
+    color: #2c5f8a;
+  }
+  .head.empty { background: transparent; }
+
+  /* Критерий */
+  .criterion {
+    display: flex;
+    align-items: center;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #52606d;
+    padding: 10px 8px;
+  }
+
+  /* Ячейки */
+  .cell {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.15s;
+  }
+  .cell:hover { transform: translateY(-1px); }
+
+  .cell.manual {
+    background: #fdf0ee;
+    color: #7a3a30;
+    border: 1px solid #f5d9d4;
+  }
+  .cell.auto {
+    background: #eaf3fa;
+    color: #1f4468;
+    border: 1px solid #cfe0ee;
+  }
+
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 90px 1fr 1fr; gap: 6px; }
+    .criterion { font-size: 0.7rem; padding: 8px 6px; }
+    .cell { font-size: 0.72rem; padding: 8px 9px; }
+    .head { font-size: 0.66rem; padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2>Ручной процесс vs Автоматизация</h2>
+
+  <div class="grid">
+
+    <div class="head empty"></div>
+    <div class="head manual">Ручной процесс</div>
+    <div class="head auto">Автоматизация</div>
+
+    <div class="criterion">Отслеживание законов</div>
+    <div class="cell manual">Юрист вручную проверяет базы данных и новости</div>
+    <div class="cell auto">Система или интеграторы сигнализируют о релевантных изменениях</div>
+
+    <div class="criterion">Согласование</div>
+    <div class="cell manual">Пересылка файлов по почте, путаница в версиях</div>
+    <div class="cell auto">Единый маршрут согласования, правки в одном окне</div>
+
+    <div class="criterion">Сбор подписей</div>
+    <div class="cell manual">Печать документов, личные встречи, сбор «живых» подписей</div>
+    <div class="cell auto">Удалённое подписание через КЭДО за пару минут</div>
+
+    <div class="criterion">Архив и аудит</div>
+    <div class="cell manual">Бумажные папки, риск потерять листы ознакомления</div>
+    <div class="cell auto">Защищённый электронный архив, поиск за секунды</div>
+
+  </div>
+</div>
+
+</body>
+</html>
