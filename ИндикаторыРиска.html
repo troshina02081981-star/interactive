@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Индикаторы риска — листалка</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:#ffffff;color:#1f2937;padding:20px;font-size:14px;line-height:1.45;
+    display:flex;justify-content:center;
+  }
+  .wrap{width:100%;max-width:600px}
+  h1{font-size:16px;font-weight:700;margin-bottom:12px}
+
+  .bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .chip{
+    padding:4px 10px;border:1px solid #d1d5db;border-radius:12px;background:#fff;
+    font-size:12px;color:#4b5563;cursor:pointer;
+  }
+  .chip:hover{border-color:#2563eb;color:#2563eb}
+  .chip.active{background:#2563eb;border-color:#2563eb;color:#fff}
+
+  .slider{
+    background:#fff;border:1px solid #e5e7eb;border-radius:10px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05);
+    overflow:hidden;position:relative;
+  }
+  .track{display:flex;transition:transform .3s ease}
+  .slide{flex:0 0 100%;padding:18px 20px 16px}
+  .slide .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:7px;background:#eef2f7;
+    color:#2563eb;font-size:13px;font-weight:700;margin-bottom:10px;
+  }
+  .slide .num.green{background:#dcfce7;color:#16a34a}
+  .slide .title{font-size:15px;font-weight:600;line-height:1.35;margin-bottom:10px}
+  .meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:4px;background:#eef2f7;color:#4b5563}
+  .tag.green{background:#dcfce7;color:#166534}
+  .tag.amber{background:#fef3c7;color:#92400e}
+  .block{margin-bottom:10px;font-size:13px;color:#4b5563}
+  .block:last-child{margin-bottom:0}
+  .lbl{color:#2563eb;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px}
+
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 14px;border-top:1px solid #eef0f3;background:#fafbfc;
+  }
+  .btn{
+    width:34px;height:34px;border-radius:50%;border:1px solid #d1d5db;
+    background:#fff;color:#4b5563;font-size:15px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+  }
+  .btn:hover:not(:disabled){border-color:#2563eb;color:#2563eb}
+  .btn:disabled{opacity:.35;cursor:default}
+  .pos{font-size:12px;color:#6b7280}
+
+  .dots{display:flex;justify-content:center;gap:6px;padding:10px 0 2px;flex-wrap:wrap}
+  .dot{
+    width:8px;height:8px;border-radius:50%;background:#d1d5db;border:none;
+    cursor:pointer;padding:0;transition:.15s;
+  }
+  .dot.active{background:#2563eb;transform:scale(1.25)}
+  .dot.green{background:#86efac}
+  .dot.green.active{background:#16a34a}
+
+  .empty{padding:30px;text-align:center;color:#9ca3af;font-size:13px;
+    background:#fff;border:1px solid #e5e7eb;border-radius:10px}
+  footer{margin-top:10px;font-size:11px;color:#9ca3af;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Индикаторы риска</h1>
+
+  <div class="bar">
+    <button class="chip active" data-f="all">Все классы</button>
+    <button class="chip" data-f="I-III">I–III</button>
+    <button class="chip" data-f="III-IV">III–IV</button>
+    <button class="chip" data-f="new">Новые</button>
+  </div>
+
+  <div class="slider" id="slider">
+    <div class="track" id="track"></div>
+    <div class="nav">
+      <button class="btn" id="prev">‹</button>
+      <span class="pos" id="pos"></span>
+      <button class="btn" id="next">›</button>
+    </div>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="empty" id="empty" style="display:none">Нет индикаторов по этому фильтру</div>
+  <footer>Свайп, стрелки или точки — для навигации</footer>
+</div>
+
+<script>
+const data = [
+ {n:1,t:"Три и более инцидентов за календарный год",c:["all-class"],cond:[],d:"Применяется для ОПО всех классов опасности. Срабатывает по факту статистики: три и более инцидента на объекте за год — признак системных проблем эксплуатации."},
+ {n:2,t:"Авария на аналогичном ОПО",c:["III-IV"],cond:["за 2 года до аварии не было проверок"],d:"Применяется для ОПО III, IV класса. «Аналогичность» определяется по типу объекта и технологиям. Если на похожем объекте авария, а у вас давно не было проверок — риск повышен."},
+ {n:3,t:"Не оформлена лицензия на ВПХОПО в течение 4 месяцев после регистрации",c:["I-III"],cond:[],d:"Применяется для ОПО I–III класса. ВПХОПО — взрывопожароопасный химически опасный объект. Объект зарегистрирован, но лицензии нет 4 месяца — нарушение лицензионных требований."},
+ {n:4,t:"Через 2 года после ЭПБ на консервацию/ликвидацию ОПО не исключён из реестра",c:["III-IV"],cond:["за 2 года до ЭПБ не было проверок"],d:"Применяется для ОПО III, IV класса. Объект законсервирован или ликвидирован, но числится в реестре более 2 лет — искажение данных надзора, риск «мёртвых» объектов."},
+ {n:5,t:"После ликвидации организации её ОПО продолжает числиться в реестре",c:["III-IV"],cond:[],d:"Применяется для ОПО III, IV класса. Юрлицо ликвидировано, объект в реестре — фактически бесхозный опасный объект."},
+ {n:6,t:"Срок эксплуатации ТУ истёк >1 года назад, ЭПБ не зарегистрирована, ТУ не выведено",c:["III-IV"],cond:["в течение года не было проверок"],d:"Применяется для ОПО III, IV класса. ТУ — техническое устройство. Просроченный срок службы без экспертизы и без остановки — прямая угроза аварии."},
+ {n:7,t:"Срок эксплуатации ЗиС истёк >1 года назад, ЭПБ не зарегистрирована, объект не выведен",c:["III-IV"],cond:["в течение года не было проверок"],d:"Применяется для ОПО III, IV класса. ЗиС — здания и сооружения. То же, что №6, но для строительных конструкций."},
+ {n:8,t:"Эксперт выдал заведомо ложное заключение ЭПБ повторно для той же организации",c:["III-IV"],cond:["после выдачи проверок не было"],d:"Применяется для ОПО III, IV класса. Недобросовестный эксперт уже выдавал заключения этой компании за 2 года до нарушения, проверок после не было — высокий риск фальсификации."},
+ {n:9,t:"Через 2 года после ЭПБ на техперевооружение не внесены изменения в реестр ОПО",c:["III-IV"],cond:["не уведомили об изменении/отмене планов"],d:"Применяется для ОПО III, IV класса. Техперевооружение меняет характеристики объекта; без изменений в реестре надзор работает с устаревшими данными."},
+ {n:10,t:"Деятельность с пиротехникой без лицензии на ВПХОПО",c:["I-III"],cond:[],d:"Применяется для ВПХОПО I–III класса. Пиротехника — повышенная опасность. Отсутствие лицензии — грубое нарушение, без доп. условий."},
+ {n:11,t:"ОПО, внесённый до 15.03.2013, не прошёл перерегистрацию с присвоением класса",c:["all-class"],cond:[],d:"Применяется для ОПО всех классов. После новых правил 2013 года все объекты должны были пройти перерегистрацию. Если нет — объект выпал из актуальной системы надзора."},
+ {n:12,t:"Нет регистрации ОПО в течение 6 месяцев после согласования техпроекта",c:["all-class"],cond:["за этот период не было проверок"],d:"Применяется для карьеров, рудников, шахт, разрезов. Техпроект согласован, но объект не зарегистрирован в реестре ОПО полгода — работа вне правового поля."},
+ {n:13,t:"Отсутствие согласованных планов и схем горных работ на текущий год",c:["all-class"],cond:["объект не законсервирован и не ликвидирован"],new:true,d:"Применяется для ОПО, связанных с недропользованием. Объект действует, но ПРГР на год не утверждены. Точечный индикатор: не более 400 проверок в год."},
+ {n:14,t:"Нет заявления об изменении реестра лицензий в части мест деятельности в течение 4 месяцев после регистрации нового ОПО",c:["I-III"],cond:["объект зарегистрирован, заявление не подано"],new:true,d:"Применяется для ОПО I–III класса, подлежащего лицензированию. Лицензия есть, но не покрывает новый объект — срабатывает автоматически."}
+];
+
+const track=document.getElementById('track'),
+      dotsBox=document.getElementById('dots'),
+      pos=document.getElementById('pos'),
+      prev=document.getElementById('prev'),
+      next=document.getElementById('next'),
+      empty=document.getElementById('empty'),
+      slider=document.getElementById('slider'),
+      chips=document.querySelectorAll('.chip');
+
+let filter='all', vis=[], idx=0;
+
+function apply(){
+  vis=data.filter(i=>filter==='all'||(filter==='new'?i.new:filter==='all-class'?i.c.includes('all-class'):i.c.includes(filter)));
+  idx=0;
+  track.innerHTML='';
+  dotsBox.innerHTML='';
+  empty.style.display=vis.length?'none':'block';
+  slider.style.display=vis.length?'block':'none';
+
+  vis.forEach((i,k)=>{
+    const s=document.createElement('div');
+    s.className='slide';
+    s.innerHTML=`
+      <div class="num ${i.new?'green':''}">${i.n}</div>
+      <div class="title">${i.t}</div>
+      <div class="meta">
+        ${i.new?'<span class="tag green">Новый</span>':''}
+        ${i.cond.map(c=>`<span class="tag amber">${c}</span>`).join('')}
+      </div>
+      <div class="block"><span class="lbl">Суть</span>${i.d}</div>
+    `;
+    track.appendChild(s);
+
+    const d=document.createElement('button');
+    d.className='dot'+(i.new?' green':'');
+    d.addEventListener('click',()=>go(k));
+    dotsBox.appendChild(d);
+  });
+  update();
+}
+
+function go(k){
+  if(k<0||k>=vis.length) return;
+  idx=k;
+  track.style.transform=`translateX(-${idx*100}%)`;
+  update();
+}
+
+function update(){
+  pos.textContent=(idx+1)+' / '+vis.length;
+  prev.disabled=idx===0;
+  next.disabled=idx===vis.length-1;
+  [...dotsBox.children].forEach((d,k)=>d.classList.toggle('active',k===idx));
+}
+
+prev.addEventListener('click',()=>go(idx-1));
+next.addEventListener('click',()=>go(idx+1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') go(idx-1);
+  if(e.key==='ArrowRight') go(idx+1);
+});
+
+let x0=null;
+slider.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+slider.addEventListener('touchend',e=>{
+  if(x0===null) return;
+  const dx=e.changedTouches[0].clientX-x0;
+  if(Math.abs(dx)>40) go(dx<0?idx+1:idx-1);
+  x0=null;
+});
+
+chips.forEach(c=>c.addEventListener('click',()=>{
+  chips.forEach(x=>x.classList.remove('active'));
+  c.classList.add('active');
+  filter=c.dataset.f;
+  apply();
+}));
+
+apply();
+</script>
+</body>
+</html>
