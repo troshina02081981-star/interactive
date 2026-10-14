@@ -5,28 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Универсальная формула промпта</title>
     <style>
-        html, body {
+        html {
             margin: 0;
             padding: 0;
-            height: auto;
+            height: fit-content;
+            overflow: hidden;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: fit-content;
             display: block;
-            padding: 4px 10px 0 10px;
-            box-sizing: border-box;
         }
 
         .scheme-container {
             width: 100%;
             max-width: 560px;
             margin: 0 auto;
+            padding: 4px 10px 0 10px;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            padding: 0;
+            height: fit-content;
         }
 
         /* Заголовок */
@@ -43,6 +47,7 @@
             font-weight: 700;
             font-size: 13px;
             align-self: center;
+            margin: 0;
         }
 
         .title-box svg {
@@ -55,13 +60,13 @@
             stroke-linejoin: round;
         }
 
-        /* Формула */
         .formula-row {
             display: flex;
             align-items: stretch;
             justify-content: center;
             gap: 4px;
             width: 100%;
+            margin: 0;
         }
 
         .block {
@@ -74,6 +79,7 @@
             align-items: center;
             gap: 6px;
             min-width: 0;
+            margin: 0;
         }
 
         .icon-circle {
@@ -109,6 +115,7 @@
             font-weight: 700;
             color: #1a56db;
             margin: 0 0 2px 0;
+            padding: 0;
             line-height: 1.1;
         }
 
@@ -117,6 +124,7 @@
             color: #666;
             line-height: 1.1;
             margin: 0;
+            padding: 0;
         }
 
         .plus-sign {
@@ -128,9 +136,9 @@
             justify-content: center;
             flex-shrink: 0;
             padding: 0 1px;
+            margin: 0;
         }
 
-        /* Подсказка */
         .tip-box {
             display: flex;
             align-items: center;
