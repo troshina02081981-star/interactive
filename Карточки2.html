@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер: Критерии хорошего промпта</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .header {
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 2px 0;
+        }
+        .header p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+            line-height: 1.3;
+        }
+        .header .task {
+            font-size: 10px;
+            color: #333;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Верхняя зона: стопка */
+        .stack-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            height: 90px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #333;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+            user-select: none;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .nav-btn:hover:not(:disabled) { background-color: #f0f0f0; }
+        .nav-btn:disabled { color: #ccc; cursor: default; }
+
+        .card-stack {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .stack-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 12px;
+            box-sizing: border-box;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #333;
+            transition: transform 0.3s, opacity 0.3s, z-index 0.3s;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .stack-card:active { cursor: grabbing; }
+
+        .stack-card:nth-child(1) { z-index: 5; transform: translateY(0) scale(1); }
+        .stack-card:nth-child(2) { z-index: 4; transform: translateY(4px) scale(0.97); opacity: 0.9; }
+        .stack-card:nth-child(3) { z-index: 3; transform: translateY(8px) scale(0.94); opacity: 0.75; }
+        .stack-card:nth-child(4) { z-index: 2; transform: translateY(12px) scale(0.91); opacity: 0.55; }
+        .stack-card:nth-child(n+5) { z-index: 1; transform: translateY(16px) scale(0.88); opacity: 0.35; }
+
+        .stack-card.dragging { opacity: 0.4; }
+
+        .stack-empty {
+            color: #999;
+            font-size: 11px;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+        }
+
+        /* Нижняя зона: две колонки */
+        .columns-area {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #ffffff;
+            min-height: 200px;
+        }
+
+        .column-header {
+            padding: 6px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .column-header.bad {
+            background-color: #ffebee;
+            color: #d32f2f;
+            border-bottom: 1px solid #ffcdd2;
+        }
+        .column-header.good {
+            background-color: #e8f5e9;
+            color: #047857;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .drop-zone {
+            flex: 1;
+            padding: 6px;
+            background-color: #fcfcfc;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: background 0.2s;
+            min-height: 150px;
+        }
+
+        .drop-zone.dragover { background-color: #f0f7ff; }
+
+        .dropped-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            padding: 6px 18px 6px 8px;
+            font-size: 10px;
+            line-height: 1.3;
+            color: #333;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            position: relative;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .dropped-card:active { cursor: grabbing; }
+
+        .dropped-card .remove-btn {
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            padding: 1px 3px;
+        }
+        .dropped-card .remove-btn:hover { color: #d32f2f; }
+
+        .check-btn {
+            background-color: #f0f0f0;
+            color: #999;
+            border: none;
+            padding: 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: not-allowed;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .check-btn.active {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .check-btn.active:hover { background-color: #000000; }
+
+        .result-message {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            min-height: 16px;
+        }
+        .result-message.success { color: #047857; }
+        .result-message.error { color: #d32f2f; }
+
+        .dropped-card.correct { border-color: #047857; background-color: #f0fff4; }
+        .dropped-card.incorrect { border-color: #d32f2f; background-color: #fff0f0; }
+
+        @media (max-width: 480px) {
+            .card-stack { max-width: 220px; }
+            .stack-card { font-size: 9.5px; padding: 5px 8px; }
+            .column-header { font-size: 9px; }
+            .dropped-card { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>ТРЕНАЖЕР: КРИТЕРИИ ХОРОШЕГО ПРОМПТА</h1>
+            <p>Отправьте карточку в стопку «ВЕРНО (+)», если критерий улучшает промпт, или в «НЕВЕРНО (−)», если ухудшает.</p>
+        </div>
+
+        <div class="stack-area">
+            <button class="nav-btn" id="prevBtn" disabled>&#8249;</button>
+            <div class="card-stack" id="cardStack"></div>
+            <button class="nav-btn" id="nextBtn">&#8250;</button>
+        </div>
+
+        <div class="columns-area">
+            <div class="column">
+                <div class="column-header bad">НЕВЕРНО (−)</div>
+                <div class="drop-zone" id="zone-bad" data-zone="bad"></div>
+            </div>
+            <div class="column">
+                <div class="column-header good">ВЕРНО (+)</div>
+                <div class="drop-zone" id="zone-good" data-zone="good"></div>
+            </div>
+        </div>
+
+        <button class="check-btn" id="checkBtn" disabled>Проверить результат</button>
+        <div class="result-message" id="resultMessage"></div>
+    </div>
+
+    <script>
+        // --- Данные ---
+        // isGood: true — критерий улучшает промпт (ВЕРНО +)
+        // isGood: false — критерий ухудшает промпт (НЕВЕРНО −)
+        const criteria = [
+            { id: 1, text: "Указать роль нейросети", isGood: true },
+            { id: 2, text: "Описать задачу в общем", isGood: false },
+            { id: 3, text: "Прописать ограничения", isGood: true },
+            { id: 4, text: "Смешать несколько задач в одном запросе", isGood: false },
+            { id: 5, text: "Уточнить источники", isGood: true },
+            { id: 6, text: "Дать противоречивые требования", isGood: false },
+            { id: 7, text: "Описать контекст", isGood: true },
+            { id: 8, text: "Не уточнять область применения", isGood: false }
+        ];
+
+        const shuffledCriteria = [...criteria].sort(() => Math.random() - 0.5);
+
+        let currentIndex = 0;
+        let draggedCard = null;
+        const placedCards = { bad: [], good: [] };
+
+        const cardStack = document.getElementById('cardStack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const zoneBad = document.getElementById('zone-bad');
+        const zoneGood = document.getElementById('zone-good');
+        const checkBtn = document.getElementById('checkBtn');
+        const resultMessage = document.getElementById('resultMessage');
+
+        function init() {
+            renderStack();
+            setupDragAndDrop();
+            setupDropZones();
+            updateCheckButton();
+        }
+
+        function renderStack() {
+            cardStack.innerHTML = '';
+            const remaining = shuffledCriteria.filter(c => !isCardPlaced(c.id));
+
+            if (remaining.length === 0) {
+                cardStack.innerHTML = '<div class="stack-empty">Все критерии распределены</div>';
+                updateNavButtons(0);
+                return;
+            }
+
+            if (currentIndex >= remaining.length) currentIndex = Math.max(0, remaining.length - 1);
+            if (currentIndex < 0) currentIndex = 0;
+
+            const cardsToShow = remaining.slice(currentIndex, currentIndex + 5);
+
+            cardsToShow.forEach((criterion) => {
+                const card = document.createElement('div');
+                card.className = 'stack-card';
+                card.textContent = criterion.text;
+                card.draggable = true;
+                card.dataset.id = criterion.id;
+                card.dataset.isGood = criterion.isGood;
+                cardStack.appendChild(card);
+            });
+
+            updateNavButtons(remaining.length);
+        }
+
+        function isCardPlaced(id) {
+            return placedCards.bad.includes(id) || placedCards.good.includes(id);
+        }
+
+        function updateNavButtons(remainingCount) {
+            const remaining = remainingCount !== undefined ? remainingCount : shuffledCriteria.filter(c => !isCardPlaced(c.id)).length;
+            prevBtn.disabled = currentIndex <= 0;
+            nextBtn.disabled = currentIndex >= remaining - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) { currentIndex--; renderStack(); }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const remaining = shuffledCriteria.filter(c => !isCardPlaced(c.id)).length;
+            if (currentIndex < remaining - 1) { currentIndex++; renderStack(); }
+        });
+
+        function setupDragAndDrop() {
+            document.addEventListener('dragstart', (e) => {
+                const card = e.target.closest('.stack-card') || e.target.closest('.dropped-card');
+                if (!card) return;
+                draggedCard = card;
+                e.dataTransfer.setData('text/plain', card.dataset.id);
+                e.dataTransfer.effectAllowed = 'move';
+                card.classList.add('dragging');
+            });
+
+            document.addEventListener('dragend', (e) => {
+                const card = e.target.closest('.stack-card') || e.target.closest('.dropped-card');
+                if (card) card.classList.remove('dragging');
+                draggedCard = null;
+            });
+        }
+
+        function setupDropZones() {
+            [zoneBad, zoneGood].forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('dragover');
+                    e.dataTransfer.dropEffect = 'move';
+                });
+
+                zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('dragover');
+                    if (!draggedCard) return;
+
+                    const cardId = parseInt(draggedCard.dataset.id);
+                    const targetZone = zone.dataset.zone;
+
+                    removeCardFromZones(cardId);
+                    addCardToZone(cardId, draggedCard.textContent, targetZone);
+
+                    draggedCard.remove();
+                    renderStack();
+                    updateCheckButton();
+                });
+            });
+        }
+
+        function removeCardFromZones(id) {
+            placedCards.bad = placedCards.bad.filter(cardId => cardId !== id);
+            placedCards.good = placedCards.good.filter(cardId => cardId !== id);
+            document.querySelectorAll(`.dropped-card[data-id="${id}"]`).forEach(el => el.remove());
+        }
+
+        function addCardToZone(id, text, zoneName) {
+            placedCards[zoneName].push(id);
+            const targetZone = zoneName === 'bad' ? zoneBad : zoneGood;
+
+            const cardEl = document.createElement('div');
+            cardEl.className = 'dropped-card';
+            cardEl.dataset.id = id;
+            cardEl.draggable = true;
+            cardEl.textContent = text;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                removeCardFromZones(id);
+                renderStack();
+                updateCheckButton();
+            };
+            cardEl.appendChild(removeBtn);
+
+            targetZone.appendChild(cardEl);
+        }
+
+        function updateCheckButton() {
+            const totalPlaced = placedCards.bad.length + placedCards.good.length;
+            const allPlaced = totalPlaced === criteria.length;
+
+            checkBtn.disabled = !allPlaced;
+            checkBtn.classList.toggle('active', allPlaced);
+
+            document.querySelectorAll('.dropped-card').forEach(card => {
+                card.classList.remove('correct', 'incorrect');
+            });
+            resultMessage.textContent = '';
+            resultMessage.className = 'result-message';
+        }
+
+        checkBtn.addEventListener('click', () => {
+            let correctCount = 0;
+            const total = criteria.length;
+
+            document.querySelectorAll('.dropped-card').forEach(cardEl => {
+                const id = parseInt(cardEl.dataset.id);
+                const parentZone = cardEl.closest('.drop-zone').dataset.zone;
+                const criterion = criteria.find(c => c.id === id);
+                if (!criterion) return;
+
+                // Правильно:
+                // isGood === true и зона "good" (ВЕРНО +)
+                // isGood === false и зона "bad" (НЕВЕРНО −)
+                const isCorrect = (criterion.isGood && parentZone === 'good') || (!criterion.isGood && parentZone === 'bad');
+
+                if (isCorrect) {
+                    cardEl.classList.add('correct');
+                    cardEl.classList.remove('incorrect');
+                    correctCount++;
+                } else {
+                    cardEl.classList.add('incorrect');
+                    cardEl.classList.remove('correct');
+                }
+            });
+
+            if (correctCount === total) {
+                resultMessage.textContent = `✅ Отлично! Все ${total} критериев распределены верно.`;
+                resultMessage.className = 'result-message success';
+            } else {
+                resultMessage.textContent = `❌ Правильно: ${correctCount} из ${total}. Попробуйте ещё раз.`;
+                resultMessage.className = 'result-message error';
+            }
+        });
+
+        init();
+    </script>
+
+</body>
+</html>
