@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер: Соотнеси инструмент и назначение</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    .title {
+        color: #1a3b5c;
+        font-weight: bold;
+        font-size: 13px;
+        text-align: center;
+        letter-spacing: 0.3px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #1a3b5c;
+    }
+
+    .hint {
+        background: #fff8e1;
+        border-left: 3px solid #f0a500;
+        border-radius: 4px;
+        padding: 7px 10px;
+        font-size: 11px;
+        line-height: 1.4;
+        color: #6b4e00;
+    }
+
+    .attempts-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f1f5f9;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 11px;
+        color: #1a3b5c;
+        font-weight: 600;
+    }
+
+    .attempts-bar .attempts-count {
+        color: #1e4bd8;
+        font-weight: 700;
+    }
+
+    /* Двухколоночная сетка */
+    .columns {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 8px;
+    }
+
+    .column-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #1a3b5c;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 4px;
+    }
+
+    .tools-col, .descs-col {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    /* Инструменты (слева) */
+    .tool {
+        padding: 8px 10px;
+        border: 1.5px solid #d0dbe8;
+        border-radius: 6px;
+        background: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        color: #1a3b5c;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+        min-height: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        line-height: 1.3;
+    }
+
+    .tool:hover {
+        border-color: #1e4bd8;
+        background: #f8faff;
+    }
+
+    .tool.active {
+        border-color: #1e4bd8;
+        background: #eef4ff;
+        box-shadow: 0 0 0 2px rgba(30, 75, 216, 0.15);
+    }
+
+    .tool.correct {
+        border-color: #28a745;
+        background: #e8f5e9;
+    }
+
+    .tool.incorrect {
+        border-color: #dc3545;
+        background: #fce8e8;
+    }
+
+    /* Слот для описания внутри инструмента */
+    .tool-slot {
+        font-size: 10.5px;
+        font-weight: 400;
+        color: #64748b;
+        font-style: italic;
+        padding: 3px 5px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 4px;
+        min-height: 16px;
+        display: flex;
+        align-items: center;
+        transition: all 0.15s;
+    }
+
+    .tool-slot.filled {
+        color: #1a3b5c;
+        font-style: normal;
+        border-style: solid;
+        background: #ffffff;
+    }
+
+    .tool.correct .tool-slot {
+        background: #ffffff;
+        color: #1a3b5c;
+    }
+
+    .tool.incorrect .tool-slot {
+        background: #ffffff;
+        color: #1a3b5c;
+    }
+
+    /* Описания (справа) */
+    .desc {
+        padding: 7px 9px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #ffffff;
+        font-size: 10.5px;
+        line-height: 1.35;
+        color: #333;
+        cursor: grab;
+        user-select: none;
+        transition: all 0.15s ease;
+        position: relative;
+    }
+
+    .desc:hover {
+        border-color: #1e4bd8;
+        background: #f8faff;
+    }
+
+    .desc:active {
+        cursor: grabbing;
+    }
+
+    .desc.dragging {
+        opacity: 0.4;
+        border-style: dashed;
+    }
+
+    .desc.used {
+        display: none;
+    }
+
+    /* Кнопки */
+    .buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 18px;
+        padding: 7px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-check {
+        background-color: #1a3b5c;
+        color: #ffffff;
+    }
+
+    .btn-check:hover {
+        background-color: #12304d;
+    }
+
+    .btn-reset {
+        background-color: #e2e8f0;
+        color: #1a3b5c;
+    }
+
+    .btn-reset:hover {
+        background-color: #cbd5e1;
+    }
+
+    .result {
+        text-align: center;
+        font-size: 11.5px;
+        font-weight: bold;
+        min-height: 16px;
+        color: #1a3b5c;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="title">СООТНЕСИТЕ ИНСТРУМЕНТ И ЕГО НАЗНАЧЕНИЕ</div>
+
+    <div class="hint">
+        💡 Перетащите описание из правой колонки к соответствующему инструменту слева. У вас <b>3 попытки</b> на каждое сопоставление.
+    </div>
+
+    <div class="attempts-bar">
+        <span>Попытки на текущее сопоставление:</span>
+        <span class="attempts-count" id="attemptsDisplay">3 осталось</span>
+    </div>
+
+    <div class="columns">
+        <!-- Левая колонка: инструменты -->
+        <div>
+            <div class="column-title">Инструменты</div>
+            <div class="tools-col" id="toolsCol">
+                <!-- Генерируется скриптом -->
+            </div>
+        </div>
+
+        <!-- Правая колонка: описания -->
+        <div>
+            <div class="column-title">Назначение</div>
+            <div class="descs-col" id="descsCol">
+                <!-- Генерируется скриптом -->
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="btn btn-check" onclick="checkAnswers()">✅ Проверить</button>
+        <button class="btn btn-reset" onclick="resetGame()">🔄 Сбросить</button>
+    </div>
+
+    <div class="result" id="resultMessage"></div>
+</div>
+
+<script>
+    // Данные: инструмент -> описание
+    const pairs = [
+        {
+            tool: "YOLO",
+            desc: "Семейство моделей компьютерного зрения. Быстро обрабатывает кадры, ищет людей без касок, в опасных зонах, дым и искры."
+        },
+        {
+            tool: "Matroid",
+            desc: "Платформа для настройки видеоаналитики без программирования. Загрузили примеры, обвели объекты — и модель готова."
+        },
+        {
+            tool: "Qmonitoring",
+            desc: "Российская система с готовыми сценариями для производства и строительства. Не требует обучения."
+        },
+        {
+            tool: "CNN",
+            desc: "Свёрточная нейросеть. Основа любого компьютерного зрения: находит объекты на изображениях, выделяет людей и дефекты."
+        },
+        {
+            tool: "LSTM",
+            desc: "Рекуррентная нейросеть. Анализирует временные ряды, но для видео подходит плохо — не видит картинку, только цифры."
+        }
+    ];
+
+    const MAX_ATTEMPTS = 3;
+
+    let attemptsLeft = MAX_ATTEMPTS;
+    let selectedTool = null;    // инструмент, ожидающий описание
+    let draggedDesc = null;     // описание для drag
+    let draggingDescData = null;
+
+    const toolsCol = document.getElementById('toolsCol');
+    const descsCol = document.getElementById('descsCol');
+    const attemptsDisplay = document.getElementById('attemptsDisplay');
+    const resultMessage = document.getElementById('resultMessage');
+
+    // Инициализация
+    function init() {
+        toolsCol.innerHTML = '';
+        descsCol.innerHTML = '';
+        resultMessage.textContent = '';
+        attemptsLeft = MAX_ATTEMPTS;
+        selectedTool = null;
+        updateAttemptsDisplay();
+
+        // Создаём инструменты
+        pairs.forEach(p => {
+            const toolEl = document.createElement('div');
+            toolEl.className = 'tool';
+            toolEl.dataset.tool = p.tool;
+            toolEl.innerHTML = `
+                <div>${p.tool}</div>
+                <div class="tool-slot" data-slot-for="${p.tool}">Перетащите описание...</div>
+            `;
+
+            // Клик по инструменту — выбор
+            toolEl.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tool-slot')) return;
+                // Снимаем выделение с других
+                document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+                toolEl.classList.add('active');
+                selectedTool = toolEl;
+                resultMessage.textContent = '';
+            });
+
+            // Клик по слоту внутри инструмента — тоже выбор
+            const slot = toolEl.querySelector('.tool-slot');
+            slot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+                toolEl.classList.add('active');
+                selectedTool = toolEl;
+            });
+
+            toolsCol.appendChild(toolEl);
+        });
+
+        // Перемешиваем описания
+        const shuffled = [...pairs].sort(() => Math.random() - 0.5);
+
+        shuffled.forEach(p => {
+            const descEl = document.createElement('div');
+            descEl.className = 'desc';
+            descEl.draggable = true;
+            descEl.dataset.tool = p.tool;
+            descEl.textContent = p.desc;
+
+            // Drag Start
+            descEl.addEventListener('dragstart', (e) => {
+                draggedDesc = descEl;
+                draggingDescData = p;
+                setTimeout(() => descEl.classList.add('dragging'), 0);
+            });
+
+            descEl.addEventListener('dragend', () => {
+                descEl.classList.remove('dragging');
+                draggedDesc = null;
+                draggingDescData = null;
+            });
+
+            // Клик по описанию (для мобильных) — помечаем как выбранное
+            descEl.addEventListener('click', () => {
+                if (descEl.classList.contains('used')) return;
+                // Если есть выбранный инструмент — сразу кладём
+                if (selectedTool) {
+                    placeDesc(selectedTool, descEl, p.tool);
+                }
+            });
+
+            descsCol.appendChild(descEl);
+        });
+
+        // Слоты инструментов как drop-зоны
+        document.querySelectorAll('.tool').forEach(toolEl => {
+            toolEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                toolEl.classList.add('active');
+            });
+            toolEl.addEventListener('dragleave', () => {
+                if (toolEl !== selectedTool) toolEl.classList.remove('active');
+            });
+            toolEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (draggedDesc && draggingDescData) {
+                    placeDesc(toolEl, draggedDesc, draggingDescData.tool);
+                }
+            });
+        });
+    }
+
+    // Помещение описания в инструмент
+    function placeDesc(toolEl, descEl, descTool) {
+        const toolName = toolEl.dataset.tool;
+        const slot = toolEl.querySelector('.tool-slot');
+
+        // Если в слоте уже есть ответ — возвращаем старое описание в правую колонку
+        if (slot.dataset.placedDesc) {
+            const oldDesc = document.getElementById(slot.dataset.placedDesc);
+            if (oldDesc) oldDesc.classList.remove('used');
+        }
+
+        // Кладём новое
+        slot.textContent = descEl.textContent;
+        slot.classList.add('filled');
+        slot.dataset.placedDesc = descEl.id;
+        slot.dataset.placedTool = descTool;
+        descEl.classList.add('used');
+
+        // Снимаем выделение
+        document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+        selectedTool = null;
+
+        // Проверяем, не закончились ли попытки
+        if (descTool !== toolName) {
+            attemptsLeft--;
+            updateAttemptsDisplay();
+            if (attemptsLeft <= 0) {
+                // Показываем верный ответ
+                const correctPair = pairs.find(p => p.tool === toolName);
+                slot.textContent = correctPair.desc;
+                slot.dataset.placedTool = correctPair.tool;
+                toolEl.classList.add('incorrect');
+                resultMessage.style.color = '#dc3545';
+                resultMessage.textContent = `Попытки исчерпаны. Правильный ответ для «${toolName}» показан.`;
+
+                // Убираем использованное описание
+                descEl.classList.add('used');
+                // Возвращаем попытки для следующего
+                attemptsLeft = MAX_ATTEMPTS;
+                updateAttemptsDisplay();
+            } else {
+                resultMessage.style.color = '#dc3545';
+                resultMessage.textContent = `❌ Неверно. Осталось попыток: ${attemptsLeft}`;
+            }
+        } else {
+            // Правильно
+            toolEl.classList.add('correct');
+            resultMessage.style.color = '#28a745';
+            resultMessage.textContent = `✅ Верно! «${toolName}» соотнесено.`;
+            attemptsLeft = MAX_ATTEMPTS;
+            updateAttemptsDisplay();
+        }
+    }
+
+    // Обновить индикатор попыток
+    function updateAttemptsDisplay() {
+        attemptsDisplay.textContent = `${attemptsLeft} ${declOfNum(attemptsLeft, ['осталась', 'осталось', 'осталось'])}`;
+    }
+
+    // Склонение
+    function declOfNum(n, forms) {
+        n = Math.abs(n) % 100;
+        const n1 = n % 10;
+        if (n > 10 && n < 20) return forms[2];
+        if (n1 > 1 && n1 < 5) return forms[1];
+        if (n1 === 1) return forms[0];
+        return forms[2];
+    }
+
+    // Проверка всех ответов
+    function checkAnswers() {
+        let correctCount = 0;
+        let total = pairs.length;
+
+        document.querySelectorAll('.tool').forEach(toolEl => {
+            const toolName = toolEl.dataset.tool;
+            const slot = toolEl.querySelector('.tool-slot');
+            const placedTool = slot.dataset.placedTool;
+
+            toolEl.classList.remove('correct', 'incorrect');
+
+            if (placedTool === toolName) {
+                toolEl.classList.add('correct');
+                correctCount++;
+            } else if (placedTool) {
+                toolEl.classList.add('incorrect');
+            }
+        });
+
+        if (correctCount === total) {
+            resultMessage.style.color = '#28a745';
+            resultMessage.textContent = `🎉 Отлично! Все ${total} сопоставлений верны!`;
+        } else {
+            resultMessage.style.color = '#dc3545';
+            resultMessage.textContent = `Правильно: ${correctCount} из ${total}. Зелёным — верно, красным — ошибки.`;
+        }
+    }
+
+    // Сброс
+    function resetGame() {
+        init();
+    }
+
+    // Запуск
+    window.onload = init;
+</script>
+
+</body>
+</html>
