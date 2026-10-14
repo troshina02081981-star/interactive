@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер: Безопасность данных в ИИ</title>
+<style>
+    :root {
+        --primary: #1a3b5c;
+        --blue: #1e4bd8;
+        --safe: #28a745;
+        --unsafe: #dc3545;
+        --bg: #ffffff;
+        --card-bg: #ffffff;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .trainer {
+        width: 100%;
+        max-width: 700px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        padding: 12px;
+        box-sizing: border-box;
+        border: 1px solid #e2e8f0;
+    }
+
+    h1 {
+        font-size: 16px;
+        color: var(--primary);
+        margin-top: 0;
+        margin-bottom: 4px;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .subtitle {
+        font-size: 11px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+
+    /* Зона с карточками */
+    .deck {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 8px;
+        background: #f8faff;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 6px;
+        min-height: 70px;
+        margin-bottom: 12px;
+        transition: background 0.2s;
+    }
+
+    .deck.drag-over {
+        background: #eef4ff;
+        border-color: var(--blue);
+    }
+
+    /* Карточка */
+    .card {
+        background: var(--card-bg);
+        border: 1px solid #d0dbe8;
+        border-radius: 4px;
+        padding: 5px 8px;
+        font-size: 11.5px;
+        color: var(--primary);
+        cursor: grab;
+        user-select: none;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        position: relative;
+        line-height: 1.2;
+    }
+
+    .card:active {
+        cursor: grabbing;
+    }
+
+    .card.selected {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 2px rgba(30, 75, 216, 0.2);
+        background: #f0f5ff;
+    }
+
+    .card.correct {
+        border-color: var(--safe);
+        background-color: #e8f5e9;
+    }
+
+    .card.incorrect {
+        border-color: var(--unsafe);
+        background-color: #fce8e8;
+    }
+
+    /* Стопки */
+    .bins {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 500px) {
+        .bins {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .bin {
+        background: #ffffff;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 6px;
+        padding: 8px;
+        min-height: 80px;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .bin.drag-over {
+        border-color: var(--blue);
+        background: #f8faff;
+    }
+
+    .bin h2 {
+        font-size: 12px;
+        margin: 0 0 4px 0;
+        text-align: center;
+        color: var(--primary);
+        padding-bottom: 4px;
+        border-bottom: 1px solid #e2e8f0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .bin.safe h2 { color: var(--safe); }
+    .bin.unsafe h2 { color: var(--unsafe); }
+
+    .bin-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex-grow: 1;
+    }
+
+    /* Кнопки управления */
+    .controls {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 14px;
+        padding: 6px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-check {
+        background-color: var(--primary);
+        color: #ffffff;
+    }
+
+    .btn-check:hover {
+        background-color: #12304d;
+    }
+
+    .btn-reset {
+        background-color: #e2e8f0;
+        color: var(--primary);
+    }
+
+    .btn-reset:hover {
+        background-color: #cbd5e1;
+    }
+
+    .score-message {
+        text-align: center;
+        margin-top: 8px;
+        font-size: 11.5px;
+        font-weight: bold;
+        color: var(--primary);
+        min-height: 16px;
+    }
+</style>
+</head>
+<body>
+
+<div class="trainer">
+    <h1>ТРЕНАЖЕР: Какие данные нельзя вводить в нейросеть?</h1>
+    <p class="subtitle">Перетащите карточки в нужную стопку (или кликните на карточку, а затем на стопку)</p>
+
+    <!-- Зона с нераспределенными карточками -->
+    <div class="deck" id="deck" ondragover="event.preventDefault()" ondrop="dropToDeck(event)">
+        <!-- Карточки генерируются скриптом -->
+    </div>
+
+    <!-- Стопки -->
+    <div class="bins">
+        <div class="bin safe" id="bin-safe" data-type="safe" ondragover="event.preventDefault()" ondrop="dropToBin(event, 'safe')" onclick="clickToBin('safe')">
+            <h2>БЕЗОПАСНО</h2>
+            <div class="bin-content" id="content-safe"></div>
+        </div>
+        <div class="bin unsafe" id="bin-unsafe" data-type="unsafe" ondragover="event.preventDefault()" ondrop="dropToBin(event, 'unsafe')" onclick="clickToBin('unsafe')">
+            <h2>НЕБЕЗОПАСНО</h2>
+            <div class="bin-content" id="content-unsafe"></div>
+        </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="controls">
+        <button class="btn btn-check" onclick="checkAnswers()">✅ Проверить</button>
+        <button class="btn btn-reset" onclick="resetTrainer()">🔄 Сбросить</button>
+    </div>
+    
+    <div class="score-message" id="score-message"></div>
+</div>
+
+<script>
+    // Исходные данные
+    const items = [
+        { id: 1, text: "Черновики внутренних инструкций без конкретных названий и фамилий", safe: true },
+        { id: 2, text: "ФИО сотрудников и клиентов", safe: false },
+        { id: 3, text: "Образцы типового договора", safe: true },
+        { id: 4, text: "ИНН и ОГРН компании", safe: false },
+        { id: 5, text: "Тексты федеральных законов, актов", safe: true },
+        { id: 6, text: "Персональные данные, паспорта, медицинские справки", safe: false },
+        { id: 7, text: "Обезличенная статистика инцидентов", safe: true },
+        { id: 8, text: "Адреса, телефоны, почты", safe: false },
+        { id: 9, text: "Шаблоны актов проверок", safe: true },
+        { id: 10, text: "Коммерческие тайны", safe: false }
+    ];
+
+    let selectedCard = null;
+
+    // Инициализация карточек
+    function init() {
+        const deck = document.getElementById('deck');
+        deck.innerHTML = '';
+        document.getElementById('content-safe').innerHTML = '';
+        document.getElementById('content-unsafe').innerHTML = '';
+        document.getElementById('score-message').textContent = '';
+
+        // Перемешиваем карточки
+        const shuffled = [...items].sort(() => Math.random() - 0.5);
+
+        shuffled.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.id = `card-${item.id}`;
+            card.dataset.safe = item.safe;
+            card.textContent = item.text;
+            
+            // Drag events
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', card.id);
+                card.classList.add('dragging');
+            });
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                card.classList.remove('selected');
+                selectedCard = null;
+            });
+
+            // Click event for mobile fallback
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (selectedCard) {
+                    selectedCard.classList.remove('selected');
+                }
+                if (selectedCard === card) {
+                    selectedCard = null;
+                } else {
+                    selectedCard = card;
+                    card.classList.add('selected');
+                }
+            });
+
+            deck.appendChild(card);
+        });
+    }
+
+    // Drag and Drop handlers
+    function dropToBin(event, binType) {
+        event.preventDefault();
+        const cardId = event.dataTransfer.getData('text/plain');
+        const card = document.getElementById(cardId);
+        const binContent = document.getElementById(`content-${binType}`);
+        
+        if (card && binContent) {
+            binContent.appendChild(card);
+            card.classList.remove('correct', 'incorrect');
+        }
+        document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+    }
+
+    function dropToDeck(event) {
+        event.preventDefault();
+        const cardId = event.dataTransfer.getData('text/plain');
+        const card = document.getElementById(cardId);
+        const deck = document.getElementById('deck');
+        
+        if (card) {
+            deck.appendChild(card);
+            card.classList.remove('correct', 'incorrect');
+        }
+        document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+    }
+
+    // Click fallback for mobile
+    function clickToBin(binType) {
+        if (!selectedCard) return;
+        
+        const binContent = document.getElementById(`content-${binType}`);
+        binContent.appendChild(selectedCard);
+        selectedCard.classList.remove('selected', 'correct', 'incorrect');
+        selectedCard = null;
+    }
+
+    // Валидация ответов
+    function checkAnswers() {
+        const safeContent = document.getElementById('content-safe');
+        const unsafeContent = document.getElementById('content-unsafe');
+        const messageEl = document.getElementById('score-message');
+
+        let correctCount = 0;
+        let totalCount = 0;
+
+        // Проверка Safe bin
+        Array.from(safeContent.children).forEach(card => {
+            totalCount++;
+            card.classList.remove('correct', 'incorrect');
+            if (card.dataset.safe === 'true') {
+                card.classList.add('correct');
+                correctCount++;
+            } else {
+                card.classList.add('incorrect');
+            }
+        });
+
+        // Проверка Unsafe bin
+        Array.from(unsafeContent.children).forEach(card => {
+            totalCount++;
+            card.classList.remove('correct', 'incorrect');
+            if (card.dataset.safe === 'false') {
+                card.classList.add('correct');
+                correctCount++;
+            } else {
+                card.classList.add('incorrect');
+            }
+        });
+
+        // Проверка, что все карточки распределены
+        const deckCards = document.getElementById('deck').children.length;
+        if (deckCards > 0) {
+            messageEl.style.color = 'var(--primary)';
+            messageEl.textContent = `Осталось распределить: ${deckCards} шт.`;
+            return;
+        }
+
+        if (correctCount === items.length) {
+            messageEl.style.color = 'var(--safe)';
+            messageEl.textContent = `Отлично! Все ${correctCount} карточек верно!`;
+        } else {
+            messageEl.style.color = 'var(--unsafe)';
+            messageEl.textContent = `Правильно: ${correctCount} из ${items.length}. Красным — ошибки.`;
+        }
+    }
+
+    // Сброс тренажера
+    function resetTrainer() {
+        init();
+        selectedCard = null;
+    }
+
+    // Запуск
+    window.onload = init;
+</script>
+
+</body>
+</html>
