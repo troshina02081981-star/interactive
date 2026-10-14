@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что могут обнаруживать нейросети</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-sizing: border-box;
+    }
+
+    .title {
+        color: #1a3b5c;
+        font-weight: bold;
+        font-size: 13px;
+        text-align: center;
+        padding: 2px 0 8px 0;
+        letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 11px;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+
+    /* Карточка */
+    .card {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .card:hover {
+        border-color: #cbd5e1;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        user-select: none;
+        background: #f8faff;
+        transition: background 0.15s;
+    }
+
+    .card-header:hover {
+        background: #eef4ff;
+    }
+
+    .card.open .card-header {
+        background: #eef4ff;
+        border-bottom: 1px solid #d0dbe8;
+    }
+
+    /* Иконка */
+    .icon-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background: #eef4ff;
+        flex-shrink: 0;
+    }
+
+    .icon-box svg {
+        width: 16px;
+        height: 16px;
+        stroke: #1e4bd8;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .card-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #1a3b5c;
+        flex-grow: 1;
+        line-height: 1.3;
+    }
+
+    .chevron {
+        width: 14px;
+        height: 14px;
+        stroke: #64748b;
+        fill: none;
+        stroke-width: 2;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+    }
+
+    .card.open .chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Тело карточки */
+    .card-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 12px;
+        font-size: 12px;
+        line-height: 1.45;
+        color: #333;
+    }
+
+    .card.open .card-body {
+        max-height: 200px;
+        padding: 10px 12px 12px 12px;
+    }
+
+    .card-body .highlight {
+        color: #1e4bd8;
+        font-weight: 600;
+    }
+
+    /* Кнопки */
+    .buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 4px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 18px;
+        padding: 7px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-expand {
+        background-color: #1a3b5c;
+        color: #ffffff;
+    }
+
+    .btn-expand:hover {
+        background-color: #12304d;
+    }
+
+    .btn-reset {
+        background-color: #e2e8f0;
+        color: #1a3b5c;
+    }
+
+    .btn-reset:hover {
+        background-color: #cbd5e1;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="title">ЧТО МОГУТ ОБНАРУЖИВАТЬ НЕЙРОСЕТИ</div>
+    <div class="subtitle">Нажмите на категорию, чтобы раскрыть описание</div>
+
+    <!-- СИЗ -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M2 18a10 10 0 0 1 20 0"/><path d="M12 4v4"/><path d="M4 12l4 2"/><path d="M20 12l-4 2"/></svg>
+            </div>
+            <div class="card-title">СИЗ</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            Людей без <span class="highlight">касок, жилетов, перчаток, масок</span>
+        </div>
+    </div>
+
+    <!-- Опасные зоны -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 20h20L12 2z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="card-title">Опасные зоны</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            Вход человека в <span class="highlight">запрещённую зону</span> или под стрелу крана
+        </div>
+    </div>
+
+    <!-- Технологические операции -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <div class="card-title">Технологические операции</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            Закрыт ли <span class="highlight">защитный кожух</span> или включён ли <span class="highlight">аварийный стоп</span> — если сценарий и камера позволяют это определить
+        </div>
+    </div>
+
+    <!-- Дефекты -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </div>
+            <div class="card-title">Дефекты</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <span class="highlight">Микротрещины, сколы, неправильная сборка</span> — при наличии подходящего качества изображения и обученной модели
+        </div>
+    </div>
+
+    <!-- Пожарная безопасность -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M12 2s4 4 4 8a4 4 0 0 1-8 0c0-2 1-3 1-3s-5 3-5 9a8 8 0 0 0 16 0c0-6-8-14-8-14z"/></svg>
+            </div>
+            <div class="card-title">Пожарная безопасность</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <span class="highlight">Дым и искры</span> на ранней стадии — при наличии соответствующего детектора и условий съёмки
+        </div>
+    </div>
+
+    <!-- Мониторинг камер -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            </div>
+            <div class="card-title">Мониторинг камер</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            Автоматически <span class="highlight">выделять фрагменты с нарушениями</span>, фиксировать <span class="highlight">тип события и время</span>
+        </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="buttons">
+        <button class="btn btn-expand" onclick="expandAll()">📖 Раскрыть все</button>
+        <button class="btn btn-reset" onclick="collapseAll()">📕 Свернуть все</button>
+    </div>
+</div>
+
+<script>
+    function toggleCard(card) {
+        card.classList.toggle('open');
+    }
+
+    function expandAll() {
+        document.querySelectorAll('.card').forEach(card => card.classList.add('open'));
+    }
+
+    function collapseAll() {
+        document.querySelectorAll('.card').forEach(card => card.classList.remove('open'));
+    }
+</script>
+
+</body>
+</html>
