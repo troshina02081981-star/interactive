@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шаги подготовки данных</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .title {
+        color: #1a3b5c;
+        font-weight: bold;
+        font-size: 13px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    /* Слайдер */
+    .slider {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f8faff;
+    }
+
+    .slides-track {
+        display: flex;
+        transition: transform 0.35s ease;
+        width: 100%;
+    }
+
+    .slide {
+        flex: 0 0 100%;
+        width: 100%;
+        padding: 14px 16px;
+        box-sizing: border-box;
+        min-height: 240px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .step-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a3b5c;
+        line-height: 1.3;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #d0dbe8;
+    }
+
+    .slide-content {
+        font-size: 12px;
+        line-height: 1.45;
+        color: #333;
+    }
+
+    .slide-content p {
+        margin: 0 0 6px 0;
+    }
+
+    .slide-content ul {
+        margin: 4px 0;
+        padding-left: 16px;
+    }
+
+    .slide-content li {
+        margin-bottom: 3px;
+    }
+
+    .slide-content .label {
+        font-weight: 600;
+        color: #1a3b5c;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* Навигация */
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #1a3b5c;
+        cursor: pointer;
+        transition: all 0.15s;
+        flex-shrink: 0;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+        background: #eef4ff;
+        border-color: #1e4bd8;
+    }
+
+    .nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .nav-btn svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* Индикаторы */
+    .dots {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.2s;
+    }
+
+    .dot.active {
+        background: #1e4bd8;
+        transform: scale(1.15);
+    }
+
+    .counter {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+        min-width: 40px;
+        text-align: right;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="title">ПОДГОТОВКА ДАННЫХ И ОБУЧЕНИЕ НЕЙРОСЕТИ</div>
+
+    <div class="slider">
+        <div class="slides-track" id="track">
+            <!-- Шаг 1 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 1. Соберите и подготовьте данные</div>
+                <div class="slide-content">
+                    <p>Качество прогноза напрямую зависит от качества и полноты исходной информации. Перед обучением превратите производственные данные в понятный для модели набор.</p>
+                    <span class="label">Соберите:</span>
+                    <ul>
+                        <li>исторические сведения об инцидентах;</li>
+                        <li>показания датчиков;</li>
+                        <li>логи ошибок АСУ ТП;</li>
+                        <li>внешние условия;</li>
+                        <li>данные о работе сотрудников;</li>
+                        <li>оперативные журналы.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Шаг 2 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 2. Разделите факторы риска на постоянные и переменные</div>
+                <div class="slide-content">
+                    <p>Постоянные факторы задают базовые условия объекта, а переменные показывают, как состояние меняется во времени.</p>
+                    <span class="label">Постоянные факторы:</span>
+                    <ul>
+                        <li>паспортные данные оборудования;</li>
+                        <li>категория взрывопожарной опасности;</li>
+                        <li>конструктивные особенности здания;</li>
+                        <li>схемы технологического регламента;</li>
+                        <li>конструкция станка или аппарата;</li>
+                        <li>нормативные параметры.</li>
+                    </ul>
+                    <span class="label">Переменные:</span>
+                    <ul>
+                        <li>температура, давление, ток двигателя;</li>
+                        <li>вибрация подшипников, уровень масла;</li>
+                        <li>влажность, освещённость.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Шаг 3 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 3. Выберите нейросеть под задачу</div>
+                <div class="slide-content">
+                    <p>Для прогнозирования по данным датчиков нужна модель, которая умеет работать с временными рядами — последовательностями измерений и зависимостями между ними.</p>
+                </div>
+            </div>
+
+            <!-- Шаг 4 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 4. Проведите гибридное прогнозирование</div>
+                <div class="slide-content">
+                    <p>LSTM анализирует загруженные данные и настройки прогноза, после чего выдаёт вероятность события. Эксперты независимо оценивают риск и фиксируют свои замечания. Итоговую оценку можно рассчитывать как взвешенную сумму.</p>
+                </div>
+            </div>
+
+            <!-- Шаг 5 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 5. Обучите и проверьте модель</div>
+                <div class="slide-content">
+                    <p>Прежде чем нейросеть начнёт действительно работать и прогнозировать риски, обучите её на исторических данных, проверьте её прогнозы и только после того, как станете уверенными, что модель обучилась хорошо, применяйте её в работе.</p>
+                </div>
+            </div>
+
+            <!-- Шаг 6 -->
+            <div class="slide">
+                <div class="step-title">ШАГ 6. Внедрите нейросеть в работу предприятия</div>
+                <div class="slide-content">
+                    <p>После обучения и проверки модель можно подключать к производственным данным. Система может получать данные с датчиков, АСУ ТП и журналов и формировать прогнозы непрерывно или с заданной периодичностью.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <div class="nav">
+        <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="dots" id="dots"></div>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="counter" id="counter">1 / 6</div>
+    </div>
+</div>
+
+<script>
+    const track = document.getElementById('track');
+    const slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.getElementById('dots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('counter');
+
+    let currentIndex = 0;
+    const total = slides.length;
+
+    slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlider() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === total - 1;
+        counter.textContent = `${currentIndex + 1} / ${total}`;
+    }
+
+    function nextSlide() {
+        if (currentIndex < total - 1) {
+            currentIndex++;
+            updateSlider();
+        }
+    }
+
+    function prevSlide() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
+    }
+
+    function goToSlide(i) {
+        currentIndex = i;
+        updateSlider();
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    updateSlider();
+</script>
+
+</body>
+</html>
