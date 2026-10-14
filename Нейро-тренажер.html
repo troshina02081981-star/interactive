@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нейро-тренажер: Сборка промпта (Компактно)</title>
+<style>
+    :root {
+        --primary: #1a3b5c;
+        --blue: #1e4bd8;
+        --bg: #ffffff;
+        --window-bg: #f8faff;
+        --border: #d0dbe8;
+        --text: #333333;
+        --ai-msg-bg: #eef4ff;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding: 8px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    /* Верхняя панель */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 6px 10px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+    }
+
+    .header h1 {
+        font-size: 14px;
+        color: var(--primary);
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .task-selector {
+        display: flex;
+        gap: 4px;
+    }
+
+    .task-btn {
+        background: #f0f5ff;
+        border: 1px solid #b3d4ff;
+        color: var(--blue);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .task-btn.active {
+        background: var(--blue);
+        color: #ffffff;
+        border-color: var(--blue);
+    }
+
+    .task-btn:hover:not(.active) {
+        background: #e0edff;
+    }
+
+    /* Основная рабочая область */
+    .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 8px;
+    }
+
+    @media (max-width: 700px) {
+        .main-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Окно нейросети */
+    .neural-window {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .window-header {
+        background: var(--primary);
+        color: #ffffff;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .drop-zone {
+        flex-grow: 1;
+        min-height: 160px;
+        max-height: 320px;
+        overflow-y: auto;
+        padding: 8px;
+        background: var(--window-bg);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: background 0.2s;
+    }
+
+    .drop-zone.drag-over {
+        background: #eef4ff;
+        box-shadow: inset 0 0 0 2px var(--blue);
+    }
+
+    .drop-zone:empty::before {
+        content: "Перетащите сюда блоки промпта в логическом порядке...";
+        color: #999;
+        font-size: 10px;
+        text-align: center;
+        margin-top: 60px;
+        display: block;
+    }
+
+    .window-footer {
+        padding: 6px 10px;
+        background: #ffffff;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 6px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 4px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-check { background: var(--blue); color: #ffffff; flex-grow: 1; }
+    .btn-check:hover { background: #12304d; }
+    .btn-reset { background: #e2e8f0; color: var(--primary); }
+    .btn-reset:hover { background: #cbd5e1; }
+
+    /* Панель доступных блоков */
+    .blocks-pool {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .blocks-pool h3 {
+        font-size: 11px;
+        color: var(--primary);
+        margin: 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 4px;
+    }
+
+    .pool-zone {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-height: 50px;
+    }
+
+    /* Блоки (карточки) */
+    .block {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 6px;
+        font-size: 10.5px;
+        color: var(--text);
+        cursor: grab;
+        user-select: none;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .block:active {
+        cursor: grabbing;
+    }
+
+    .block.dragging {
+        opacity: 0.5;
+        border-style: dashed;
+    }
+
+    .block-badge {
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--blue);
+        background: #eef4ff;
+        padding: 1px 4px;
+        border-radius: 2px;
+        align-self: flex-start;
+    }
+
+    .block-text {
+        line-height: 1.3;
+    }
+
+    .block.correct {
+        border-color: #28a745;
+        background-color: #e8f5e9;
+    }
+
+    .block.incorrect {
+        border-color: #dc3545;
+        background-color: #fce8e8;
+    }
+
+    /* Ответ нейросети */
+    .ai-response {
+        margin-top: 6px;
+        padding: 8px;
+        background: var(--ai-msg-bg);
+        border-radius: 6px;
+        border-left: 3px solid var(--blue);
+        font-size: 11px;
+        line-height: 1.35;
+        color: var(--primary);
+        display: none;
+    }
+
+    .ai-response strong {
+        color: var(--blue);
+    }
+
+    .score-badge {
+        display: inline-block;
+        background: var(--blue);
+        color: #fff;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: bold;
+        margin-bottom: 3px;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Шапка -->
+    <div class="header">
+        <h1>🤖 Нейро-тренажер: Сборка промпта</h1>
+        <div class="task-selector">
+            <button class="task-btn active" onclick="loadTask(0)">Создание инструкции</button>
+            <button class="task-btn" onclick="loadTask(1)">Актуализация акта</button>
+            <button class="task-btn" onclick="loadTask(2)">Разработка приказа</button>
+        </div>
+    </div>
+
+    <!-- Основная область -->
+    <div class="main-layout">
+        <!-- Окно нейросети -->
+        <div class="neural-window">
+            <div class="window-header">
+                <span>🧠 Нейросеть (Оценка промпта)</span>
+            </div>
+            <div class="drop-zone" id="promptZone" ondragover="event.preventDefault()" ondrop="dropToPrompt(event)">
+                <!-- Сюда перетаскиваются блоки -->
+            </div>
+            <div class="window-footer">
+                <button class="btn btn-check" onclick="checkPrompt()">▶ Проверить промпт</button>
+                <button class="btn btn-reset" onclick="resetTask()">🔄 Сбросить</button>
+            </div>
+            <!-- Ответ нейросети -->
+            <div class="ai-response" id="aiResponse"></div>
+        </div>
+
+        <!-- Панель доступных блоков -->
+        <div class="blocks-pool">
+            <h3>📦 Доступные блоки</h3>
+            <div class="pool-zone" id="poolZone" ondragover="event.preventDefault()" ondrop="dropToPool(event)">
+                <!-- Блоки генерируются скриптом -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // База данных задач
+    const tasksData = [
+        {
+            title: "Создание инструкции",
+            blocks: [
+                { id: "role", type: "Роль", text: "Ты эксперт по промышленной безопасности", order: 1 },
+                { id: "task", type: "Задача", text: "Составь инструкцию по охране труда", order: 2 },
+                { id: "context", type: "Контекст", text: "Для металлургического предприятия", order: 3 },
+                { id: "audience", type: "ЦА", text: "Для электрогазосварщика", order: 4 },
+                { id: "constraints", type: "Ограничения", text: "Учти требования ФНП и профстандартов", order: 5 },
+                { id: "format", type: "Формат", text: "В виде таблицы с этапами работ", order: 6 },
+                { id: "sources", type: "Источники", text: "Используй Федеральный закон №116-ФЗ", order: 7 }
+            ]
+        },
+        {
+            title: "Актуализация акта",
+            blocks: [
+                { id: "role", type: "Роль", text: "Ты юрист в области промбезопасности", order: 1 },
+                { id: "task", type: "Задача", text: "Актуализируй локальный акт 'Положение о ПК'", order: 2 },
+                { id: "context", type: "Контекст", text: "В связи с изменением постановления Правительства РФ", order: 3 },
+                { id: "audience", type: "ЦА", text: "Для специалистов отдела ПБ", order: 4 },
+                { id: "constraints", type: "Ограничения", text: "Выдели только измененные пункты", order: 5 },
+                { id: "format", type: "Формат", text: "Сравнительная таблица 'Было - Стало'", order: 6 },
+                { id: "sources", type: "Источники", text: "Используй новое Постановление №...", order: 7 }
+            ]
+        },
+        {
+            title: "Разработка приказа",
+            blocks: [
+                { id: "role", type: "Роль", text: "Ты руководитель отдела охраны труда", order: 1 },
+                { id: "task", type: "Задача", text: "Напиши проект приказа о внедрении изменений", order: 2 },
+                { id: "context", type: "Контекст", text: "На ОПО III класса", order: 3 },
+                { id: "audience", type: "ЦА", text: "Для начальников цехов", order: 4 },
+                { id: "constraints", type: "Ограничения", text: "Укажи ответственных лиц и сроки", order: 5 },
+                { id: "format", type: "Формат", text: "Структурированный текст с шапкой", order: 6 },
+                { id: "sources", type: "Источники", text: "На основе внутренних регламентов", order: 7 }
+            ]
+        }
+    ];
+
+    let currentTaskIndex = 0;
+
+    // Инициализация задачи
+    function loadTask(index) {
+        currentTaskIndex = index;
+        const task = tasksData[index];
+
+        // Обновляем кнопки
+        document.querySelectorAll('.task-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === index);
+        });
+
+        // Очищаем зоны
+        const promptZone = document.getElementById('promptZone');
+        const poolZone = document.getElementById('poolZone');
+        const aiResponse = document.getElementById('aiResponse');
+        
+        promptZone.innerHTML = '';
+        poolZone.innerHTML = '';
+        aiResponse.style.display = 'none';
+        aiResponse.innerHTML = '';
+
+        // Перемешиваем блоки и добавляем в пул
+        const shuffled = [...task.blocks].sort(() => Math.random() - 0.5);
+        
+        shuffled.forEach(blockData => {
+            const blockEl = createBlockElement(blockData);
+            poolZone.appendChild(blockEl);
+        });
+    }
+
+    // Создание DOM-элемента блока
+    function createBlockElement(blockData) {
+        const div = document.createElement('div');
+        div.className = 'block';
+        div.draggable = true;
+        div.id = `block-${blockData.id}`;
+        div.dataset.order = blockData.order;
+        div.dataset.type = blockData.type;
+        
+        div.innerHTML = `
+            <div class="block-badge">${blockData.type}</div>
+            <div class="block-text">${blockData.text}</div>
+        `;
+
+        div.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', div.id);
+            div.classList.add('dragging');
+        });
+
+        div.addEventListener('dragend', () => {
+            div.classList.remove('dragging');
+        });
+
+        return div;
+    }
+
+    // Drag and Drop логика
+    function dropToPrompt(event) {
+        event.preventDefault();
+        const blockId = event.dataTransfer.getData('text/plain');
+        const block = document.getElementById(blockId);
+        const promptZone = document.getElementById('promptZone');
+
+        if (block && !promptZone.contains(block)) {
+            promptZone.appendChild(block);
+            block.classList.remove('correct', 'incorrect');
+        }
+        
+        document.getElementById('promptZone').classList.remove('drag-over');
+    }
+
+    function dropToPool(event) {
+        event.preventDefault();
+        const blockId = event.dataTransfer.getData('text/plain');
+        const block = document.getElementById(blockId);
+        const poolZone = document.getElementById('poolZone');
+
+        if (block && !poolZone.contains(block)) {
+            poolZone.appendChild(block);
+            block.classList.remove('correct', 'incorrect');
+        }
+        
+        document.getElementById('poolZone').classList.remove('drag-over');
+    }
+
+    // Подсветка зон при перетаскивании
+    document.getElementById('promptZone').addEventListener('dragover', () => {
+        document.getElementById('promptZone').classList.add('drag-over');
+    });
+    document.getElementById('promptZone').addEventListener('dragleave', () => {
+        document.getElementById('promptZone').classList.remove('drag-over');
+    });
+    document.getElementById('poolZone').addEventListener('dragover', () => {
+        document.getElementById('poolZone').classList.add('drag-over');
+    });
+    document.getElementById('poolZone').addEventListener('dragleave', () => {
+        document.getElementById('poolZone').classList.remove('drag-over');
+    });
+
+    // Проверка промпта
+    function checkPrompt() {
+        const promptZone = document.getElementById('promptZone');
+        const blocks = Array.from(promptZone.children);
+        const aiResponse = document.getElementById('aiResponse');
+        const task = tasksData[currentTaskIndex];
+
+        let score = 0;
+        let missingCount = task.blocks.length - blocks.length;
+        let orderErrors = 0;
+
+        // Проверка на наличие всех блоков
+        if (missingCount > 0) {
+            // Можно добавить вывод в консоль или в ответ
+        }
+
+        // Проверка порядка
+        blocks.forEach((block, index) => {
+            block.classList.remove('correct', 'incorrect');
+            const expectedOrder = parseInt(block.dataset.order);
+            
+            if (expectedOrder === index + 1) {
+                score++;
+                block.classList.add('correct');
+            } else {
+                block.classList.add('incorrect');
+                orderErrors++;
+            }
+        });
+
+        // Формирование ответа нейросети
+        let aiMessage = `<span class="score-badge">Оценка: ${score} / ${task.blocks.length}</span><br>`;
+        
+        if (score === task.blocks.length) {
+            aiMessage += `<strong>Отличный промпт!</strong> Вы четко соблюли структуру: Роль → Задача → Контекст → ЦА → Ограничения → Формат → Источники. Нейросеть выдаст точный и структурированный результат.`;
+        } else {
+            if (missingCount > 0) {
+                aiMessage += `⚠️ <strong>Промпт неполный.</strong> Вы не использовали все доступные блоки. `;
+            }
+            if (orderErrors > 0) {
+                aiMessage += `⚠️ <strong>Нарушен порядок элементов.</strong> Рекомендуется начинать с роли и задачи, затем добавлять контекст и целевую аудиторию. `;
+            }
+            aiMessage += `<br><br>Нейросеть может выдать неточный или неструктурированный ответ. Попробуйте переставить блоки в логическом порядке.`;
+        }
+
+        aiResponse.innerHTML = aiMessage;
+        aiResponse.style.display = 'block';
+    }
+
+    // Сброс текущей задачи
+    function resetTask() {
+        loadTask(currentTaskIndex);
+    }
+
+    // Запуск при загрузке
+    window.onload = () => loadTask(0);
+</script>
+
+</body>
+</html>
