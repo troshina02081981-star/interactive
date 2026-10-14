@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивная инструкция: Промпт в нейросети</title>
+    <style>
+        /* Базовый сброс и белый фон */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        /* Контейнер с рамкой */
+        .chat-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Окно ввода */
+        .prompt-wrapper {
+            position: relative;
+        }
+
+        .prompt-area {
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            min-height: 220px;
+            white-space: pre-wrap;
+        }
+
+        /* Панель инструментов */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+        }
+
+        .left-tools, .right-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #444;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+
+        .tool-btn:hover {
+            background-color: #f2f2f2;
+        }
+
+        .send-btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 16px;
+        }
+
+        .send-btn:hover {
+            background-color: #000000;
+        }
+
+        /* Метки */
+        .marker {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: #ff3b30;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.15s, background 0.15s;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 6px rgba(255, 59, 48, 0.35);
+        }
+
+        .marker:hover {
+            transform: translateX(-50%) scale(1.15);
+            background-color: #d32f2f;
+        }
+
+        /* Тултипы */
+        .tooltip {
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s, transform 0.15s;
+            z-index: 20;
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1a1a1a transparent transparent transparent;
+        }
+
+        .marker:hover + .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        /* Сдвиг тултипов по краям */
+        .tooltip-edge-left {
+            left: 0;
+            transform: translateX(0);
+        }
+        .tooltip-edge-left::after {
+            left: 12px;
+            transform: translateX(0);
+        }
+        .marker:hover + .tooltip-edge-left {
+            transform: translateX(0) translateY(-4px);
+        }
+
+        .tooltip-edge-right {
+            left: auto;
+            right: 0;
+            transform: translateX(0);
+        }
+        .tooltip-edge-right::after {
+            left: auto;
+            right: 12px;
+            transform: translateX(0);
+        }
+        .marker:hover + .tooltip-edge-right {
+            transform: translateX(0) translateY(-4px);
+        }
+
+        /* Превью документа справа */
+        .doc-preview {
+            position: absolute;
+            right: -340px;
+            top: 24px;
+            width: 300px;
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 18px;
+            font-size: 10px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-sizing: border-box;
+        }
+
+        .doc-preview h3 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-preview .line {
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+
+        .doc-preview .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .doc-preview .red-circle {
+            border: 2px solid red;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: red;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 1200px) {
+            .doc-preview {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+
+        <!-- Окно ввода -->
+        <div class="prompt-wrapper">
+            <div class="marker">2</div>
+            <div class="tooltip">📝 Окно ввода (Текстовое поле для промпта)</div>
+
+            <div class="prompt-area">
+Ты — эксперт по промышленной безопасности.
+
+Задача: [опишите, что нужно сделать].
+
+Источники: используй только [загруженные документы / ФНП №___ / внутренние регламенты]. Не используй внешние знания.
+
+Контекст: [тип ОПО, класс опасности, вид оборудования, специфика предприятия].
+
+Ограничения:
+            </div>
+        </div>
+
+        <!-- Панель инструментов -->
+        <div class="toolbar">
+            <div class="left-tools">
+
+                <!-- 1. Прикрепить файл -->
+                <div class="btn-wrapper">
+                    <div class="marker">1</div>
+                    <div class="tooltip tooltip-edge-left">📁 Прикрепить файл</div>
+                    <button class="tool-btn">+</button>
+                </div>
+
+                <!-- 5. Поиск -->
+                <div class="btn-wrapper">
+                    <div class="marker">5</div>
+                    <div class="tooltip">🔍 Поиск в интернете</div>
+                    <button class="tool-btn">🔍 Поиск</button>
+                </div>
+
+                <button class="tool-btn">💻 Компьютер</button>
+            </div>
+
+            <div class="right-tools">
+                <!-- 3. Выбор модели -->
+                <div class="btn-wrapper">
+                    <div class="marker">3</div>
+                    <div class="tooltip">🤖 Выбор модели ИИ</div>
+                    <button class="tool-btn">Модель v</button>
+                </div>
+
+                <!-- 4. Отправка -->
+                <div class="btn-wrapper">
+                    <div class="marker">4</div>
+                    <div class="tooltip tooltip-edge-right">📤 Отправить запрос</div>
+                    <button class="send-btn">↑</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Превью наряд-допуска -->
+        <div class="doc-preview">
+            <h3>НАРЯД-ДОПУСК № 15</h3>
+            <div class="line">на производство погрузочно-разгрузочных работ</div>
+            <div class="line">"14" апреля 2025 г. в 08 час. 3</div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">1</span>
+                <span class="highlight">Укажите точную дату и время выдачи наряда-допуска</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">2</span> Ответственный руководитель работ: <br>
+                <span style="margin-left: 15px;">Прораб _______________ С.И. Иванов</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">3</span> Производитель работ (ответственный): <br>
+                <span style="margin-left: 15px;">Мастер _______________ Козлов М.И.</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">4</span> Члены бригады с указанием профессии:
+                <div style="margin-left: 15px;">1. Стропальщик _______________</div>
+                <div style="margin-left: 15px;">2. Стропальщик _______________</div>
+                <div style="margin-left: 15px;">3. Водитель автомобиля (низкорам...)</div>
+                <div style="margin-left: 15px;">4. Машинист автокрана КС-45717</div>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">5</span> Место производства работ (точный адрес): <br>
+                <span style="margin-left: 15px;">г. Н-ск, ул. Строителей, д. 25, строение 1</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="red-circle">6</span> Наименование, содержание и условия работ: <br>
+                <span style="margin-left: 15px;">Погрузка железобетонных плит перекрытия на площадке складирования.</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
