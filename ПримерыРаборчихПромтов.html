@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Примеры рабочих промптов</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Заголовок */
+    .title {
+        color: #1a3b5c;
+        padding: 2px 4px 6px 4px;
+        font-weight: bold;
+        font-size: 13px;
+        text-align: center;
+        line-height: 1.3;
+        letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 11px;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+
+    /* Карточка промпта */
+    .card {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        user-select: none;
+        background: #f8faff;
+        transition: background 0.15s;
+    }
+
+    .card-header:hover {
+        background: #eef4ff;
+    }
+
+    .card-header .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #1e4bd8;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .card-header .task-title {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #1a3b5c;
+        flex-grow: 1;
+        line-height: 1.3;
+    }
+
+    .card-header .chevron {
+        width: 14px;
+        height: 14px;
+        stroke: #64748b;
+        fill: none;
+        stroke-width: 2;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+    }
+
+    .card.open .card-header .chevron {
+        transform: rotate(180deg);
+    }
+
+    .card-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 12px;
+    }
+
+    .card.open .card-body {
+        max-height: 500px;
+        padding: 10px 12px 12px 12px;
+    }
+
+    .prompt-text {
+        font-size: 12px;
+        line-height: 1.45;
+        color: #333;
+        background: #f8faff;
+        border-left: 3px solid #1e4bd8;
+        border-radius: 4px;
+        padding: 8px 10px;
+        margin: 0;
+    }
+
+    /* Кнопки управления */
+    .buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 2px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 18px;
+        padding: 7px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-expand {
+        background-color: #1a3b5c;
+        color: #ffffff;
+    }
+
+    .btn-expand:hover {
+        background-color: #12304d;
+    }
+
+    .btn-reset {
+        background-color: #e2e8f0;
+        color: #1a3b5c;
+    }
+
+    .btn-reset:hover {
+        background-color: #cbd5e1;
+    }
+
+    /* Подсказка */
+    .hint {
+        font-size: 10.5px;
+        color: #94a3b8;
+        text-align: center;
+        margin-top: 2px;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="title">ПРИМЕРЫ РАБОЧИХ ПРОМПТОВ</div>
+    <div class="subtitle">Нажмите на задачу, чтобы увидеть готовый промпт</div>
+
+    <!-- Карточка 1 -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon">1</div>
+            <div class="task-title">Составить тест для проверки знаний</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <p class="prompt-text">
+                Создай тест из 10 вопросов для проверки знаний по безопасной эксплуатации [оборудование/вид работ]. К каждому вопросу предложи 4 варианта ответа, укажи правильный и кратко объясни его. Проверяй не формальное запоминание, а понимание опасностей и правильных действий в реальных ситуациях.
+            </p>
+        </div>
+    </div>
+
+    <!-- Карточка 2 -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon">2</div>
+            <div class="task-title">Собрать сценарий инструктажа</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <p class="prompt-text">
+                Напиши сценарий инструктажа по промышленной безопасности для электрогазосварщика. Ситуация — сварка в замкнутом пространстве. В ключевых моментах предложи 2–3 варианта действий и укажи последствия каждого выбора. Используй реалистичные производственные условия.
+            </p>
+        </div>
+    </div>
+
+    <!-- Карточка 3 -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon">3</div>
+            <div class="task-title">Адаптировать готовый инструктаж под возрастную группу</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <p class="prompt-text">
+                Адаптируй прикрепленный текст инструктажа по промышленной безопасности для [профессия]. Аудитория — сотрудники 55+. Используй короткие предложения, крупный шрифт, простой язык и акцент на практические действия. Сохрани все обязательные требования исходного материала.
+            </p>
+        </div>
+    </div>
+
+    <!-- Карточка 4 -->
+    <div class="card" onclick="toggleCard(this)">
+        <div class="card-header">
+            <div class="icon">4</div>
+            <div class="task-title">Создать обучающий чек-лист</div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="card-body">
+            <p class="prompt-text">
+                Создай обучающий чек-лист для стропальщика с опытом работы 3 месяца. Только практика, без теории. 7 вопросов для самопроверки перед подъемом груза, ответы ДА/НЕТ. В конце добавь правило: «Хотя бы одно НЕТ — не работай, зови мастера». Объем — не более одной страницы.
+            </p>
+        </div>
+    </div>
+
+    <!-- Кнопки управления -->
+    <div class="buttons">
+        <button class="btn btn-expand" onclick="expandAll()">📖 Раскрыть все</button>
+        <button class="btn btn-reset" onclick="collapseAll()">📕 Свернуть все</button>
+    </div>
+
+    <div class="hint">💡 Замените [параметры] на свои данные при работе с нейросетью</div>
+</div>
+
+<script>
+    // Переключение одной карточки
+    function toggleCard(card) {
+        card.classList.toggle('open');
+    }
+
+    // Раскрыть все карточки
+    function expandAll() {
+        document.querySelectorAll('.card').forEach(card => {
+            card.classList.add('open');
+        });
+    }
+
+    // Свернуть все карточки
+    function collapseAll() {
+        document.querySelectorAll('.card').forEach(card => {
+            card.classList.remove('open');
+        });
+    }
+</script>
+
+</body>
+</html>
