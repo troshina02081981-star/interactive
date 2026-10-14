@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание: Задачи для ИИ (Компактно)</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #f4f7fb;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        margin: 0;
+    }
+
+    .container {
+        background: #ffffff;
+        width: 100%;
+        max-width: 600px; /* Чуть уже */
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    /* Шапка */
+    .header {
+        background-color: #1a3b5c;
+        color: #ffffff;
+        padding: 12px 16px; /* Уменьшено */
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-icon {
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .header-text h1 {
+        font-size: 15px; /* Уменьшено */
+        margin: 0 0 2px 0;
+        font-weight: 700;
+    }
+
+    .header-text p {
+        font-size: 11px; /* Уменьшено */
+        margin: 0;
+        opacity: 0.85;
+    }
+
+    /* Блоки контента */
+    .content {
+        padding: 12px 16px; /* Уменьшено */
+    }
+
+    .info-block {
+        border-radius: 6px;
+        padding: 8px 10px; /* Уменьшено */
+        margin-bottom: 8px; /* Уменьшено */
+        font-size: 11.5px; /* Уменьшено */
+        line-height: 1.35;
+        color: #333;
+        background-color: #f8faff;
+    }
+
+    .scenario { border-left: 3px solid #f0a500; }
+    .task { border-left: 3px solid #1e4bd8; }
+    .info-block strong { color: #1a3b5c; }
+
+    /* Сетка чекбоксов */
+    .checkboxes-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px; /* Уменьшено */
+        margin-bottom: 12px; /* Уменьшено */
+    }
+
+    @media (min-width: 500px) {
+        .checkboxes-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        background: #ffffff;
+        border: 1px solid #d0dbe8;
+        border-radius: 6px;
+        padding: 6px 8px; /* Уменьшено */
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-size: 11.5px; /* Уменьшено */
+        line-height: 1.3;
+        color: #1a3b5c;
+    }
+
+    .checkbox-item:hover {
+        border-color: #1e4bd8;
+        background: #f4f8ff;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        margin-top: 1px;
+        cursor: pointer;
+        accent-color: #1e4bd8;
+        flex-shrink: 0;
+    }
+
+    .checkbox-item.correct { border-color: #28a745; background-color: #e8f5e9; }
+    .checkbox-item.incorrect { border-color: #dc3545; background-color: #fce8e8; }
+
+    /* Кнопки */
+    .buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 16px;
+        padding: 6px 14px; /* Уменьшено */
+        font-size: 12px; /* Уменьшено */
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-check { background-color: #1a3b5c; color: #ffffff; }
+    .btn-check:hover { background-color: #12304d; }
+    .btn-reset { background-color: #e2e8f0; color: #1a3b5c; }
+    .btn-reset:hover { background-color: #cbd5e1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-icon">📋</div>
+        <div class="header-text">
+            <h1>Задание 1.1. «Задачи для ИИ»</h1>
+            <p>Отметьте действия, которые нейросеть выполнит самостоятельно</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="info-block scenario">
+            <strong>📂 Ситуация:</strong> Вышло новое постановление Правительства РФ об изменениях в требованиях к производственному контролю на ОПО III класса. Специалист должен сравнить редакции, внести правки в локальные акты и подготовить приказ.
+        </div>
+
+        <div class="info-block task">
+            <strong>🎯 Задание:</strong> Отметьте галочками действия, которые ИИ может выполнить полностью самостоятельно при доступе к документам и шаблонам. Остальные требуют экспертной оценки.
+        </div>
+
+        <div class="checkboxes-grid">
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Сравнить старую и новую редакции постановления и выделить изменения в таблицу</span>
+            </label>
+            <label class="checkbox-item" data-correct="false">
+                <input type="checkbox">
+                <span>Определить, какие разделы Положения о ПК требуют изменений</span>
+            </label>
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Написать текст нового приказа, используя корпоративный шаблон</span>
+            </label>
+            <label class="checkbox-item" data-correct="false">
+                <input type="checkbox">
+                <span>Проверить, не противоречит ли проект приказа другим локальным актам</span>
+            </label>
+            <label class="checkbox-item" data-correct="false">
+                <input type="checkbox">
+                <span>Распечатать приказ, подшить в папку и отправить на подпись</span>
+            </label>
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Сгенерировать сопроводительное письмо в юридический отдел</span>
+            </label>
+            <label class="checkbox-item" data-correct="false">
+                <input type="checkbox">
+                <span>Принять решение, с какой даты вводить изменения в действие</span>
+            </label>
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Создать черновик уведомления для сотрудников в виде памятки</span>
+            </label>
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Проверить проект приказа на грамматические и орфографические ошибки</span>
+            </label>
+            <label class="checkbox-item" data-correct="true">
+                <input type="checkbox">
+                <span>Подготовить таблицу «Было — Стало» для доклада руководству</span>
+            </label>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-check" onclick="checkAnswers()">✅ Проверить</button>
+            <button class="btn btn-reset" onclick="resetAnswers()">🔄 Сбросить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const items = document.querySelectorAll('.checkbox-item');
+        let score = 0, totalCorrect = 0;
+        items.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const isCorrect = item.getAttribute('data-correct') === 'true';
+            item.classList.remove('correct', 'incorrect');
+            if (isCorrect) totalCorrect++;
+            if (checkbox.checked === isCorrect) {
+                item.classList.add('correct'); score++;
+            } else {
+                item.classList.add('incorrect');
+            }
+        });
+        setTimeout(() => alert(`Правильно: ${score} из ${totalCorrect}`), 100);
+    }
+
+    function resetAnswers() {
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.querySelector('input[type="checkbox"]').checked = false;
+            item.classList.remove('correct', 'incorrect');
+        });
+    }
+</script>
+
+</body>
+</html>
