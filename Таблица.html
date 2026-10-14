@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Правила использования ИИ</title>
+<style>
+    body {
+        font-family: 'Times New Roman', Times, serif;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        color: #000000;
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    td {
+        border: 1.5px solid #000000;
+        padding: 10px 12px;
+        vertical-align: top;
+    }
+
+    /* Первая колонка (иконки) */
+    .icon-cell {
+        width: 70px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .icon-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+    }
+
+    /* Вторая колонка (правила) */
+    .rule-cell {
+        width: 30%;
+        font-weight: bold;
+        vertical-align: middle;
+    }
+
+    /* Третья колонка (описание) */
+    .desc-cell {
+        width: 70%;
+        text-align: justify;
+    }
+</style>
+</head>
+<body>
+
+<div class="table-wrapper">
+    <table>
+        <tr>
+            <td class="icon-cell">
+                <div class="icon-box">
+                    <!-- Иконка галочки -->
+                    <svg width="45" height="45" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Рамка -->
+                        <rect x="2" y="2" width="41" height="41" fill="none" stroke="#000000" stroke-width="2"/>
+                        <!-- Галочка -->
+                        <path d="M10 22 L18 30 L34 12" fill="none" stroke="#4CAF50" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </td>
+            <td class="rule-cell">
+                Можно использовать документы с персональными данными в ИИ
+            </td>
+            <td class="desc-cell">
+                Если ваша нейросеть разработана специально под ваше предприятие, нигде больше не используется и имеет закрытые локальные серверы, на которых хранит все данные и информацию, а также если она адаптирована и имеет защиту для безопасного хранения конфиденциальных данных
+            </td>
+        </tr>
+        <tr>
+            <td class="icon-cell">
+                <div class="icon-box">
+                    <!-- Иконка крестика -->
+                    <svg width="45" height="45" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Рамка -->
+                        <rect x="2" y="2" width="41" height="41" fill="none" stroke="#000000" stroke-width="2"/>
+                        <!-- Крестик -->
+                        <path d="M12 12 L33 33 M33 12 L12 33" fill="none" stroke="#F44336" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </td>
+            <td class="rule-cell">
+                Запрещено использовать персональные данные и конфиденциальную информацию в ИИ
+            </td>
+            <td class="desc-cell">
+                Если ваша нейросеть имеет облачные хранилища и удаленные открытые серверы, то есть информация, которую вы загружаете в ИИ, становится общедоступной для всех пользователей этого ИИ
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
