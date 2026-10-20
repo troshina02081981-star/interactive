@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто участвует в проекте автоматизации</title>
+<style>
+  *{box-sizing:border-box}
+  html, body { margin: 0; padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+  body { padding: 8px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2937; line-height: 1.25; }
+  .widget { max-width: 680px; margin: 0 auto; background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; display: inline-block; width: 100%; }
+  .widget h1 { font-size: 13px; margin: 0 0 3px; }
+  .lead { color: #6b7280; font-size: 10px; margin: 0 0 10px; }
+
+  /* Плашки */
+  .zones { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  @media(max-width: 560px){ .zones { grid-template-columns: 1fr; } }
+  .zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 6px; min-height: 80px; transition: .12s; background: #fff; }
+  .zone.over { border-color: #2563eb; background: #eff6ff; }
+  .zone h2 { font-size: 9.5px; text-transform: uppercase; letter-spacing: .2px; color: #6b7280; font-weight: 700; margin: 0 0 5px; }
+  .zone .item { border: 1px solid #e5e7eb; border-radius: 5px; padding: 4px 6px; margin-bottom: 4px; font-size: 10px; background: #f0fdf4; border-color: #16a34a; color: #166534; }
+  .zone .item.err { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
+
+  /* Карточки */
+  .pool { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #fafafa; }
+  .pool h2 { font-size: 9.5px; text-transform: uppercase; letter-spacing: .2px; color: #6b7280; font-weight: 700; margin: 0 0 6px; }
+  .cards { display: flex; flex-wrap: wrap; gap: 6px; }
+  .card { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 8px; font-size: 10.5px; cursor: pointer; transition: .12s; user-select: none; background: #fff; }
+  .card:hover { border-color: #2563eb; background: #eff6ff; }
+  .card.sel { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 1px #2563eb; }
+  .card.err { border-color: #dc2626; background: #fef2f2; animation: shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
+
+  /* Результат */
+  .bar { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  button { border: 0; border-radius: 6px; padding: 6px 12px; font-size: 11px; cursor: pointer; background: #2563eb; color: #fff; font-weight: 600; }
+  button.ghost { background: #e5e7eb; color: #1f2937; }
+  .result { font-size: 10.5px; font-weight: 600; }
+  .result.ok { color: #16a34a; }
+  .result.err { color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Кто участвует в проекте</h1>
+  <p class="lead">Кликните участника, затем плашку с его главной ролью.</p>
+
+  <div class="zones">
+    <div class="zone" data-type="order">
+      <h2>Заказывает и платит</h2>
+      <div class="items"></div>
+    </div>
+    <div class="zone" data-type="impl">
+      <h2>Выбирает и внедряет</h2>
+      <div class="items"></div>
+    </div>
+    <div class="zone" data-type="data">
+      <h2>Отвечает за данные</h2>
+      <div class="items"></div>
+    </div>
+  </div>
+
+  <div class="pool">
+    <h2>Участники</h2>
+    <div class="cards" id="cards"></div>
+  </div>
+
+  <div class="bar">
+    <button id="resetBtn" class="ghost">Сбросить</button>
+    <span class="result" id="result"></span>
+  </div>
+</div>
+
+<script>
+// type: order (заказывает), impl (внедряет), data (отвечает за данные)
+const CARDS = [
+  { text: "Руководитель", type: "order" },
+  { text: "Специалист по ПБ", type: "data" },
+  { text: "ИТ-служба", type: "impl" },
+  { text: "Отдел качества", type: "data" },
+  { text: "Поставщик / интегратор", type: "impl" },
+  { text: "Консультант", type: "impl" },
+  { text: "Аттестационный центр", type: "data" }
+];
+
+const cardsEl = document.getElementById("cards");
+const zones = [...document.querySelectorAll(".zone")];
+const result = document.getElementById("result");
+
+let picked = null;
+let placed = new Map(); // text -> type
+
+function shuffle(a){ return a.map(v => [Math.random(), v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]); }
+
+function render(){
+  // карточки
+  cardsEl.innerHTML = "";
+  const left = shuffle(CARDS.filter(c => !placed.has(c.text)));
+  if (left.length === 0) cardsEl.innerHTML = `<div class="card" style="cursor:default;color:#16a34a;border-color:#16a34a;background:#f0fdf4">Все карточки разложены.</div>`;
+  left.forEach(c => {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.textContent = c.text;
+    el.dataset.type = c.type;
+    el.dataset.text = c.text;
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".card").forEach(x => x.classList.remove("sel"));
+      el.classList.add("sel");
+      picked = c;
+    });
+    cardsEl.appendChild(el);
+  });
+
+  // плашки
+  zones.forEach(z => {
+    const box = z.querySelector(".items");
+    box.innerHTML = "";
+    [...placed.entries()].forEach(([text, type]) => {
+      if (type !== z.dataset.type) return;
+      const it = document.createElement("div");
+      it.className = "item";
+      it.textContent = text;
+      box.appendChild(it);
+    });
+  });
+}
+
+function drop(type, zone){
+  if (!picked){ result.className="result err"; result.textContent="Сначала выберите карточку."; return; }
+  if (picked.type === type){
+    placed.set(picked.text, type);
+    picked = null;
+    result.className = "result ok";
+    result.textContent = "Верно.";
+    render();
+    if (placed.size === CARDS.length){
+      result.className = "result ok";
+      result.textContent = "Все роли распределены. Помните: если роли не разделены, проект превращается в «все немного участвовали, никто не отвечает».";
+    }
+  } else {
+    result.className = "result err";
+    result.textContent = "Не совпало. Попробуйте еще.";
+    const c = document.querySelector(".card.sel");
+    if (c){
+      c.classList.add("err");
+      setTimeout(() => { c.classList.remove("err"); c.classList.remove("sel"); }, 400);
+    }
+  }
+}
+
+zones.forEach(z => z.addEventListener("click", () => drop(z.dataset.type, z)));
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  placed = new Map();
+  picked = null;
+  result.textContent = "";
+  result.className = "result";
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
