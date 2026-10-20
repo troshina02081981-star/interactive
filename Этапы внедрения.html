@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Этапы внедрения автоматизации ПБ</title>
+<style>
+  *{box-sizing:border-box}
+  html, body { margin: 0; padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+  body { padding: 8px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2937; line-height: 1.25; }
+  .widget { max-width: 680px; margin: 0 auto; background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; display: inline-block; width: 100%; }
+  .widget h1 { font-size: 13px; margin: 0 0 10px; }
+
+  .chain { display: flex; align-items: stretch; gap: 0; }
+  .step {
+    flex: 1 1 0; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 8px;
+    background: #fff; display: flex; flex-direction: column; gap: 3px; min-width: 0;
+  }
+  .step .num {
+    flex: 0 0 auto; align-self: flex-start;
+    width: 17px; height: 17px; border-radius: 50%; background: #2563eb; color: #fff;
+    font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .step b { font-size: 10.5px; color: #1f2937; }
+  .step span { font-size: 9px; color: #6b7280; line-height: 1.15; }
+  .arrow {
+    flex: 0 0 20px; display: flex; align-items: center; justify-content: center;
+    color: #2563eb; font-size: 15px; font-weight: 700;
+  }
+  @media(max-width: 560px) {
+    .chain { flex-direction: column; }
+    .arrow { transform: rotate(90deg); height: 16px; }
+    .step { min-width: 0; }
+  }
+
+  .note { margin: 8px 0 0; padding: 6px 8px; border-radius: 7px; background: #fffbeb; border: 1px solid #fde68a; font-size: 9.5px; color: #78350f; }
+  .note strong { color: #92400e; }
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Этапы внедрения автоматизации ПБ</h1>
+
+  <div class="chain">
+    <div class="step">
+      <div class="num">1</div>
+      <b>Аудит</b>
+      <span>Диагностика болей, данных и процессов.</span>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <b>Пилот</b>
+      <span>Проверка на одном объекте: что работает, что ломается.</span>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <b>Масштабирование</b>
+      <span>Распространение рабочего решения на другие объекты.</span>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <b>Обучение</b>
+      <span>Учим людей работать в системе.</span>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <b>Поддержка</b>
+      <span>Сопровождение, обновления, развитие.</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Правило:</strong> не пытайтесь внедрить все сразу на всех объектах. Дешевле ошибиться на пилоте, чем на всей организации.
+  </div>
+</div>
+</body>
+</html>
