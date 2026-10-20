@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Диагностика ПБ: четыре документа</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:8px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.3}
+  .widget{max-width:720px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px}
+  .widget h1{font-size:13px;margin:0 0 3px}
+  .lead{color:#6b7280;font-size:10.5px;margin:0 0 10px}
+  h2{font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:#2563eb;font-weight:700;margin:12px 0 5px}
+  .row{display:flex;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+  .row input, .row select{
+    border:1px solid #d1d5db;border-radius:6px;padding:4px 6px;font-size:10.5px;
+    font-family:inherit;color:#1f2937;background:#fff;
+  }
+  .row input.grow{flex:1;min-width:140px}
+  .row input.num{flex:0 0 90px;text-align:right}
+  .row select{flex:0 0 120px}
+  .btn{border:0;border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer;background:#2563eb;color:#fff;font-weight:600}
+  .btn.ghost{background:#e5e7eb;color:#1f2937}
+  .bar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .out{margin-top:10px;border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fafafa;font-size:10.5px;white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;max-height:340px;overflow:auto}
+  .hint{color:#6b7280;font-size:9.5px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Диагностика ПБ: четыре документа</h1>
+  <p class="lead">Заполните поля, нажмите «Собрать» — получите четыре документа. Кнопка «Скачать» сохранит их одним текстовым файлом.</p>
+
+  <h2>1. Карта болей</h2>
+  <div id="pains"></div>
+  <div class="bar"><button class="btn ghost" id="addPain">+ боль</button></div>
+
+  <h2>2. Цена бездействия</h2>
+  <div class="row"><input class="grow" id="wName" placeholder="Что считаем" value="Ручная отчетность"></div>
+  <div class="row">
+    <input class="num" id="wHours" type="number" min="0" value="20" placeholder="часов/мес">
+    <input class="num" id="wRate" type="number" min="0" value="800" placeholder="руб/час">
+    <input class="num" id="wFines" type="number" min="0" value="50000" placeholder="штрафы/год">
+    <input class="num" id="wDown" type="number" min="0" value="30000" placeholder="простои/год">
+  </div>
+  <div class="hint">Часы в месяц · стоимость часа · штрафы за год · простои за год</div>
+
+  <h2>3. Реестр данных</h2>
+  <div id="reg"></div>
+  <div class="bar"><button class="btn ghost" id="addReg">+ строка</button></div>
+
+  <h2>4. Карта процессов с приоритетами</h2>
+  <div id="proc"></div>
+  <div class="bar"><button class="btn ghost" id="addProc">+ процесс</button></div>
+
+  <div class="bar">
+    <button class="btn" id="build">Собрать</button>
+    <button class="btn ghost" id="download">Скачать .txt</button>
+  </div>
+
+  <div class="out" id="out">Здесь появятся четыре документа.</div>
+</div>
+
+<script>
+// ---------- карта болей ----------
+const painsEl = document.getElementById("pains");
+function addPainRow(proc = "", who = "", pain = ""){
+  const div = document.createElement("div");
+  div.className = "row pain";
+  div.innerHTML = `
+    <input class="grow p-proc" placeholder="Процесс" value="${proc}">
+    <input class="grow p-who" placeholder="Кто страдает" value="${who}">
+    <input class="grow p-pain" placeholder="Боль" value="${pain}">
+    <button class="btn ghost p-del" type="button">×</button>`;
+  div.querySelector(".p-del").addEventListener("click", () => div.remove());
+  painsEl.appendChild(div);
+}
+document.getElementById("addPain").addEventListener("click", () => addPainRow());
+
+// ---------- реестр данных ----------
+const regEl = document.getElementById("reg");
+function addRegRow(data = "", where = "", who = "", issue = "Ок"){
+  const div = document.createElement("div");
+  div.className = "row reg";
+  div.innerHTML = `
+    <input class="grow r-data" placeholder="Данные" value="${data}">
+    <input class="grow r-where" placeholder="Где ведется" value="${where}">
+    <input class="grow r-who" placeholder="Кем" value="${who}">
+    <select class="r-issue">
+      <option>Ок</option><option>Пробел</option><option>Дубль</option>
+    </select>
+    <button class="btn ghost r-del" type="button">×</button>`;
+  div.querySelector(".r-issue").value = issue;
+  div.querySelector(".r-del").addEventListener("click", () => div.remove());
+  regEl.appendChild(div);
+}
+document.getElementById("addReg").addEventListener("click", () => addRegRow());
+
+// ---------- процессы ----------
+const procEl = document.getElementById("proc");
+function addProcRow(name = "", prio = "1"){
+  const div = document.createElement("div");
+  div.className = "row proc";
+  div.innerHTML = `
+    <input class="grow pr-name" placeholder="Процесс / область" value="${name}">
+    <select class="pr-prio">
+      <option value="1">1 — первым</option>
+      <option value="2">2 — вторым</option>
+      <option value="3">3 — подождет</option>
+    </select>
+    <button class="btn ghost pr-del" type="button">×</button>`;
+  div.querySelector(".pr-prio").value = prio;
+  div.querySelector(".pr-del").addEventListener("click", () => div.remove());
+  procEl.appendChild(div);
+}
+document.getElementById("addProc").addEventListener("click", () => addProcRow());
+
+// ---------- стартовые данные ----------
+addPainRow("Отчетность", "Специалист ПБ", "Отчеты собираются вручную из Excel и почты");
+addPainRow("Проверки", "Служба ПБ", "Невозможно быстро найти актуальный документ");
+addPainRow("Оборудование", "Механик", "Поверки и ремонты в разных файлах, дубли");
+
+addRegRow("Оборудование", "Excel + бумага", "Механик", "Дубль");
+addRegRow("Поверки", "—", "—", "Пробел");
+addRegRow("Аттестации", "Excel", "Кадры", "Ок");
+addRegRow("Инциденты", "Почта + журнал", "ПБ", "Дубль");
+addRegRow("Наряды-допуски", "СЭД", "ПБ", "Ок");
+
+addProcRow("Отчетность и инциденты", "1");
+addProcRow("Контроль сроков и аттестации", "2");
+addProcRow("ТОиР и оборудование", "3");
+
+// ---------- сборка ----------
+function val(sel, cls){ return [...document.querySelectorAll(sel + " ." + cls)].map(x => x.value.trim()); }
+function rows(sel){ return [...document.querySelectorAll(sel)]; }
+
+document.getElementById("build").addEventListener("click", () => {
+  const lines = [];
+
+  // 1. Карта болей
+  lines.push("КАРТА БОЛЕЙ");
+  lines.push("-------------");
+  rows(".pain").forEach((r, i) => {
+    const proc = r.querySelector(".p-proc").value.trim();
+    const who = r.querySelector(".p-who").value.trim();
+    const pain = r.querySelector(".p-pain").value.trim();
+    if (proc || who || pain) lines.push(`${i + 1}. ${proc} | ${who} | ${pain}`);
+  });
+  lines.push("");
+
+  // 2. Цена бездействия
+  const name = document.getElementById("wName").value.trim();
+  const h = +document.getElementById("wHours").value || 0;
+  const rate = +document.getElementById("wRate").value || 0;
+  const fines = +document.getElementById("wFines").value || 0;
+  const down = +document.getElementById("wDown").value || 0;
+  const month = h * rate;
+  const year = month * 12 + fines + down;
+  lines.push("ЦЕНА БЕЗДЕЙСТВИЯ");
+  lines.push("-------------");
+  lines.push(`Что считаем: ${name}`);
+  lines.push(`Рутина: ${h} ч/мес × ${rate} руб. = ${month.toLocaleString("ru-RU")} руб./мес`);
+  lines.push(`За год рутина: ${(month * 12).toLocaleString("ru-RU")} руб.`);
+  lines.push(`Штрафы: ${fines.toLocaleString("ru-RU")} руб./год`);
+  lines.push(`Простои: ${down.toLocaleString("ru-RU")} руб./год`);
+  lines.push(`ИТОГО за год: ${year.toLocaleString("ru-RU")} руб.`);
+  lines.push("");
+
+  // 3. Реестр данных
+  lines.push("РЕЕСТР ДАННЫХ");
+  lines.push("-------------");
+  rows(".reg").forEach((r, i) => {
+    const d = r.querySelector(".r-data").value.trim();
+    const w = r.querySelector(".r-where").value.trim();
+    const who = r.querySelector(".r-who").value.trim();
+    const issue = r.querySelector(".r-issue").value;
+    if (d || w || who) lines.push(`${i + 1}. ${d} | где: ${w} | кем: ${who} | ${issue}`);
+  });
+  const gaps = rows(".reg").filter(r => r.querySelector(".r-issue").value === "Пробел").length;
+  const dups = rows(".reg").filter(r => r.querySelector(".r-issue").value === "Дубль").length;
+  lines.push(`Пробелов: ${gaps}. Дублей: ${dups}.`);
+  lines.push("");
+
+  // 4. Карта процессов
+  lines.push("КАРТА ПРОЦЕССОВ С ПРИОРИТЕТАМИ");
+  lines.push("-------------");
+  const procs = rows(".proc").map(r => ({
+    name: r.querySelector(".pr-name").value.trim(),
+    prio: r.querySelector(".pr-prio").value
+  })).filter(p => p.name);
+  procs.sort((a, b) => a.prio - b.prio);
+  procs.forEach(p => lines.push(`${p.prio}. ${p.name}`));
+  lines.push("");
+  lines.push("С этими документами можно идти к руководству и выбирать решение.");
+
+  document.getElementById("out").textContent = lines.join("\n");
+});
+
+// ---------- скачивание ----------
+document.getElementById("download").addEventListener("click", () => {
+  const text = document.getElementById("out").textContent;
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "diagnostika-pb.txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>
