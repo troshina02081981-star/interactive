@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Инструменты автоматизации ПБ</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:6px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.25}
+  .widget{max-width:560px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:7px 8px}
+  .widget h1{font-size:12px;margin:0 0 5px}
+  table{border-collapse:collapse;width:100%;font-size:9px;table-layout:fixed}
+  th,td{border:1px solid #e5e7eb;padding:3px 4px;vertical-align:top;text-align:left;word-wrap:break-word}
+  th{background:#eff6ff;color:#1d4ed8;font-size:8px;text-transform:uppercase;letter-spacing:.2px;font-weight:700}
+  td b{display:block;font-size:9px;color:#1f2937}
+  td span{color:#6b7280;font-size:8.5px}
+  tr:nth-child(even) td{background:#fafafa}
+  .note{margin-top:5px;padding:4px 6px;border-radius:5px;background:#fffbeb;border:1px solid #fde68a;font-size:8.5px;color:#78350f}
+  .note strong{color:#92400e}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Инструменты автоматизации ПБ</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:16%">Инструмент</th>
+        <th style="width:26%">Что закрывает</th>
+        <th style="width:29%">Сильные стороны</th>
+        <th style="width:29%">Ограничения</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Таблицы</b><span>Excel, Google</span></td>
+        <td>Реестр оборудования, мероприятия, замечания, сроки поверок</td>
+        <td>Дешево, быстро, знакомо; пилот на одном участке</td>
+        <td>Данные разрознены, ручной труд, ошибки, нет связей с оборудованием и АСУ ТП</td>
+      </tr>
+      <tr>
+        <td><b>СЭД</b><span>документооборот</span></td>
+        <td>Согласования, версии документов, поручения</td>
+        <td>Порядок в приказах и предписаниях, маршруты, история правок</td>
+        <td>Нет аналитики по ПБ, нет карточки оборудования, документ отдельно от объекта</td>
+      </tr>
+      <tr>
+        <td><b>Платформы ПБ</b><span>EHS</span></td>
+        <td>Реестр ОПО, обходы, наряды, инциденты, обучение, СИЗ, отчетность</td>
+        <td>Связи объектов: документ к оборудованию, замечание к обходу, инцидент к участку; единая точка правды</td>
+        <td>Внедрение и настройка, нужны качественные данные, интеграция с АСУ ТП — отдельный этап</td>
+      </tr>
+      <tr>
+        <td><b>ИИ</b><span>аналитика</span></td>
+        <td>Аномалии, предиктивное обслуживание, распознавание фото и документов, риск-скоринг</td>
+        <td>Усиливает платформу, нетипичные показания датчиков, разбор фото</td>
+        <td>Только на качественных данных; без платформы бесполезен</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>Логика:</strong> таблицы — отдельные задачи, СЭД — документы, платформа — процессы, ИИ — надстройка. Маршрут: платформа → АСУ ТП и IoT → ИИ.</div>
+</div>
+</body>
+</html>
