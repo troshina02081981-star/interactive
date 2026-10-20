@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Главная связка: боль → цена → данные → пробел</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.2}
+  .widget{max-width:680px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px}
+  .widget h1{font-size:13px;margin:0 0 10px}
+
+  .chain{display:flex;align-items:stretch;gap:0}
+  .step{
+    flex:1 1 0;border:1px solid #d1d5db;border-radius:8px;padding:7px 8px;
+    background:#fff;display:flex;flex-direction:column;gap:3px;min-width:0;
+  }
+  .step .num{
+    flex:0 0 auto;align-self:flex-start;
+    width:17px;height:17px;border-radius:50%;background:#2563eb;color:#fff;
+    font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .step b{font-size:10.5px;color:#1f2937}
+  .step span{font-size:9px;color:#6b7280;line-height:1.15}
+  .step .q{padding-top:3px;border-top:1px dashed #e5e7eb;font-size:8.5px;color:#2563eb}
+  .arrow{
+    flex:0 0 20px;display:flex;align-items:center;justify-content:center;
+    color:#2563eb;font-size:15px;font-weight:700;
+  }
+  @media(max-width:560px){
+    .chain{flex-direction:column}
+    .arrow{transform:rotate(90deg);height:16px}
+    .step{min-width:0}
+  }
+
+  .note{margin:8px 0 0;padding:6px 8px;border-radius:7px;background:#fffbeb;border:1px solid #fde68a;font-size:9.5px;color:#78350f}
+  .note strong{color:#92400e}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Главная связка: боль → цена → данные → пробел</h1>
+
+  <div class="chain">
+    <div class="step">
+      <div class="num">1</div>
+      <b>Боль</b>
+      <span>Что именно болит: данные, сроки, отчеты, проверки, инциденты.</span>
+      <div class="q">Что мешает работать?</div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <b>Цена</b>
+      <span>Часы, стоимость часа, штрафы, предписания, простои.</span>
+      <div class="q">Сколько это стоит в год?</div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <b>Данные</b>
+      <span>Что ведется, где, кем, в каком виде. Где порядок, где хаос.</span>
+      <div class="q">На чем держится боль?</div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <b>Пробел</b>
+      <span>Нет данных — первый кандидат. Хаос — сначала порядок в первичке.</span>
+      <div class="q">Что автоматизировать первым?</div>
+    </div>
+  </div>
+
+  <div class="note"><strong>Правило:</strong> автоматизировать хаос бессмысленно — получится хаос в цифре, только быстрее и дороже.</div>
+</div>
+</body>
+</html>
