@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практика: что автоматизировать первым</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:8px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.3}
+  .widget{max-width:640px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px}
+  .widget h1{font-size:13px;margin:0 0 3px}
+  .lead{color:#6b7280;font-size:10.5px;margin:0 0 10px}
+  .routines{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+  @media(max-width:520px){.routines{grid-template-columns:1fr}}
+  .routine{border:1px solid #e5e7eb;border-radius:7px;padding:6px 7px;font-size:10.5px;cursor:pointer;transition:.12s;user-select:none;background:#fff;text-align:center}
+  .routine:hover{border-color:#2563eb;background:#f8fafc}
+  .routine.sel{border-color:#2563eb;background:#eff6ff}
+  .routine b{display:block;font-size:10.5px}
+  .routine span{color:#6b7280;font-size:9.5px}
+  .panel{border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;min-height:120px}
+  .panel h2{font-size:10px;text-transform:uppercase;letter-spacing:.2px;color:#6b7280;margin:0 0 6px}
+  .opt{display:flex;gap:6px;align-items:flex-start;border:1px solid #e5e7eb;border-radius:6px;padding:5px 7px;margin-bottom:4px;font-size:10.5px;cursor:pointer;transition:.12s}
+  .opt:hover{border-color:#2563eb;background:#f8fafc}
+  .opt.sel{border-color:#2563eb;background:#eff6ff}
+  .opt.ok{border-color:#16a34a;background:#f0fdf4}
+  .opt.err{border-color:#dc2626;background:#fef2f2}
+  .opt .box{flex:0 0 12px;height:12px;border:1.5px solid #cbd5e1;border-radius:3px;margin-top:1px}
+  .opt.sel .box{border-color:#2563eb;background:#2563eb}
+  .opt.ok .box{border-color:#16a34a;background:#16a34a}
+  .opt.err .box{border-color:#dc2626;background:#dc2626}
+  .bar{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+  button{border:0;border-radius:6px;padding:6px 12px;font-size:11.5px;cursor:pointer;background:#2563eb;color:#fff;font-weight:600}
+  button:disabled{opacity:.5;cursor:default}
+  button.ghost{background:#e5e7eb;color:#1f2937}
+  .result{font-size:11px;font-weight:600}
+  .result.ok{color:#16a34a}
+  .result.err{color:#dc2626}
+  .summary{display:none;margin-top:8px;padding:7px 9px;border-radius:7px;background:#fffbeb;border:1px solid #fde68a;font-size:10px;color:#78350f}
+  .summary.show{display:block}
+  .summary strong{color:#92400e}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Практика: что автоматизировать первым</h1>
+  <p class="lead">Выберите рутину, отметьте, что в ней автоматизировать, и проверьте ожидаемый эффект.</p>
+
+  <div class="routines" id="routines"></div>
+
+  <div class="panel">
+    <h2 id="panelTitle">Выберите рутину сверху</h2>
+    <div id="options"></div>
+  </div>
+
+  <div class="bar">
+    <button id="checkBtn" disabled>Проверить</button>
+    <button id="resetBtn" class="ghost">Сбросить</button>
+    <span class="result" id="result"></span>
+  </div>
+
+  <div class="summary" id="summary">
+    <strong>Вывод.</strong> Начинать стоит с рутины, которая одновременно съедает время и создает риск. Обходы и журналы — быстрый эффект и меньше потерь записей. Контроль сроков — меньше просрочек и прозрачная ответственность. Отчетность и инциденты — быстрее отчеты и системная профилактика.
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    id:"r1", name:"Обходы и журналы", sub:"записи и замечания",
+    options:[
+      { text:"Мобильные чек-листы", ok:true },
+      { text:"Фотофиксация", ok:true },
+      { text:"Автосоздание замечаний и задач", ok:true },
+      { text:"Ручной перенос записей в Excel", ok:false }
+    ],
+    effect:"Меньше времени на оформление, нет потери записей, быстрее закрываются замечания."
+  },
+  {
+    id:"r2", name:"Контроль сроков", sub:"предписания и мероприятия",
+    options:[
+      { text:"Напоминания", ok:true },
+      { text:"Эскалации", ok:true },
+      { text:"Дашборд просрочек", ok:true },
+      { text:"Держать сроки в голове", ok:false }
+    ],
+    effect:"Меньше просрочек, прозрачная ответственность, руководитель видит риски заранее."
+  },
+  {
+    id:"r3", name:"Отчетность и инциденты", sub:"отчеты и разбор",
+    options:[
+      { text:"Автосбор данных", ok:true },
+      { text:"Шаблоны отчетов", ok:true },
+      { text:"Аналитика причин и повторяемости", ok:true },
+      { text:"Сбор отчетов вручную из почты", ok:false }
+    ],
+    effect:"Отчеты готовятся быстрее, причины инцидентов видны системно, профилактика становится реальной."
+  }
+];
+
+const routinesEl = document.getElementById("routines");
+const optionsEl = document.getElementById("options");
+const panelTitle = document.getElementById("panelTitle");
+const result = document.getElementById("result");
+const summary = document.getElementById("summary");
+const checkBtn = document.getElementById("checkBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+let current = null;
+let selected = new Set();
+
+function renderRoutines(){
+  routinesEl.innerHTML = "";
+  DATA.forEach(r => {
+    const el = document.createElement("div");
+    el.className = "routine" + (current && current.id === r.id ? " sel" : "");
+    el.innerHTML = `<b>${r.name}</b><span>${r.sub}</span>`;
+    el.addEventListener("click", () => {
+      current = r; selected = new Set();
+      result.textContent = ""; result.className = "result";
+      summary.classList.remove("show");
+      checkBtn.disabled = false;
+      renderRoutines(); renderOptions();
+    });
+    routinesEl.appendChild(el);
+  });
+}
+
+function renderOptions(){
+  optionsEl.innerHTML = "";
+  if (!current){ panelTitle.textContent = "Выберите рутину сверху"; return; }
+  panelTitle.textContent = current.name + ": что автоматизировать";
+  current.options.forEach((o, i) => {
+    const el = document.createElement("div");
+    el.className = "opt" + (selected.has(i) ? " sel" : "");
+    el.innerHTML = `<div class="box"></div><div>${o.text}</div>`;
+    el.addEventListener("click", () => {
+      if (el.classList.contains("ok") || el.classList.contains("err")) return;
+      if (selected.has(i)) selected.delete(i); else selected.add(i);
+      renderOptions();
+    });
+    optionsEl.appendChild(el);
+  });
+}
+
+checkBtn.addEventListener("click", () => {
+  if (!current) return;
+  const items = optionsEl.querySelectorAll(".opt");
+  let correct = 0, wrong = 0;
+  current.options.forEach((o, i) => {
+    const el = items[i];
+    const sel = selected.has(i);
+    el.classList.remove("sel");
+    if (o.ok && sel){ el.classList.add("ok"); correct++; }
+    else if (!o.ok && sel){ el.classList.add("err"); wrong++; }
+    else if (o.ok && !sel){ el.classList.add("err"); }
+  });
+  const totalOk = current.options.filter(o => o.ok).length;
+  if (correct === totalOk && wrong === 0){
+    result.className = "result ok";
+    result.textContent = `Верно. ${current.effect}`;
+  } else {
+    result.className = "result err";
+    result.textContent = `Верно ${correct} из ${totalOk}. Лишних отметок: ${wrong}.`;
+  }
+  summary.classList.add("show");
+  checkBtn.disabled = true;
+});
+
+resetBtn.addEventListener("click", () => {
+  current = null; selected = new Set();
+  result.textContent = ""; result.className = "result";
+  summary.classList.remove("show"); checkBtn.disabled = true;
+  renderRoutines(); renderOptions();
+});
+
+renderRoutines(); renderOptions();
+</script>
+</body>
+</html>
