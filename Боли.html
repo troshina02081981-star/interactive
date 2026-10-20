@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Типичные боли специалиста по ПБ — схема</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:8px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.25}
+  .widget{max-width:680px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:12px 14px}
+  .widget h1{font-size:13px;margin:0 0 12px}
+
+  .diagram{position:relative;display:flex;flex-direction:column;align-items:center}
+  .hub{
+    border:2px solid #2563eb;border-radius:10px;padding:8px 16px;
+    background:#eff6ff;font-size:12px;font-weight:700;color:#1d4ed8;
+    text-align:center;z-index:2;
+  }
+  .trunk{width:2px;height:14px;background:#93c5fd}
+  .rail{width:86%;height:2px;background:#93c5fd;margin:0 auto}
+  .cols{display:grid;grid-template-columns:repeat(6,1fr);width:100%;margin-top:0}
+  @media(max-width:640px){.cols{grid-template-columns:repeat(3,1fr)}}
+  .col{display:flex;flex-direction:column;align-items:center}
+  .col .drop{width:2px;height:14px;background:#93c5fd}
+  .card{
+    border:1px solid #d1d5db;border-radius:8px;padding:6px 7px;background:#fff;
+    width:100%;min-height:88px;
+  }
+  .card b{display:block;font-size:10px;color:#1f2937;margin-bottom:2px;line-height:1.2}
+  .card span{font-size:9px;color:#6b7280;line-height:1.2;display:block}
+  .note{margin-top:12px;padding:6px 8px;border-radius:7px;background:#fffbeb;border:1px solid #fde68a;font-size:10px;color:#78350f;text-align:center}
+  .note strong{color:#92400e}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Типичные боли специалиста по ПБ</h1>
+
+  <div class="diagram">
+    <div class="hub">Специалист по ПБ</div>
+    <div class="trunk"></div>
+    <div class="rail"></div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Данные теряются и дублируются</b><span>Информация в трех файлах, версия неясна</span></div>
+      </div>
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Сроки не отслеживаются</b><span>Аттестации и проверки всплывают поздно</span></div>
+      </div>
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Отчетность вручную</b><span>Сборка из Excel и почты, ошибки</span></div>
+      </div>
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Проверки застают врасплох</b><span>Документ не найден или устарел</span></div>
+      </div>
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Инциденты постфактум</b><span>Фиксируем, а не предотвращаем</span></div>
+      </div>
+      <div class="col">
+        <div class="drop"></div>
+        <div class="card"><b>Руководство не видит картины</b><span>Иллюзия, что все под контролем</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><strong>Каждая боль имеет цену:</strong> часы, рубли, штрафы, простои.</div>
+</div>
+</body>
+</html>
