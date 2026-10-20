@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Уровни АСУ ТП — схема с разветвлениями</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:10px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.3}
+  .widget{max-width:680px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:12px 14px}
+  .widget h1{font-size:14px;margin:0 0 10px}
+
+  .level{display:flex;flex-direction:column;align-items:center}
+  .level-name{
+    border:1.5px solid #2563eb;border-radius:8px;padding:6px 12px;
+    background:#eff6ff;font-size:12px;font-weight:700;color:#1d4ed8;text-align:center;
+  }
+  .branches{display:flex;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .branch{
+    position:relative;border:1px solid #d1d5db;border-radius:7px;
+    padding:6px 9px;font-size:11px;background:#fff;text-align:center;
+    min-width:110px;max-width:170px;
+  }
+  .branch::before{
+    content:"";position:absolute;top:-7px;left:50%;width:1px;height:6px;
+    background:#cbd5e1;transform:translateX(-50%);
+  }
+  .branch b{display:block;font-size:11px;color:#374151;margin-bottom:1px}
+  .branch span{color:#6b7280;font-size:10.5px}
+
+  .arrow{
+    text-align:center;color:#2563eb;font-size:15px;font-weight:700;line-height:1;
+    padding:5px 0;
+  }
+  .arrow span{display:block;font-size:9.5px;color:#94a3b8;font-weight:400;margin-top:1px}
+
+  .note{
+    margin-top:10px;padding:7px 9px;border-radius:8px;background:#fffbeb;
+    border:1px solid #fde68a;font-size:11px;color:#78350f;
+  }
+  .note strong{color:#92400e}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Уровни АСУ ТП: от датчика к диспетчеру</h1>
+
+  <!-- Диспетчерский -->
+  <div class="level">
+    <div class="level-name">Диспетчерский уровень</div>
+    <div class="branches">
+      <div class="branch"><b>SCADA</b><span>сбор и визуализация</span></div>
+      <div class="branch"><b>АРМ оператора</b><span>управление и тревоги</span></div>
+      <div class="branch"><b>Архивы</b><span>история и тренды</span></div>
+      <div class="branch"><b>EHS / ПБ</b><span>интеграция</span></div>
+    </div>
+  </div>
+
+  <div class="arrow">↑<span>данные с нижнего уровня</span></div>
+
+  <!-- Контроллерный -->
+  <div class="level">
+    <div class="level-name">Контроллерный уровень</div>
+    <div class="branches">
+      <div class="branch"><b>ПЛК</b><span>логика и сбор</span></div>
+      <div class="branch"><b>Блокировки</b><span>защита</span></div>
+      <div class="branch"><b>Локальная автоматика</b><span>регулирование</span></div>
+    </div>
+  </div>
+
+  <div class="arrow">↑<span>данные с нижнего уровня</span></div>
+
+  <!-- Полевой -->
+  <div class="level">
+    <div class="level-name">Полевой уровень</div>
+    <div class="branches">
+      <div class="branch"><b>Датчики</b><span>давление, температура</span></div>
+      <div class="branch"><b>Газоанализаторы</b><span>загазованность</span></div>
+      <div class="branch"><b>Детекторы</b><span>пламя, дым</span></div>
+      <div class="branch"><b>Исполнительные механизмы</b><span>клапаны, задвижки</span></div>
+      <div class="branch"><b>Датчики положения</b><span>состояние оборудования</span></div>
+    </div>
+  </div>
+
+  <div class="note"><strong>Не путать:</strong> АСУ ТП управляет технологическим процессом, а цифровая система ПБ связывает эти данные с проверками, нарядами, инцидентами и отчётностью.</div>
+</div>
+</body>
+</html>
