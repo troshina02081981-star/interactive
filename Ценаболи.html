@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Посчитай цену боли</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:8px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.3}
+  .widget{max-width:640px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px}
+  .widget h1{font-size:13px;margin:0 0 3px}
+  .lead{color:#6b7280;font-size:10.5px;margin:0 0 10px}
+  .pain{border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;margin-bottom:6px;transition:.12s}
+  .pain.on{border-color:#2563eb;background:#eff6ff}
+  .head{display:flex;gap:8px;align-items:center;cursor:pointer;user-select:none}
+  .head .box{flex:0 0 13px;height:13px;border:1.5px solid #cbd5e1;border-radius:3px}
+  .pain.on .head .box{border-color:#2563eb;background:#2563eb}
+  .head b{font-size:11px}
+  .head .sum{margin-left:auto;font-size:10.5px;font-weight:700;color:#6b7280}
+  .pain.on .head .sum{color:#1d4ed8}
+  .fields{display:none;grid-template-columns:1fr 1fr;gap:4px 8px;margin-top:6px}
+  .pain.on .fields{display:grid}
+  @media(max-width:520px){.fields{grid-template-columns:1fr}}
+  .f{display:flex;align-items:center;gap:6px}
+  .f label{flex:1;font-size:9.5px;color:#6b7280}
+  .f input{flex:0 0 92px;border:1px solid #d1d5db;border-radius:6px;padding:3px 6px;font-size:10.5px;text-align:right}
+  .total{margin-top:10px;padding:9px 11px;border-radius:8px;background:#eff6ff;border:1px solid #bfdbfe;font-size:11px}
+  .total b{color:#1d4ed8}
+  .total .big{display:block;font-size:16px;font-weight:700;color:#1d4ed8;margin-top:2px}
+  .hint{color:#6b7280;font-size:9.5px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Посчитай цену боли</h1>
+  <p class="lead">Отметьте боли, введите цифры — увидите потери в месяц и в год.</p>
+
+  <div id="pains"></div>
+
+  <div class="total" id="total"></div>
+  <div class="hint">Сумма обычно отрезвляет. С ней разговор с руководством идет иначе.</div>
+</div>
+
+<script>
+const PAINS = [
+  { id:"p1", name:"Данные теряются и дублируются", hours:12, rate:800, fines:0, down:0 },
+  { id:"p2", name:"Сроки не отслеживаются", hours:6, rate:800, fines:50000, down:0 },
+  { id:"p3", name:"Отчетность вручную", hours:16, rate:800, fines:0, down:0 },
+  { id:"p4", name:"Проверки застают врасплох", hours:4, rate:800, fines:100000, down:0 },
+  { id:"p5", name:"Инциденты постфактум", hours:8, rate:800, fines:0, down:30000 },
+  { id:"p6", name:"Руководство не видит картины", hours:2, rate:800, fines:0, down:0 }
+];
+
+const painsEl = document.getElementById("pains");
+const totalEl = document.getElementById("total");
+const state = {};
+
+function money(n){ return n.toLocaleString("ru-RU") + " руб."; }
+
+function calcPain(p){
+  const st = state[p.id];
+  if (!st.on) return 0;
+  return (st.hours * st.rate) * 12 + st.fines + st.down;
+}
+
+function render(){
+  painsEl.innerHTML = "";
+  PAINS.forEach(p => {
+    const st = state[p.id];
+    const el = document.createElement("div");
+    el.className = "pain" + (st.on ? " on" : "");
+    el.innerHTML = `
+      <div class="head">
+        <div class="box"></div>
+        <b>${p.name}</b>
+        <span class="sum">${st.on ? money(calcPain(p)) + "/год" : ""}</span>
+      </div>
+      <div class="fields">
+        <div class="f"><label>Часов в месяц</label><input type="number" min="0" data-k="hours" value="${st.hours}"></div>
+        <div class="f"><label>Стоимость часа</label><input type="number" min="0" data-k="rate" value="${st.rate}"></div>
+        <div class="f"><label>Штрафы за год</label><input type="number" min="0" data-k="fines" value="${st.fines}"></div>
+        <div class="f"><label>Простои за год</label><input type="number" min="0" data-k="down" value="${st.down}"></div>
+      </div>`;
+    el.querySelector(".head").addEventListener("click", () => {
+      st.on = !st.on; render();
+    });
+    el.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("input", () => {
+        st[inp.dataset.k] = +inp.value || 0;
+        update();
+      });
+    });
+    painsEl.appendChild(el);
+  });
+  update();
+}
+
+function update(){
+  let month = 0, year = 0, count = 0;
+  PAINS.forEach(p => {
+    const st = state[p.id];
+    if (!st.on) return;
+    count++;
+    month += st.hours * st.rate;
+    year += calcPain(p);
+  });
+  totalEl.innerHTML = count === 0
+    ? "Отметьте хотя бы одну боль."
+    : `Болей отмечено: <b>${count}</b>. Рутина: <b>${money(month)}/мес</b>.<br>Потери за год: <span class="big">${money(year)}</span>`;
+  // обновляем суммы в шапках
+  document.querySelectorAll(".pain").forEach((el, i) => {
+    const p = PAINS[i], st = state[p.id];
+    const sum = el.querySelector(".sum");
+    sum.textContent = st.on ? money(calcPain(p)) + "/год" : "";
+  });
+}
+
+PAINS.forEach(p => { state[p.id] = { on:true, hours:p.hours, rate:p.rate, fines:p.fines, down:p.down }; });
+render();
+</script>
+</body>
+</html>
