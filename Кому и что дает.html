@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карточки: кто вносит данные, кто пользуется результатом</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:10px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.3}
+  .widget{max-width:760px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px}
+  .widget h1{font-size:14px;margin:0 0 2px}
+  .lead{color:#6b7280;font-size:11px;margin:0 0 10px}
+  .zones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  @media(max-width:560px){.zones{grid-template-columns:1fr}}
+  .zone{border:2px dashed #cbd5e1;border-radius:8px;padding:8px;min-height:120px;transition:.12s;background:#fff}
+  .zone.over{border-color:#2563eb;background:#eff6ff}
+  .zone h2{font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:#6b7280;font-weight:700;margin:0 0 6px}
+  .zone .item{border:1px solid #e5e7eb;border-radius:6px;padding:5px 7px;margin-bottom:4px;font-size:11.5px;background:#f0fdf4;border-color:#16a34a;color:#166534}
+  .zone .item.err{background:#fef2f2;border-color:#dc2626;color:#991b1b}
+  .pool{border:1px solid #e5e7eb;border-radius:8px;padding:8px;background:#fff}
+  .pool h2{font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:#6b7280;font-weight:700;margin:0 0 6px}
+  .cards{display:flex;flex-wrap:wrap;gap:6px}
+  .card{border:1px solid #e5e7eb;border-radius:6px;padding:5px 9px;font-size:11.5px;cursor:pointer;transition:.12s;user-select:none;background:#fff}
+  .card:hover{border-color:#2563eb;background:#f8fafc}
+  .card.sel{border-color:#2563eb;background:#eff6ff}
+  .card.err{border-color:#dc2626;background:#fef2f2}
+  .bar{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+  button{border:0;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;background:#2563eb;color:#fff;font-weight:600}
+  button.ghost{background:#e5e7eb;color:#1f2937}
+  .result{font-size:12px;font-weight:600}
+  .result.ok{color:#16a34a}
+  .result.err{color:#dc2626}
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Кто вносит данные, а кто пользуется результатом</h1>
+  <p class="lead">Кликните карточку, затем плашку. Или перетащите мышью.</p>
+
+  <div class="zones">
+    <div class="zone" data-type="input">
+      <h2>Вносят данные</h2>
+      <div class="items"></div>
+    </div>
+    <div class="zone" data-type="output">
+      <h2>Пользуются результатом</h2>
+      <div class="items"></div>
+    </div>
+  </div>
+
+  <div class="pool">
+    <h2>Карточки</h2>
+    <div class="cards" id="cards"></div>
+  </div>
+
+  <div class="bar">
+    <button id="resetBtn" class="ghost">Сбросить</button>
+    <span class="result" id="result"></span>
+  </div>
+</div>
+
+<script>
+// input = вносят данные, output = пользуются результатом
+// some = и то, и другое (принимается в любой плашке)
+const CARDS = [
+  { text:"Специалисты по ПБ и ОТ", type:"input" },
+  { text:"Диспетчеры", type:"input" },
+  { text:"Операторы", type:"input" },
+  { text:"Ремонтные службы", type:"input" },
+  { text:"Подрядчики", type:"input" },
+  { text:"Кадры и обучение", type:"input" },
+  { text:"Руководители подразделений", type:"input" },
+  { text:"Руководство предприятия", type:"output" },
+  { text:"Служба ПБ", type:"output" },
+  { text:"Производственные руководители", type:"output" },
+  { text:"Надзорные органы", type:"output" },
+  { text:"Аудиторы", type:"output" },
+  { text:"Страховые компании", type:"output" },
+  { text:"Работники", type:"output" }
+];
+
+const cardsEl = document.getElementById("cards");
+const zones = [...document.querySelectorAll(".zone")];
+const result = document.getElementById("result");
+
+let picked = null;
+let placed = new Map(); // text -> type
+
+function shuffle(a){ return a.map(v => [Math.random(), v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]); }
+
+function render(){
+  // карточки
+  cardsEl.innerHTML = "";
+  const left = shuffle(CARDS.filter(c => !placed.has(c.text)));
+  if (left.length === 0) cardsEl.innerHTML = `<div class="card" style="cursor:default;color:#16a34a">Все карточки разложены.</div>`;
+  left.forEach(c => {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.textContent = c.text;
+    el.dataset.type = c.type;
+    el.dataset.text = c.text;
+    el.setAttribute("draggable","true");
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".card").forEach(x => x.classList.remove("sel"));
+      el.classList.add("sel");
+      picked = c;
+    });
+    el.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", c.text);
+      picked = c;
+    });
+    cardsEl.appendChild(el);
+  });
+
+  // плашки
+  zones.forEach(z => {
+    const box = z.querySelector(".items");
+    box.innerHTML = "";
+    [...placed.entries()].forEach(([text, type]) => {
+      if (type !== z.dataset.type) return;
+      const it = document.createElement("div");
+      it.className = "item";
+      it.textContent = text;
+      box.appendChild(it);
+    });
+  });
+}
+
+function drop(type, zone){
+  if (!picked){ result.className="result err"; result.textContent="Сначала выберите карточку."; return; }
+  const ok = (picked.type === type) || (picked.type === "some");
+  if (ok){
+    placed.set(picked.text, type);
+    picked = null;
+    result.className = "result ok";
+    result.textContent = "Верно.";
+    render();
+    if (placed.size === CARDS.length){ result.className="result ok"; result.textContent="Все карточки разложены."; }
+  } else {
+    result.className = "result err";
+    result.textContent = "Не совпало. Попробуйте ещё.";
+    const c = document.querySelector(".card.sel");
+    if (c){ c.classList.add("err"); setTimeout(() => c.classList.remove("err"), 700); }
+  }
+}
+
+zones.forEach(z => {
+  z.addEventListener("click", () => drop(z.dataset.type, z));
+  z.addEventListener("dragover", e => { e.preventDefault(); z.classList.add("over"); });
+  z.addEventListener("dragleave", () => z.classList.remove("over"));
+  z.addEventListener("drop", e => {
+    e.preventDefault(); z.classList.remove("over");
+    if (!picked){
+      const t = e.dataTransfer.getData("text/plain");
+      picked = CARDS.find(c => c.text === t) || null;
+    }
+    drop(z.dataset.type, z);
+  });
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  placed = new Map();
+  picked = null;
+  result.textContent = "";
+  result.className = "result";
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
