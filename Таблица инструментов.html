@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Инструменты автоматизации ПБ</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:10px;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1f2937;line-height:1.35}
+  .widget{max-width:900px;margin:0 auto;background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:12px 14px}
+  .widget h1{font-size:14px;margin:0 0 10px}
+  .table-wrap{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:11.5px;min-width:760px}
+  th,td{border:1px solid #e5e7eb;padding:6px 8px;vertical-align:top;text-align:left}
+  th{background:#eff6ff;color:#1d4ed8;font-size:10.5px;text-transform:uppercase;letter-spacing:.3px;font-weight:700;white-space:nowrap}
+  td b{display:block;font-size:11.5px;color:#1f2937;margin-bottom:1px}
+  td span{color:#6b7280}
+  tr:nth-child(even) td{background:#fafafa}
+  .tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap}
+  .tag.part{background:#fef3c7;color:#92400e}
+  .tag.comp{background:#dbeafe;color:#1d4ed8}
+  .tag.full{background:#dcfce7;color:#166534}
+  .note{margin-top:10px;padding:7px 9px;border-radius:8px;background:#fffbeb;border:1px solid #fde68a;font-size:11px;color:#78350f}
+  .note strong{color:#92400e}
+
+  @media(max-width:640px){
+    table{min-width:0;border:0}
+    thead{display:none}
+    tr{display:block;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px;padding:6px}
+    td{display:block;border:0;padding:3px 4px}
+    td::before{content:attr(data-label) " ";font-weight:700;color:#6b7280;font-size:10px;text-transform:uppercase}
+  }
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Инструменты автоматизации ПБ</h1>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Инструмент</th>
+          <th>Что закрывает</th>
+          <th>Сильные стороны</th>
+          <th>Ограничения</th>
+          <th>Вид автоматизации</th>
+          <th>Когда выбирать</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Инструмент"><b>Электронные таблицы</b><span>Excel, Google Таблицы</span></td>
+          <td data-label="Что закрывает">Реестр оборудования, список мероприятий, журнал замечаний, расчет сроков поверок</td>
+          <td data-label="Сильные стороны">Дешево, быстро, знакомо; не нужна платформа для пилота на одном участке</td>
+          <td data-label="Ограничения">Данные разрознены, много ручного труда, риск ошибок, нет связей с оборудованием и АСУ ТП, нет аудируемого следа</td>
+          <td data-label="Вид автоматизации"><span class="tag part">Частичная</span></td>
+          <td data-label="Когда выбирать">Первый шаг, пилот, небольшой участок, временный порядок в одном списке</td>
+        </tr>
+        <tr>
+          <td data-label="Инструмент"><b>СЭД</b><span>система документооборота</span></td>
+          <td data-label="Что закрывает">Согласования, версии документов, поручения, контроль исполнительской дисциплины</td>
+          <td data-label="Сильные стороны">Порядок в приказах, инструкциях и предписаниях; маршруты согласования, история правок, напоминания</td>
+          <td data-label="Ограничения">Нет аналитики по ПБ, нет карточки оборудования, нет обходов с фотофиксацией, документ живет отдельно от объекта</td>
+          <td data-label="Вид автоматизации"><span class="tag part">Частичная</span></td>
+          <td data-label="Когда выбирать">Задача — навести порядок в документообороте, а не в безопасности</td>
+        </tr>
+        <tr>
+          <td data-label="Инструмент"><b>Специализированные платформы</b><span>системы ПБ / EHS</span></td>
+          <td data-label="Что закрывает">Реестр ОПО и технических устройств, обходы и проверки, наряды-допуски, инциденты, обучение, СИЗ, отчетность, дашборды</td>
+          <td data-label="Сильные стороны">Связи между объектами: документ привязан к оборудованию, замечание — к обходу, инцидент — к участку и наряду; единая точка правды, уведомления, эскалации, готовность к проверкам</td>
+          <td data-label="Ограничения">Требует внедрения и настройки, нужны качественные данные, интеграция с АСУ ТП — отдельный этап</td>
+          <td data-label="Вид автоматизации"><span class="tag comp">Комплексная</span></td>
+          <td data-label="Когда выбирать">Основной инструмент для ПБ на ОПО; ядро системы</td>
+        </tr>
+        <tr>
+          <td data-label="Инструмент"><b>ИИ</b><span>аналитика и распознавание</span></td>
+          <td data-label="Что закрывает">Поиск аномалий, предиктивное обслуживание, распознавание фото и документов, риск-скоринг, подсказки по замечаниям</td>
+          <td data-label="Сильные стороны">Усиливает платформу, находит нетипичные показания датчиков, разбирает фото с обходов</td>
+          <td data-label="Ограничения">Работает только на качественных данных; без платформы и связей бесполезен</td>
+          <td data-label="Вид автоматизации"><span class="tag full">Полная</span></td>
+          <td data-label="Когда выбирать">После платформы и интеграции с АСУ ТП и IoT, когда данные уже качественные</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note"><strong>Как читать таблицу:</strong> инструменты — не конкуренты, а ступени. Таблицы закрывают отдельные задачи, СЭД наводит порядок в документах, платформа связывает процессы, ИИ усиливает платформу. Разумный маршрут — платформа как ядро, затем интеграция с АСУ ТП и IoT, затем ИИ как надстройка.</div>
+</div>
+</body>
+</html>
