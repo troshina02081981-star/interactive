@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отрази возражение цифрами</title>
+<style>
+  *{box-sizing:border-box}
+  html, body { margin: 0; padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+  body { padding: 8px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2937; line-height: 1.3; }
+  .widget { max-width: 680px; margin: 0 auto; background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; display: inline-block; width: 100%; }
+  .widget h1 { font-size: 13px; margin: 0 0 3px; }
+  .lead { color: #6b7280; font-size: 10.5px; margin: 0 0 10px; }
+
+  .objection { border: 1px solid #fca5a5; background: #fef2f2; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 12px; font-weight: 600; color: #991b1b; }
+  .objection span { display: block; font-weight: 400; font-size: 10px; color: #b91c1c; margin-top: 2px; }
+
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .opt { border: 1px solid #e5e7eb; border-radius: 7px; padding: 7px 9px; font-size: 10.5px; cursor: pointer; transition: .12s; background: #fff; }
+  .opt:hover { border-color: #2563eb; background: #f8fafc; }
+  .opt.ok { border-color: #16a34a; background: #f0fdf4; }
+  .opt.err { border-color: #dc2626; background: #fef2f2; }
+  .opt .mark { font-weight: 700; margin-right: 4px; }
+  .opt .why { display: none; font-size: 9.5px; color: #6b7280; margin-top: 3px; padding-top: 3px; border-top: 1px dashed #e5e7eb; }
+  .opt.ok .why, .opt.err .why { display: block; }
+
+  .bar { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  button { border: 0; border-radius: 6px; padding: 6px 12px; font-size: 11px; cursor: pointer; background: #2563eb; color: #fff; font-weight: 600; }
+  button:disabled { opacity: .5; cursor: default; }
+  button.ghost { background: #e5e7eb; color: #1f2937; }
+  .result { font-size: 10.5px; font-weight: 600; }
+  .result.ok { color: #16a34a; }
+  .result.err { color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>Отрази возражение цифрами</h1>
+  <p class="lead">Выберите ответ, который убедит руководство. Спокойный ответ с цифрами сильнее лозунга.</p>
+
+  <div id="app"></div>
+
+  <div class="bar">
+    <button id="nextBtn" disabled>Следующее</button>
+    <button id="resetBtn" class="ghost">Начать заново</button>
+    <span class="result" id="result"></span>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    objection: "«Это дорого»",
+    sub: "Руководство видит цену лицензии, но не видит цену бездействия.",
+    options: [
+      { text: "Это современная цифровая платформа, она окупится сторицей.", ok: false, why: "Лозунг. Руководству нужны цифры, а не обещания." },
+      { text: "Мы теряем 620 тыс. руб. в год на рутине, штрафах и простоях. Система окупается за 14 месяцев.", ok: true, why: "Верно. Ответ опирается на расчет цены боли и срок окупаемости." },
+      { text: "Все так говорят, но мы должны идти в ногу со временем.", ok: false, why: "Лозунг. Не отвечает на вопрос о деньгах." }
+    ]
+  },
+  {
+    objection: "«У нас и так все работает»",
+    sub: "Руководство не видит проблем, потому что они не выходят на поверхность.",
+    options: [
+      { text: "Давайте посмотрим на цифры: сколько часов в месяц уходит на ручную отчетность и сколько раз за год терялись документы.", ok: true, why: "Верно. Ответ переводит разговор от ощущений к фактам." },
+      { text: "Вы просто не хотите ничего менять.", ok: false, why: "Ошибка. Обвинение вызывает защиту, а не диалог." },
+      { text: "Если бы работало, не было бы штрафов и предписаний.", ok: false, why: "Слишком резко и без цифр. Похоже на упрек, а не на аргумент." }
+    ]
+  },
+  {
+    objection: "«Нам это не нужно»",
+    sub: "Возражение чаще всего означает: не вижу связи с моими задачами.",
+    options: [
+      { text: "Это нужно всем, это требование времени.", ok: false, why: "Лозунг. Не отвечает на вопрос «зачем мне это»." },
+      { text: "Система снимет рутину с инженера и покажет вам риски и сроки на одном экране — без запросов и Excel.", ok: true, why: "Верно. Ответ говорит на языке выгоды конкретного человека." },
+      { text: "Надзор все равно заставит.", ok: false, why: "Ошибка. Страх не мотивирует, а вызывает отторжение." }
+    ]
+  }
+];
+
+const app = document.getElementById("app");
+const result = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+let current = 0;
+let answered = false;
+
+function render(){
+  const d = DATA[current];
+  answered = false;
+  result.textContent = "";
+  result.className = "result";
+  nextBtn.disabled = true;
+  nextBtn.textContent = current === DATA.length - 1 ? "Завершить" : "Следующее";
+
+  app.innerHTML = `
+    <div class="objection">${d.objection}<span>${d.sub}</span></div>
+    <div class="options" id="options"></div>`;
+
+  const optsEl = document.getElementById("options");
+  d.options.forEach(o => {
+    const el = document.createElement("div");
+    el.className = "opt";
+    el.innerHTML = `<span class="mark"></span>${o.text}<div class="why">${o.why}</div>`;
+    el.addEventListener("click", () => {
+      if (answered) return;
+      answered = true;
+      const all = optsEl.querySelectorAll(".opt");
+      d.options.forEach((oo, i) => {
+        if (oo.ok) { all[i].classList.add("ok"); all[i].querySelector(".mark").textContent = "✓"; }
+        else if (all[i] === el) { all[i].classList.add("err"); all[i].querySelector(".mark").textContent = "✕"; }
+      });
+      if (o.ok){
+        result.className = "result ok";
+        result.textContent = "Верно. Спокойный ответ с цифрами.";
+      } else {
+        result.className = "result err";
+        result.textContent = "Не сработает. Посмотрите, какой ответ сильнее.";
+      }
+      nextBtn.disabled = false;
+    });
+    optsEl.appendChild(el);
+  });
+}
+
+nextBtn.addEventListener("click", () => {
+  if (current < DATA.length - 1){ current++; render(); }
+  else {
+    app.innerHTML = `<div class="objection" style="border-color:#16a34a;background:#f0fdf4;color:#166534">Готово. На каждое возражение — спокойный ответ с цифрами, а не лозунг.</div>
+      <div style="font-size:10.5px;color:#6b7280;margin-top:6px">Помните: «система красивая» — не аргумент. «Окупится за 14 месяцев за счет сокращения просрочек и ручной отчетности» — аргумент.</div>`;
+    result.textContent = "";
+    nextBtn.disabled = true;
+  }
+});
+
+resetBtn.addEventListener("click", () => { current = 0; render(); });
+
+render();
+</script>
+</body>
+</html>
