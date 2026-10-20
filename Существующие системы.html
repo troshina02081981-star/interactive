@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP, СЭД, 1С: определения</title>
+<style>
+  *{box-sizing:border-box}
+  html, body { margin: 0; padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+  body { padding: 8px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2937; line-height: 1.3; }
+  .widget { max-width: 680px; margin: 0 auto; background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; display: inline-block; width: 100%; }
+  .widget h1 { font-size: 13px; margin: 0 0 3px; }
+  .lead { color: #6b7280; font-size: 10.5px; margin: 0 0 10px; }
+  
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 10.5px; min-width: 640px; table-layout: fixed; }
+  th, td { border: 1px solid #e5e7eb; padding: 5px 6px; vertical-align: top; text-align: left; word-wrap: break-word; }
+  th { background: #eff6ff; color: #1d4ed8; font-size: 9.5px; text-transform: uppercase; letter-spacing: .2px; font-weight: 700; }
+  td b { display: block; font-size: 11px; color: #1f2937; margin-bottom: 2px; }
+  td span { color: #6b7280; font-size: 10px; display: block; }
+  tr:nth-child(even) td { background: #fafafa; }
+  
+  .note { margin-top: 8px; padding: 6px 8px; border-radius: 7px; background: #fffbeb; border: 1px solid #fde68a; font-size: 10px; color: #78350f; }
+  .note strong { color: #92400e; }
+</style>
+</head>
+<body>
+<div class="widget">
+  <h1>ERP, СЭД, 1С: определения</h1>
+  <p class="lead">Что это такое с точки зрения ИТ-архитектуры.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%">Система</th>
+          <th style="width:32%">Определение</th>
+          <th style="width:25%">Основная функция</th>
+          <th style="width:25%">Чего нет в контексте ПБ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>ERP</b><span>Enterprise Resource Planning</span></td>
+          <td>Корпоративная информационная система для управления ресурсами предприятия на основе единой базы данных.</td>
+          <td>Интеграция и планирование финансовых, производственных, кадровых и складских процессов.</td>
+          <td>Специализированного контура промышленной безопасности (обходы, наряды, инциденты).</td>
+        </tr>
+        <tr>
+          <td><b>СЭД</b><span>Система электронного документооборота</span></td>
+          <td>Программный комплекс для создания, согласования, хранения и поиска электронных документов с контролем версий и маршрутов.</td>
+          <td>Управление жизненным циклом документов и контроль исполнительской дисциплины.</td>
+          <td>Связи документов с техническими устройствами и аналитики рисков.</td>
+        </tr>
+        <tr>
+          <td><b>1С</b><span>Платформа и семейство прикладных решений</span></td>
+          <td>Российская технологическая платформа для разработки и эксплуатации учетных и управленческих информационных систем.</td>
+          <td>Автоматизация учета по настраиваемым конфигурациям (бухгалтерия, ERP, зарплата и др.).</td>
+          <td>Готового отраслевого модуля по ПБ без дополнительной разработки.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <strong>В контексте ПБ:</strong> ERP и 1С выступают источниками первичных данных (финансы, персонал, оборудование), СЭД — источником документов. Система ПБ интегрируется с ними по принципу «встроиться, а не заменять».
+  </div>
+</div>
+</body>
+</html>
