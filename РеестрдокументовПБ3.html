@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=560"><title>Реестр ПБ</title>
+<style>
+*{box-sizing:border-box;font:12px/1.35 system-ui,Arial;margin:0}
+body{background:#fff;color:#1f2937;max-width:560px;margin:0 auto;padding:8px}
+header{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 12px;display:flex;gap:6px;align-items:center;margin-bottom:8px}
+header b{font-size:13px;flex:1;color:#111827}
+select,button,input{padding:4px 6px;border:1px solid #d1d5db;border-radius:4px;background:#fff;font-size:11px;color:#1f2937}
+button{cursor:pointer;background:#2563eb;color:#fff;border:1px solid #2563eb}
+button:hover{background:#1d4ed8}
+button.g{background:#fff;color:#2563eb;border:1px solid #93c5fd}
+button.g:hover{background:#eff6ff}
+button:disabled{opacity:.4;cursor:not-allowed}
+.p{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;margin:0 0 8px}
+.p h3{font-size:12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;color:#111827}
+.opo{display:inline-block;border:1px solid #e5e7eb;border-radius:5px;padding:4px 7px;margin:0 4px 4px 0;cursor:pointer;font-size:11px;vertical-align:top;max-width:100%;background:#fff}
+.opo:hover{background:#f9fafb}
+.opo.on{border-color:#2563eb;background:#eff6ff}
+.opo b{display:block;font-size:11px;color:#111827}
+.opo small{color:#6b7280;font-size:10px}
+.b{display:inline-block;padding:1px 5px;border-radius:8px;font-size:9px;font-weight:600;color:#fff}
+.c1{background:#dc2626}.c2{background:#ea580c}.c3{background:#ca8a04}.c4{background:#2563eb}
+.ok{background:#16a34a}.w{background:#d97706}.bad{background:#dc2626}
+.doc{border:1px solid #e5e7eb;border-radius:5px;padding:6px 7px;margin-bottom:5px;font-size:11px;background:#fff}
+.doc .top{display:flex;justify-content:space-between;gap:6px}
+.doc .name{font-weight:600;flex:1;color:#111827}
+.doc .meta{color:#6b7280;font-size:10px;margin-top:2px}
+.doc .act{margin-top:4px;display:flex;gap:3px}
+.doc .act button{padding:1px 6px;font-size:10px}
+.nf{border-left:3px solid #d97706;background:#fffbeb;padding:4px 6px;border-radius:3px;margin-bottom:4px;font-size:10px;color:#1f2937}
+.nf.bad{border-color:#dc2626;background:#fef2f2}
+.nf b{display:block;font-size:10px}
+.muted{color:#9ca3af;font-size:10px;text-align:center;padding:6px}
+.log{font-size:9px;color:#6b7280;max-height:70px;overflow:auto;border-top:1px dashed #e5e7eb;margin-top:6px;padding-top:4px}
+dialog{border:1px solid #e5e7eb;border-radius:6px;padding:10px;max-width:540px;width:96%;background:#fff;color:#1f2937}
+dialog::backdrop{background:rgba(0,0,0,.25)}
+dialog label{display:block;font-size:10px;color:#6b7280;margin:5px 0 1px}
+dialog input,dialog select{width:100%}
+.row{display:flex;gap:5px;justify-content:flex-end;margin-top:8px}
+.hist{border-bottom:1px solid #e5e7eb;padding:3px 0;font-size:11px}
+input#q{width:100%;margin-bottom:6px}
+</style></head><body>
+
+<header>
+  <b>🛡️ Реестр ПБ</b>
+  <select id="role" onchange="applyRole()">
+    <option value="engineer">Инженер</option>
+    <option value="manager">Руководитель</option>
+    <option value="admin">Админ</option>
+  </select>
+  <span id="ri" class="b c4">—</span>
+</header>
+
+<div class="p">
+  <h3>ОПО <button class="g" onclick="openOpo()" style="padding:1px 6px">+</button></h3>
+  <div id="opoList"></div>
+</div>
+
+<div class="p">
+  <h3>
+    <span id="title">Выберите ОПО</span>
+    <button id="addDocBtn" style="padding:1px 8px" onclick="openDoc(null)" disabled>+</button>
+  </h3>
+  <input id="q" placeholder="Поиск..." oninput="renderDocs()">
+  <div id="docBody"></div>
+  <div class="muted" id="empty">Нет данных</div>
+  <div class="log" id="log"></div>
+</div>
+
+<div class="p">
+  <h3>Уведомления</h3>
+  <div id="nf"></div>
+</div>
+
+<dialog id="opoDlg">
+  <b>Новый ОПО</b>
+  <label>Наименование</label><input id="oName">
+  <label>Тип</label><input id="oType" placeholder="Кран, сосуд...">
+  <label>Класс</label>
+  <select id="oClass"><option value="1">I</option><option value="2">II</option><option value="3">III</option><option value="4" selected>IV</option></select>
+  <label>Ответственный</label><input id="oOwner" placeholder="Иванов И.И.">
+  <div class="row">
+    <button type="button" class="g" onclick="opoDlg.close()">Отмена</button>
+    <button type="button" onclick="saveOpo()">ОК</button>
+  </div>
+</dialog>
+
+<dialog id="docDlg">
+  <b id="docTitle">Документ</b>
+  <input type="hidden" id="dId">
+  <label>Наименование</label><input id="dName">
+  <label>Номер</label><input id="dNum">
+  <label>Дата выдачи</label><input type="date" id="dIssue">
+  <label>Срок действия</label><input type="date" id="dExp">
+  <div class="row">
+    <button type="button" class="g" onclick="docDlg.close()">Отмена</button>
+    <button type="button" onclick="saveDoc()">ОК</button>
+  </div>
+</dialog>
+
+<dialog id="histDlg">
+  <b>История версий</b>
+  <div id="histBody" style="margin-top:6px"></div>
+  <div class="row">
+    <button type="button" class="g" onclick="histDlg.close()">Закрыть</button>
+  </div>
+</dialog>
+
+<script>
+const D=864e5,T=(()=>{const d=new Date();d.setHours(0,0,0,0);return d})();
+const iso=d=>new Date(d).toISOString().slice(0,10);
+const ago=n=>iso(new Date(T-n*D)), fwd=n=>iso(new Date(+T+n*D));
+const $=id=>document.getElementById(id);
+const left=e=>Math.ceil((new Date(e)-T)/D);
+const RN=["","I","II","III","IV"];
+
+let OPOS=[
+ {id:1,name:"Кран мостовой №3",type:"Грузоподъёмный",class:3,owner:"Петров П.П.",docs:[
+  {id:101,name:"Паспорт крана",number:"КР-2023/011",issue:ago(400),expiry:fwd(12),signed:true,version:3,
+   history:[{v:1,date:ago(900),note:"Внесение",user:"admin"},{v:2,date:ago(400),note:"Продление",user:"engineer"},{v:3,date:ago(30),note:"Обновление",user:"engineer"}]},
+  {id:102,name:"Заключение ЭПБ",number:"ЭПБ-45/24",issue:ago(200),expiry:fwd(5),signed:false,version:1,
+   history:[{v:1,date:ago(200),note:"Внесение",user:"engineer"}]},
+  {id:103,name:"Протокол аттестации",number:"ПР-77/22",issue:ago(800),expiry:ago(10),signed:true,version:2,
+   history:[{v:1,date:ago(1100),note:"Внесение",user:"admin"},{v:2,date:ago(800),note:"Продление",user:"engineer"}]}]},
+ {id:2,name:"Резервуар Р-12",type:"Сосуд под давлением",class:2,owner:"Сидоров С.С.",docs:[
+  {id:201,name:"Паспорт сосуда",number:"СП-2022/004",issue:ago(700),expiry:fwd(60),signed:true,version:1,
+   history:[{v:1,date:ago(700),note:"Внесение",user:"admin"}]}]},
+ {id:3,name:"ГРС-1",type:"Газоснабжение",class:1,owner:"Кузнецов К.К.",docs:[]}
+];
+let sel=1, role="engineer", logs=[];
+const R={engineer:{edit:1,add:1,del:0,l:"Полный доступ",c:"c4"},
+         manager:{edit:0,add:0,del:0,l:"Просмотр",c:"c3"},
+         admin:{edit:1,add:1,del:1,l:"Админ",c:"c1"}};
+
+const log=m=>{logs.unshift(`[${new Date().toLocaleTimeString('ru-RU')}] ${m}`);logs=logs.slice(0,25);$("log").innerHTML=logs.map(x=>`<div>${x}</div>`).join("")};
+const status=d=>{const l=left(d.expiry);return l<0?{l:"Просрочен",c:"bad"}:l<=7?{l:`${l} дн.`,c:"bad"}:l<=14?{l:`${l} дн.`,c:"w"}:{l:"Действует",c:"ok"}};
+const opo=()=>OPOS.find(o=>o.id===sel);
+
+function renderOpos(){
+  $("opoList").innerHTML=OPOS.map(o=>`<div class="opo ${o.id===sel?'on':''}" onclick="sel=${o.id};renderAll()">
+    <b>${o.name}</b><small>${o.type} · <span class="b c${o.class}">${RN[o.class]}</span> · ${o.docs.length} д.</small></div>`).join("");
+}
+
+function renderDocs(){
+  const o=opo(), body=$("docBody"), empty=$("empty"), r=R[role];
+  if(!o){$("title").textContent="Выберите ОПО";$("addDocBtn").disabled=true;body.innerHTML="";empty.style.display="block";return}
+  $("title").innerHTML=`${o.name} <span class="b c${o.class}">${RN[o.class]}</span>`;
+  $("addDocBtn").disabled=!r.edit;
+
+  const q=$("q").value.toLowerCase().trim();
+  const list=o.docs.filter(d=>!q||d.name.toLowerCase().includes(q)||d.number.toLowerCase().includes(q));
+  empty.style.display=list.length?"none":"block";
+  empty.textContent=o.docs.length?"Ничего не найдено":"Документов нет";
+
+  body.innerHTML=list.map(d=>{
+    const s=status(d);
+    return `<div class="doc">
+      <div class="top"><div class="name">${d.name}</div><span class="b ${s.c}">${s.l}</span></div>
+      <div class="meta">№ ${d.number} от ${d.issue} · срок ${d.expiry} (${left(d.expiry)} дн.) · вер. ${d.version}${d.signed?' · <span style="color:#16a34a">✔ ЭЦП</span>':''}</div>
+      <div class="act">
+        ${r.edit?`<button type="button" onclick="openDoc(${d.id})">✎</button>`:''}
+        ${r.edit&&!d.signed?`<button type="button" onclick="sign(${d.id})">✍</button>`:''}
+        <button type="button" class="g" onclick="hist(${d.id})">≡</button>
+        ${r.del?`<button type="button" style="background:#dc2626;border-color:#dc2626" onclick="delDoc(${d.id})">🗑</button>`:''}
+      </div></div>`}).join("");
+}
+
+function renderNf(){
+  const items=[];
+  OPOS.forEach(o=>o.docs.forEach(d=>{
+    const l=left(d.expiry);
+    if(l<0)items.push({bad:1,t:"🔴 Просрочен — эскалация",x:`${o.name} → ${d.name}, +${-l} дн. Отв.: ${o.owner}`});
+    else if(l<=7)items.push({t:"🟠 за 7 дней",x:`${o.name} → ${d.name}, ${d.expiry}. Отв.: ${o.owner}`});
+    else if(l<=14)items.push({t:"🟡 за 14 дней",x:`${o.name} → ${d.name}, ${d.expiry}. Отв.: ${o.owner}`});
+  }));
+  $("nf").innerHTML=items.length?items.map(n=>`<div class="nf ${n.bad?'bad':''}"><b>${n.t}</b>${n.x}</div>`).join(""):'<div class="muted">Уведомлений нет</div>';
+}
+const renderAll=()=>{renderOpos();renderDocs();renderNf()};
+
+function applyRole(){role=$("role").value;const r=R[role];$("ri").textContent=r.l;$("ri").className="b "+r.c;log(`Роль: ${role}`);renderAll()}
+
+function openOpo(){
+  if(!R[role].add)return alert("Нет прав");
+  $("oName").value="";$("oType").value="";$("oOwner").value="";$("oClass").value="4";
+  $("opoDlg").showModal();
+}
+function saveOpo(){
+  const n=$("oName").value.trim();
+  if(!n){alert("Введите наименование");return;}
+  OPOS.push({id:Date.now(),name:n,type:$("oType").value.trim()||"—",class:+$("oClass").value,owner:$("oOwner").value.trim()||"—",docs:[]});
+  log(`+ ОПО «${n}»`);
+  $("opoDlg").close();
+  renderAll();
+}
+
+function openDoc(id){
+  if(!R[role].edit)return alert("Нет прав");
+  const d=id?opo().docs.find(x=>x.id===id):null;
+  $("docTitle").textContent=d?"Редактирование (новая версия)":"Новый документ";
+  $("dId").value=d?d.id:"";
+  $("dName").value=d?d.name:"";
+  $("dNum").value=d?d.number:"";
+  $("dIssue").value=d?d.issue:iso(T);
+  $("dExp").value=d?d.expiry:fwd(365);
+  $("docDlg").showModal();
+}
+function saveDoc(){
+  const o=opo(); if(!o){alert("Выберите ОПО");return}
+  const n=$("dName").value.trim(), num=$("dNum").value.trim();
+  const iss=$("dIssue").value, exp=$("dExp").value;
+  if(!n||!num||!iss||!exp){alert("Заполните все поля");return}
+  const id=$("dId").value;
+  if(id){
+    const d=o.docs.find(x=>x.id==id);
+    Object.assign(d,{name:n,number:num,issue:iss,expiry:exp,version:d.version+1,signed:false});
+    d.history.push({v:d.version,date:iso(T),note:"Изменение",user:role});
+    log(`✎ ${num} → в.${d.version}`);
+  }else{
+    o.docs.push({id:Date.now(),name:n,number:num,issue:iss,expiry:exp,signed:false,version:1,
+      history:[{v:1,date:iso(T),note:"Внесение",user:role}]});
+    log(`+ ${num} (${o.name})`);
+  }
+  $("docDlg").close();
+  renderAll();
+}
+
+function sign(did){
+  if(!R[role].edit){alert("Нет прав");return}
+  const d=opo().docs.find(x=>x.id===did);
+  const pin=prompt("PIN для ЭЦП (демо — введите любой):");
+  if(pin===null||pin==="")return;
+  d.signed=true;d.version++;
+  d.history.push({v:d.version,date:iso(T),note:"Подписание ЭЦП",user:role});
+  log(`✍ ${d.number} подписан`);
+  renderAll();
+}
+function hist(id){
+  const d=opo().docs.find(x=>x.id===id);
+  $("histBody").innerHTML=(d.history||[]).slice().reverse().map(h=>`<div class="hist"><b>в.${h.v}</b> — ${h.date}<br>${h.note} <small style="color:#6b7280">(${h.user})</small></div>`).join("")||'<div class="muted">Пусто</div>';
+  $("histDlg").showModal();
+}
+function delDoc(id){
+  if(!R[role].del){alert("Нет прав");return}
+  if(!confirm("Удалить документ?"))return;
+  const o=opo();o.docs=o.docs.filter(x=>x.id!==id);
+  log(`🗑 документ удалён`);renderAll();
+}
+
+log("Инициализация + автопроверка сроков:");
+OPOS.forEach(o=>o.docs.forEach(d=>{const l=left(d.expiry);
+  if(l<0)log(`⚠ Эскалация: ${d.number} +${-l} дн.`);
+  else if(l<=7)log(`🔔 7д: ${d.number}`);
+  else if(l<=14)log(`🔔 14д: ${d.number}`);}));
+applyRole();
+</script></body></html>
