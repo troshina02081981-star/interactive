@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=560"><title>Дашборд ПК</title>
+<style>
+*{box-sizing:border-box;font:10px/1.25 system-ui,Arial;margin:0}
+body{background:#fff;color:#1f2937;max-width:560px;margin:0 auto;padding:6px}
+h1{font-size:12px;margin-bottom:4px}
+.p{border:1px solid #e5e7eb;border-radius:5px;padding:5px 6px;margin-bottom:4px}
+.p h3{font-size:9px;color:#6b7280;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between}
+.lights{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.opo{border:1px solid #e5e7eb;border-radius:4px;padding:3px;text-align:center}
+.opo .dot{width:10px;height:10px;border-radius:50%;margin:0 auto 1px}
+.opo .name{font-size:8px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opo .meta{font-size:7px;color:#6b7280}
+.g{background:#16a34a}.y{background:#eab308}.r{background:#dc2626}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.kpi .box{border:1px solid #e5e7eb;border-radius:4px;padding:3px;text-align:center}
+.kpi .v{font-size:14px;font-weight:700;line-height:1}
+.kpi .v.bad{color:#dc2626}
+.kpi .l{font-size:7px;color:#6b7280;margin-top:1px}
+.owner{display:flex;align-items:center;gap:3px;margin-bottom:2px;font-size:9px}
+.owner .n{width:96px;flex:0 0 96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.owner .bar{flex:1;height:7px;background:#f3f4f6;border-radius:2px;overflow:hidden}
+.owner .bar i{display:block;height:100%;background:#dc2626}
+.owner .c{width:16px;text-align:right;font-weight:700;font-size:9px}
+.week{display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #f3f4f6;font-size:9px}
+.week:last-child{border:0}
+.week .d{width:28px;flex:0 0 28px;font-weight:600}
+.week .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week .o{color:#6b7280;font-size:8px}
+.b{display:inline-block;padding:0 3px;border-radius:5px;font-size:7px;font-weight:600;color:#fff;line-height:10px}
+.ind{display:flex;align-items:center;gap:3px;margin-bottom:2px;font-size:8px}
+.ind .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ind .v{font-weight:700;width:30px;text-align:right}
+.ind .v.bad{color:#dc2626}.ind .v.ok{color:#16a34a}
+.ind .th{font-size:7px;color:#9ca3af;width:36px}
+.muted{color:#9ca3af;font-size:8px;text-align:center;padding:3px}
+.btns{display:flex;gap:3px;margin-top:3px}
+.btns button{flex:1;padding:2px;font-size:8px;border:1px solid #93c5fd;background:#fff;color:#2563eb;border-radius:3px;cursor:pointer}
+</style></head><body>
+
+<h1>Дашборд производственного контроля</h1>
+
+<div class="p">
+  <h3>Светофор ОПО <span id="sw"></span></h3>
+  <div class="lights" id="lights"></div>
+</div>
+
+<div class="p">
+  <div class="kpi" id="kpi"></div>
+</div>
+
+<div class="p">
+  <h3>Просрочки по ответственным</h3>
+  <div id="owners"></div>
+</div>
+
+<div class="p">
+  <h3>Мероприятия на неделю</h3>
+  <div id="week"></div>
+</div>
+
+<div class="p">
+  <h3>Индикаторы риска</h3>
+  <div id="inds"></div>
+</div>
+
+<div class="p">
+  <h3>Наряды-допуски</h3>
+  <div id="permits"></div>
+</div>
+
+<div class="p">
+  <div class="muted" id="ts"></div>
+  <div class="btns">
+    <button onclick="tick()">Обновить</button>
+    <button onclick="addDemo()">+ Просрочка</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const OPOS=[
+ {id:1,name:"Кран №3",class:3,status:"g"},
+ {id:2,name:"Резервуар Р-12",class:2,status:"y"},
+ {id:3,name:"ГРС-1",class:1,status:"r"},
+ {id:4,name:"Компрессор К-5",class:4,status:"g"}
+];
+
+let EVENTS=[
+ {id:1,title:"Течь сальника",owner:"Сидоров С.С.",status:"overdue",days:3},
+ {id:2,title:"Повторная ЭПБ",owner:"Петров П.П.",status:"overdue",days:5},
+ {id:3,title:"Замена манометра",owner:"Петров П.П.",status:"overdue",days:1},
+ {id:4,title:"Инструктаж подрядчика",owner:"Кузнецов К.К.",status:"overdue",days:2},
+ {id:5,title:"Ремонт задвижки",owner:"Сидоров С.С.",status:"overdue",days:7}
+];
+
+const WEEK=[
+ {d:"Пн",title:"Осмотр крана №3",owner:"Петров",done:true},
+ {d:"Вт",title:"ТО компрессора К-5",owner:"Сидоров",done:true},
+ {d:"Ср",title:"Проверка наряда",owner:"Кузнецов",done:false},
+ {d:"Чт",title:"Экспертиза Р-12",owner:"Петров",done:false},
+ {d:"Пт",title:"Обход ГРС-1",owner:"Иванов",done:false}
+];
+
+let IND=[
+ {n:"Просроченные меропр., %",v:18,th:10,unit:"%",inv:true},
+ {n:"Среднее устранение, дн.",v:6.2,th:4,unit:"дн",inv:true},
+ {n:"Нарушений на участок",v:3,th:2,unit:"",inv:true},
+ {n:"Охват проверками, %",v:92,th:95,unit:"%",inv:false},
+ {n:"Чек-листы без подтв., %",v:7,th:5,unit:"%",inv:true},
+ {n:"Наряды без пакета",v:1,th:0,unit:"",inv:true}
+];
+
+const PERMITS=[
+ {n:"ПР-112",work:"Ремонт кровли",contractor:"ООО Ремонт",ok:true},
+ {n:"ПР-113",work:"Трубопровод",contractor:"ООО Трубы",ok:true},
+ {n:"ПР-114",work:"Сварка Р-12",contractor:"ИП Сварнов",ok:false}
+];
+
+function renderLights(){
+  const map={g:"green",y:"yellow",r:"red"};
+  $("lights").innerHTML=OPOS.map(o=>`<div class="opo">
+    <div class="dot ${o.status}"></div>
+    <div class="name" title="${o.name}">${o.name}</div>
+    <div class="meta">кл.${o.class} · ${map[o.status]}</div>
+  </div>`).join("");
+  const r=OPOS.filter(o=>o.status==="r").length;
+  const y=OPOS.filter(o=>o.status==="y").length;
+  $("sw").textContent=`${r} кр · ${y} жёлт`;
+  $("sw").style.color=r?"#dc2626":"#16a34a";
+}
+function renderKpi(){
+  const over=EVENTS.filter(e=>e.status==="overdue");
+  const maxDays=Math.max(...over.map(e=>e.days),0);
+  const red=OPOS.filter(o=>o.status==="r").length;
+  $("kpi").innerHTML=`
+    <div class="box"><div class="v ${over.length?"bad":""}">${over.length}</div><div class="l">просрочено</div></div>
+    <div class="box"><div class="v ${red?"bad":""}">${red}</div><div class="l">красных</div></div>
+    <div class="box"><div class="v ${maxDays>5?"bad":""}">${maxDays}</div><div class="l">макс. дн.</div></div>`;
+}
+function renderOwners(){
+  const by={};
+  EVENTS.filter(e=>e.status==="overdue").forEach(e=>{by[e.owner]=(by[e.owner]||0)+1});
+  const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  if(!arr.length){$("owners").innerHTML='<div class="muted">Просрочек нет</div>';return}
+  const max=arr[0][1];
+  $("owners").innerHTML=arr.map(([n,c])=>`<div class="owner">
+    <div class="n" title="${n}">${n}</div>
+    <div class="bar"><i style="width:${c/max*100}%"></i></div>
+    <div class="c">${c}</div>
+  </div>`).join("");
+}
+function renderWeek(){
+  $("week").innerHTML=WEEK.map(w=>`<div class="week">
+    <div class="d">${w.d}</div>
+    <div class="t" style="${w.done?'color:#9ca3af;text-decoration:line-through':''}">${w.title}</div>
+    <div class="o">${w.owner}</div>
+    <div class="b ${w.done?'g':'y'}">${w.done?'✔':'•'}</div>
+  </div>`).join("");
+}
+function renderInds(){
+  $("inds").innerHTML=IND.map(i=>{
+    const bad=i.inv?i.v>i.th:i.v<i.th;
+    return `<div class="ind">
+      <div class="n" title="${i.n}">${i.n}</div>
+      <div class="v ${bad?'bad':'ok'}">${i.v}${i.unit}</div>
+      <div class="th">${i.inv?'≤':'≥'}${i.th}${i.unit}</div>
+    </div>`;
+  }).join("");
+}
+function renderPermits(){
+  $("permits").innerHTML=PERMITS.map(p=>`<div class="week">
+    <div class="d">${p.n}</div>
+    <div class="t">${p.work}</div>
+    <div class="o">${p.contractor}</div>
+    <div class="b ${p.ok?'g':'r'}">${p.ok?'✔':'⛔'}</div>
+  </div>`).join("");
+}
+function renderAll(){
+  renderLights();renderKpi();renderOwners();renderWeek();renderInds();renderPermits();
+  $("ts").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
+}
+function tick(){
+  OPOS.forEach(o=>{
+    const over=EVENTS.filter(e=>e.status==="overdue");
+    o.status = over.some(e=>e.days>=3)&&o.class<=2 ? "r" : over.length ? "y" : "g";
+  });
+  renderAll();
+}
+function addDemo(){
+  const owners=["Петров П.П.","Сидоров С.С.","Кузнецов К.К."];
+  EVENTS.push({id:Date.now(),title:"Новое нарушение",owner:owners[Math.floor(Math.random()*3)],status:"overdue",days:Math.ceil(Math.random()*6)});
+  IND[0].v=Math.min(40,IND[0].v+2);
+  tick();
+}
+renderAll();
+</script></body></html>
