@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=560"><title>Чек-лист</title>
+<style>
+*{box-sizing:border-box;font:13px/1.4 system-ui,Arial;margin:0}
+body{background:#fff;color:#1f2937;max-width:560px;margin:0 auto;padding:10px}
+header{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;margin-bottom:10px}
+header h1{font-size:15px;color:#111827;margin-bottom:4px}
+header p{font-size:11px;color:#6b7280}
+.progress{height:6px;background:#e5e7eb;border-radius:3px;margin-top:8px;overflow:hidden}
+.progress i{display:block;height:100%;background:#16a34a;width:0;transition:.3s}
+.p{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:8px;transition:.2s}
+.p.done{background:#f0fdf4;border-color:#86efac}
+.item{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.item input{width:18px;height:18px;margin-top:1px;accent-color:#16a34a;cursor:pointer;flex:0 0 auto}
+.item .txt{flex:1}
+.item .txt b{display:block;font-size:13px;color:#111827;margin-bottom:2px}
+.p.done .txt b{color:#15803d;text-decoration:line-through}
+.item .txt small{display:block;font-size:11px;color:#6b7280;line-height:1.4}
+.p.done .txt small{color:#4b5563}
+.tags{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
+.tag{font-size:9px;padding:1px 6px;border-radius:8px;background:#eff6ff;color:#2563eb;font-weight:600}
+.p.done .tag{background:#dcfce7;color:#15803d}
+.foot{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.foot span{flex:1;font-size:12px;font-weight:600;color:#111827}
+.foot span.ok{color:#16a34a}
+button{cursor:pointer;background:#2563eb;color:#fff;border:1px solid #2563eb;border-radius:5px;padding:5px 10px;font-size:11px}
+button:hover{background:#1d4ed8}
+button.g{background:#fff;color:#2563eb;border-color:#93c5fd}
+button.g:hover{background:#eff6ff}
+.note{background:#fffbeb;border-left:3px solid #d97706;padding:6px 8px;border-radius:4px;font-size:11px;color:#1f2937;margin-top:8px}
+.note.ok{background:#f0fdf4;border-color:#16a34a}
+</style></head><body>
+
+<header>
+  <h1>Чек-лист</h1>
+  <p id="counter">Выполнено 0 из 3</p>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<div class="p" id="p1">
+  <label class="item">
+    <input type="checkbox" onchange="toggle(1,this.checked)">
+    <div class="txt">
+      <b>Сверить перечень ОПО с государственным реестром и внутренней структурой</b>
+      <small>Убедиться, что каждый объект из реестра есть в перечне организации, и наоборот. Нет «забытых» и «лишних» ОПО.</small>
+      <div class="tags"><span class="tag">госреестр</span><span class="tag">внутренняя структура</span></div>
+    </div>
+  </label>
+</div>
+
+<div class="p" id="p2">
+  <label class="item">
+    <input type="checkbox" onchange="toggle(2,this.checked)">
+    <div class="txt">
+      <b>Для каждого объекта указать класс опасности, территорию, подразделение, технические устройства, ответственного за ПК и руководителя, принимающего решения</b>
+      <small>Без этих полей карточка объекта неполная: непонятно, кто отвечает за контроль и кто ограничивает работу при нарушении.</small>
+      <div class="tags"><span class="tag">класс опасности</span><span class="tag">территория</span><span class="tag">подразделение</span><span class="tag">тех. устройства</span><span class="tag">ответственный за ПК</span><span class="tag">принимает решения</span></div>
+    </div>
+  </label>
+</div>
+
+<div class="p" id="p3">
+  <label class="item">
+    <input type="checkbox" onchange="toggle(3,this.checked)">
+    <div class="txt">
+      <b>Если несколько юрлиц работают на общей площадке — разграничить их зоны документально</b>
+      <small>Общая территория без разграничения — источник размытой ответственности. Зоны фиксируются документом (договор, приказ, акт).</small>
+      <div class="tags"><span class="tag">юрлица</span><span class="tag">зоны</span><span class="tag">документально</span></div>
+    </div>
+  </label>
+</div>
+
+<div class="foot">
+  <span id="status">Отметьте пункты, чтобы увидеть прогресс</span>
+  <button class="g" onclick="reset()">Сбросить</button>
+</div>
+
+<div class="note" id="note">Пока не выполнены все три пункта, перечень ОПО нельзя считать готовым к утверждению положения о ПК.</div>
+
+<script>
+const TOTAL=3;
+const state={1:false,2:false,3:false};
+
+function toggle(n,v){
+  state[n]=v;
+  document.getElementById("p"+n).classList.toggle("done",v);
+  render();
+}
+function render(){
+  const done=Object.values(state).filter(Boolean).length;
+  document.getElementById("counter").textContent=`Выполнено ${done} из ${TOTAL}`;
+  document.getElementById("bar").style.width=(done/TOTAL*100)+"%";
+  const st=document.getElementById("status");
+  const note=document.getElementById("note");
+  if(done===TOTAL){
+    st.textContent="✔ Все пункты выполнены — перечень готов";
+    st.className="ok";
+    note.className="note ok";
+    note.innerHTML="<b>✔ Готово.</b> Перечень ОПО сверен, карточки заполнены, зоны разграничены. Можно переходить к следующему этапу.";
+  }else{
+    st.textContent=`Осталось: ${TOTAL-done}`;
+    st.className="";
+    note.className="note";
+    note.innerHTML="Пока не выполнены все три пункта, перечень ОПО нельзя считать готовым к утверждению положения о ПК.";
+  }
+}
+function reset(){
+  for(let i=1;i<=3;i++){
+    state[i]=false;
+    document.getElementById("p"+i).classList.remove("done");
+    document.querySelector(`#p${i} input`).checked=false;
+  }
+  render();
+}
+render();
+</script></body></html>
