@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Схема иерархии объекта</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --card:#ffffff;
+    --border:#d0d7e2;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --l1:#1e3a8a;
+    --l2:#2563eb;
+    --l3:#0891b2;
+    --l4:#16a34a;
+    --shadow:0 1px 6px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;padding:0;
+    background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    font-size:13px;line-height:1.35;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:14px}
+
+  .header-card{
+    background:var(--card);
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    box-shadow:var(--shadow);
+    margin-bottom:12px;
+  }
+  .header-card h1{margin:0;font-size:15px;font-weight:600;color:var(--l1);
+                  display:flex;align-items:center;gap:6px}
+  .header-card p{margin:3px 0 0;color:var(--muted);font-size:11.5px}
+
+  /* Схема */
+  .schema{
+    background:var(--card);
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:14px 12px;
+    box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+
+  /* Уровни */
+  .level{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .level-label{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:var(--muted);
+    font-weight:600;
+    margin-bottom:2px;
+  }
+
+  /* Карточка узла */
+  .node{
+    display:flex;align-items:center;gap:6px;
+    padding:5px 9px;
+    border:1.5px solid var(--border);
+    border-radius:7px;
+    background:#fff;
+    font-size:11.5px;
+    font-weight:500;
+    white-space:nowrap;
+    max-width:100%;
+    overflow:hidden;text-overflow:ellipsis;
+  }
+  .node .ic{
+    width:14px;height:14px;border-radius:3px;flex-shrink:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:#fff;font-size:8px;
+  }
+  .n1{border-color:var(--l1)} .n1 .ic{background:var(--l1)}
+  .n2{border-color:var(--l2)} .n2 .ic{background:var(--l2)}
+  .n3{border-color:var(--l3)} .n3 .ic{background:var(--l3)}
+  .n4{border-color:var(--l4)} .n4 .ic{background:var(--l4)}
+
+  /* Вертикальная соединительная линия между уровнями */
+  .link{
+    width:1.5px;height:10px;background:#cbd5e1;margin:0 auto;
+  }
+
+  /* Ряд узлов одного уровня */
+  .row{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
+    position:relative;
+  }
+
+  /* Горизонтальная линия-гребёнка над рядом */
+  .branch{
+    position:relative;
+    padding-top:10px;
+    margin-top:2px;
+  }
+  .branch::before{
+    content:"";position:absolute;top:0;left:50%;
+    width:1.5px;height:10px;background:#cbd5e1;transform:translateX(-50%);
+  }
+  .branch > .row{
+    border-top:1.5px solid #cbd5e1;
+    padding-top:8px;
+  }
+  .branch > .row > .node{
+    position:relative;
+  }
+  .branch > .row > .node::before{
+    content:"";position:absolute;top:-8px;left:50%;
+    width:1.5px;height:8px;background:#cbd5e1;transform:translateX(-50%);
+  }
+
+  /* Компактная группировка участков под ОПО */
+  .group{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    border:1px dashed #cbd5e1;
+    border-radius:9px;
+    padding:8px;
+  }
+  .group-title{
+    font-size:10px;color:var(--muted);font-weight:600;
+  }
+
+  /* Легенда */
+  .legend{
+    display:flex;flex-wrap:wrap;gap:10px;
+    margin-top:10px;
+    font-size:10.5px;color:var(--muted);
+    justify-content:center;
+  }
+  .legend .item{display:flex;align-items:center;gap:4px}
+  .legend .dot{width:8px;height:8px;border-radius:50%}
+  .d1{background:var(--l1)} .d2{background:var(--l2)}
+  .d3{background:var(--l3)} .d4{background:var(--l4)}
+
+  /* Обёртка для ТУ под участком */
+  .tu-list{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:5px;
+    max-width:520px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header-card">
+    <h1>🏭 Схема иерархии объекта</h1>
+    <p>Предприятие → ОПО → участок → техническое устройство</p>
+  </div>
+
+  <div class="schema">
+
+    <!-- Уровень 1: Предприятие -->
+    <div class="level">
+      <div class="level-label">Предприятие</div>
+      <div class="node n1"><span class="ic">🏢</span>ООО «ПромТехБезопасность»</div>
+    </div>
+
+    <div class="link"></div>
+
+    <!-- Уровень 2: ОПО -->
+    <div class="branch">
+      <div class="row">
+        <div class="node n2"><span class="ic">🏭</span>Резервуарный парк</div>
+        <div class="node n2"><span class="ic">🏭</span>Компрессорная станция</div>
+        <div class="node n2"><span class="ic">🏭</span>Котёл КВ-2</div>
+      </div>
+    </div>
+
+    <div class="link"></div>
+
+    <!-- Уровень 3–4: участки и ТУ по каждому ОПО -->
+    <div class="level">
+      <div class="level-label">Участки и технические устройства</div>
+
+      <!-- ОПО 1 -->
+      <div class="group">
+        <div class="group-title">Резервуарный парк</div>
+        <div class="tu-list">
+          <div class="node n3"><span class="ic">📍</span>Приём и хранение</div>
+          <div class="node n3"><span class="ic">📍</span>Слив-налив</div>
+        </div>
+        <div class="tu-list">
+          <div class="node n4"><span class="ic">⚙</span>РВС-5000 №1</div>
+          <div class="node n4"><span class="ic">⚙</span>РВС-5000 №2</div>
+          <div class="node n4"><span class="ic">⚙</span>Насос НА-1</div>
+          <div class="node n4"><span class="ic">⚙</span>Задвижка ЗД-1</div>
+          <div class="node n4"><span class="ic">⚙</span>УСН-1</div>
+          <div class="node n4"><span class="ic">⚙</span>Трубопровод ТП-1</div>
+        </div>
+      </div>
+
+      <!-- ОПО 2 -->
+      <div class="group">
+        <div class="group-title">Компрессорная станция</div>
+        <div class="tu-list">
+          <div class="node n3"><span class="ic">📍</span>Машинный зал</div>
+        </div>
+        <div class="tu-list">
+          <div class="node n4"><span class="ic">⚙</span>Компрессор К-1</div>
+          <div class="node n4"><span class="ic">⚙</span>Компрессор К-2</div>
+        </div>
+      </div>
+
+      <!-- ОПО 3 -->
+      <div class="group">
+        <div class="group-title">Котёл КВ-2</div>
+        <div class="tu-list">
+          <div class="node n3"><span class="ic">📍</span>Котельная</div>
+        </div>
+        <div class="tu-list">
+          <div class="node n4"><span class="ic">⚙</span>Котёл КВ-2 №1</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <div class="item"><span class="dot d1"></span>Предприятие</div>
+    <div class="item"><span class="dot d2"></span>ОПО</div>
+    <div class="item"><span class="dot d3"></span>Участок</div>
+    <div class="item"><span class="dot d4"></span>Техустройство</div>
+  </div>
+
+</div>
+</body>
+</html>
