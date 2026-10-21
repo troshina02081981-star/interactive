@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подбор инструмента для реестра ПБ</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --card:#ffffff;
+    --border:#d0d7e2;
+    --border-strong:#b8c2d1;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --primary:#2563eb;
+    --primary-d:#1d4ed8;
+    --danger:#dc2626;
+    --ok:#16a34a;
+    --shadow:0 1px 6px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;padding:0;min-height:100%;
+    background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    font-size:13px;line-height:1.4;
+  }
+
+  .wrap{
+    max-width:560px;
+    margin:0 auto;
+    padding:14px;
+  }
+
+  /* Шапка — в рамке, внутри контейнера */
+  .header-card{
+    background:var(--card);
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    box-shadow:var(--shadow);
+    margin-bottom:10px;
+  }
+  .header-card h1{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+    color:#1e3a8a;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .header-card p{
+    margin:3px 0 0;
+    color:var(--muted);
+    font-size:11.5px;
+  }
+
+  .progress{display:flex;gap:4px;margin-bottom:10px}
+  .progress .seg{flex:1;height:4px;border-radius:2px;background:#e5e7eb;transition:.3s}
+  .progress .seg.done{background:var(--primary)}
+  .progress .seg.active{background:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.2)}
+
+  .card{
+    background:var(--card);
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    box-shadow:var(--shadow);
+    margin-bottom:10px;
+  }
+
+  .q-num{font-size:10px;color:var(--primary);font-weight:600;
+         text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+  .q-title{font-size:14px;font-weight:600;margin:0 0 2px}
+  .q-hint{color:var(--muted);font-size:11.5px;margin:0 0 10px}
+
+  .options{display:flex;flex-direction:column;gap:6px}
+  .opt{
+    display:flex;align-items:flex-start;gap:8px;
+    padding:8px 10px;
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    cursor:pointer;transition:.15s;
+  }
+  .opt:hover{border-color:var(--primary);background:#f8fafc}
+  .opt.selected{
+    border-color:var(--primary);
+    background:#eff6ff;
+    box-shadow:0 0 0 2px rgba(37,99,235,.12);
+  }
+  .opt .radio{
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid #cbd5e1;
+    flex-shrink:0;margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    transition:.15s;background:#fff;
+  }
+  .opt.selected .radio{border-color:var(--primary)}
+  .opt.selected .radio::after{
+    content:"";width:6px;height:6px;border-radius:50%;background:var(--primary);
+  }
+  .opt .body{flex:1;min-width:0}
+  .opt .label{font-weight:500;font-size:12.5px;margin-bottom:1px}
+  .opt .desc{font-size:11px;color:var(--muted);line-height:1.35}
+
+  .nav{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
+  .btn{
+    padding:7px 12px;border-radius:7px;cursor:pointer;font-size:12.5px;
+    font-weight:500;transition:.15s;display:inline-flex;align-items:center;gap:5px;
+    border:1.5px solid transparent;
+  }
+  .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .btn-primary:hover{background:var(--primary-d);border-color:var(--primary-d)}
+  .btn-primary:disabled{background:#cbd5e1;border-color:#cbd5e1;cursor:not-allowed}
+  .btn-ghost{background:#fff;border-color:var(--border);color:var(--text)}
+  .btn-ghost:hover{background:#f8fafc;border-color:var(--border-strong)}
+  .btn-ghost:disabled{opacity:.5;cursor:not-allowed}
+
+  .result-hero{text-align:center;padding:4px 0 2px}
+  .result-hero .icon{font-size:30px;margin-bottom:2px}
+  .result-hero .rec{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+  .result-hero h2{margin:3px 0 4px;font-size:17px;color:var(--primary-d);line-height:1.25}
+  .result-hero .sub{color:var(--muted);font-size:11.5px;margin:0 auto;max-width:480px}
+
+  .score-bar{margin:12px 0 2px}
+  .score-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .score-row .name{width:120px;font-size:11px;font-weight:500;flex-shrink:0;
+                   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .score-row .bar{
+    flex:1;height:16px;background:#eef2f7;border-radius:4px;
+    overflow:hidden;position:relative;border:1px solid var(--border);
+  }
+  .score-row .fill{height:100%;border-radius:3px;transition:width .6s ease}
+  .score-row .pct{width:28px;text-align:right;font-size:10.5px;color:var(--muted);flex-shrink:0}
+  .fill.best{background:linear-gradient(90deg,#22c55e,#16a34a)}
+  .fill.mid{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+  .fill.low{background:linear-gradient(90deg,#f87171,#dc2626)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  @media(max-width:480px){.grid2{grid-template-columns:1fr}}
+
+  .panel{
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    padding:9px 10px;
+  }
+  .panel h4{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;
+            letter-spacing:.4px;color:var(--muted)}
+  .panel ul{margin:0;padding-left:14px;font-size:11.5px}
+  .panel li{margin-bottom:3px;line-height:1.35}
+  .panel.pros{border-left:3px solid var(--ok)}
+  .panel.cons{border-left:3px solid var(--danger)}
+  .panel.steps{border-left:3px solid var(--primary);background:#f5f9ff}
+  .panel.steps ol{margin:0;padding-left:14px;font-size:11.5px}
+  .panel.steps li{margin-bottom:4px;line-height:1.35}
+
+  .answers{margin-top:10px;border-top:1.5px solid var(--border);padding-top:8px}
+  .answers h4{margin:0 0 5px;font-size:10.5px;color:var(--muted);text-transform:uppercase}
+  .answers .row{display:flex;gap:6px;font-size:11px;margin-bottom:3px;line-height:1.35}
+  .answers .row .q{color:var(--muted);min-width:150px;flex-shrink:0}
+  .answers .row .a{font-weight:500}
+
+  .actions-end{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
+  @media print{
+    body,html{background:#fff}
+    .header-card{background:#fff;border:1px solid #000;box-shadow:none}
+    .actions-end,.progress{display:none}
+    .card{border:1px solid #000;box-shadow:none;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Шапка в рамке -->
+  <div class="header-card">
+    <h1>🧭 Подбор инструмента для реестра ПБ</h1>
+    <p>6 вопросов — рекомендация с обоснованием и планом внедрения</p>
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div id="app"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id:"opo",
+    title:"Сколько у вас ОПО и оборудования?",
+    hint:"От масштаба зависит привязка документов к объектам",
+    options:[
+      {v:"small", label:"1–2 ОПО, до 10 единиц", desc:"Небольшой объект, учёт можно вести вручную"},
+      {v:"medium", label:"3–10 ОПО, 10–50 единиц", desc:"Нужна привязка документов к объектам"},
+      {v:"large", label:"10+ ОПО или 50+ единиц", desc:"Нужен полноценный учёт по объектам и оборудованию"}
+    ]
+  },
+  {
+    id:"sed",
+    title:"Есть ли СЭД?",
+    hint:"«Дело», Directum, ELMA, 1С:Документооборот",
+    options:[
+      {v:"yes", label:"Да, активно используется", desc:"Документы уже хранятся и согласуются в СЭД"},
+      {v:"planned", label:"Планируется к внедрению", desc:"В процессе выбора или закупки"},
+      {v:"no", label:"Нет", desc:"Документооборот ведётся вручную / в файлах"}
+    ]
+  },
+  {
+    id:"onec",
+    title:"Используете ли 1С?",
+    hint:"Лицензии, админ и программист 1С",
+    options:[
+      {v:"yes_dev", label:"Да, есть 1С и программист", desc:"Можно доработать платформу под реестр ПБ"},
+      {v:"yes_nol", label:"1С есть, но без программиста", desc:"Доработка потребует подрядчика"},
+      {v:"no", label:"1С не используем", desc:"Нет инфраструктуры и компетенций"}
+    ]
+  },
+  {
+    id:"budget",
+    title:"Какой бюджет?",
+    hint:"Лицензии, внедрение, поддержка",
+    options:[
+      {v:"low", label:"Минимальный", desc:"Ручная настройка и самостоятельная поддержка"},
+      {v:"mid", label:"Средний", desc:"Можно купить готовое или доработать существующее"},
+      {v:"high", label:"Есть бюджет на платформу", desc:"Готовы платить за лицензии и внедрение"}
+    ]
+  },
+  {
+    id:"it",
+    title:"Есть ли своя IT-команда?",
+    hint:"Разработчики, администраторы, поддержка",
+    options:[
+      {v:"yes", label:"Да, есть разработчики", desc:"Можем вести собственную разработку"},
+      {v:"admin", label:"Только админ / техподдержка", desc:"Разработку не потянем"},
+      {v:"no", label:"Нет IT-специалистов", desc:"Нужно готовое решение с поддержкой вендора"}
+    ]
+  },
+  {
+    id:"control",
+    title:"Важен ли контроль сроков и эскалации?",
+    hint:"Просрочки разрешительных документов — критичный риск",
+    options:[
+      {v:"critical", label:"Критично", desc:"Нужны автоматические напоминания и эскалации"},
+      {v:"important", label:"Важно, но можно вручную", desc:"Достаточно отчётов и ручного контроля"},
+      {v:"low", label:"Не приоритет", desc:"Главное — хранение документов"}
+    ]
+  }
+];
+
+const TOOLS = {
+  sed:{
+    name:"СЭД",
+    icon:"🗂️",
+    short:"Использовать существующую СЭД для реестра документов ПБ",
+    pros:[
+      "Версионность, история правок, согласование",
+      "Права доступа и поиск уже настроены",
+      "Не нужно покупать новую систему"
+    ],
+    cons:[
+      "Нет привязки к оборудованию и ОПО",
+      "Нет контроля сроков в разрезе ПБ",
+      "СЭД — про документы, а не про безопасность"
+    ],
+    steps:[
+      "Завести справочник ОПО и оборудования",
+      "Создать карточку документа с полями ПБ",
+      "Настроить отчёт по срокам и ручную рассылку",
+      "Назначить ответственного за реестр"
+    ]
+  },
+  ehs:{
+    name:"EHS-платформа ПБ",
+    icon:"🛡️",
+    short:"Оптимально для ОПО: карточки объектов, контроль сроков, эскалации",
+    pros:[
+      "Готовые карточки ОПО и оборудования",
+      "Реестр разрешительных документов «из коробки»",
+      "Автоуведомления и эскалации по просрочкам",
+      "Структура соответствует логике ПБ"
+    ],
+    cons:[
+      "Стоимость лицензий и внедрения",
+      "Нужна интеграция с СЭД и 1С",
+      "Зависимость от вендора"
+    ],
+    steps:[
+      "Демо 2–3 платформ",
+      "Согласовать бюджет",
+      "Перенести справочники ОПО и оборудования",
+      "Настроить эскалации 60/30/10 дней",
+      "Пилот на одном ОПО, затем обучение"
+    ]
+  },
+  onec:{
+    name:"1С (доработка)",
+    icon:"⚙️",
+    short:"Собрать реестр на базе существующей 1С — дешевле отдельной платформы",
+    pros:[
+      "Дешевле специализированной платформы",
+      "Предприятие уже живёт в 1С",
+      "Связь с бухгалтерией и договорами"
+    ],
+    cons:[
+      "Нужен программист 1С и время",
+      "Нет отраслевой логики ПБ — настраивать с нуля",
+      "Поддержка и развитие — на вас"
+    ],
+    steps:[
+      "Сформулировать ТЗ и справочники",
+      "Настроить карточку и контроль сроков",
+      "Регламентное задание и рассылка",
+      "Тестовый запуск и обучение"
+    ]
+  },
+  custom:{
+    name:"Собственная разработка",
+    icon:"💻",
+    short:"Точно ляжет на процессы, но требует команды и бюджета",
+    pros:[
+      "Идеально под ваши процессы",
+      "Полный контроль над данными"
+    ],
+    cons:[
+      "Постоянная команда разработки",
+      "Бюджет на поддержку",
+      "Долгий срок до результата",
+      "Для большинства избыточно"
+    ],
+    steps:[
+      "Собрать требования и архитектуру",
+      "Выделить команду и бюджет",
+      "Разработать MVP: реестр, сроки, уведомления",
+      "Пилот и итерации"
+    ]
+  }
+};
+
+function score(a){
+  const s = {sed:0, ehs:0, onec:0, custom:0};
+  if(a.opo==="small"){s.sed+=2;s.onec+=2;}
+  if(a.opo==="medium"){s.sed+=1;s.onec+=1;s.ehs+=2;}
+  if(a.opo==="large"){s.ehs+=4;s.custom+=1;}
+  if(a.sed==="yes"){s.sed+=3;}
+  if(a.sed==="planned"){s.sed+=1;s.ehs+=1;}
+  if(a.sed==="no"){s.ehs+=1;s.custom+=1;}
+  if(a.onec==="yes_dev"){s.onec+=3;}
+  if(a.onec==="yes_nol"){s.onec+=1;s.ehs+=1;}
+  if(a.onec==="no"){s.sed+=1;s.ehs+=1;}
+  if(a.budget==="low"){s.sed+=2;s.onec+=1;s.custom-=2;}
+  if(a.budget==="mid"){s.onec+=2;s.ehs+=1;s.sed+=1;}
+  if(a.budget==="high"){s.ehs+=3;s.custom+=1;}
+  if(a.it==="yes"){s.custom+=3;s.onec+=1;}
+  if(a.it==="admin"){s.onec+=1;s.sed+=1;s.ehs+=1;}
+  if(a.it==="no"){s.ehs+=2;s.sed+=1;s.custom-=3;}
+  if(a.control==="critical"){s.ehs+=4;s.onec+=1;}
+  if(a.control==="important"){s.ehs+=2;s.onec+=1;s.sed+=1;}
+  if(a.control==="low"){s.sed+=2;}
+  return s;
+}
+
+let step = 0;
+let answers = {};
+const app = document.getElementById("app");
+const progress = document.getElementById("progress");
+
+function renderProgress(){
+  progress.innerHTML = QUESTIONS.map((_,i)=>{
+    let cls = "seg";
+    if(i < step) cls += " done";
+    else if(i === step) cls += " active";
+    return `<div class="${cls}"></div>`;
+  }).join("");
+}
+
+function renderQuestion(){
+  renderProgress();
+  const q = QUESTIONS[step];
+  const selected = answers[q.id];
+  app.innerHTML = `
+    <div class="card">
+      <div class="q-num">Вопрос ${step+1} из ${QUESTIONS.length}</div>
+      <h2 class="q-title">${q.title}</h2>
+      <p class="q-hint">${q.hint}</p>
+      <div class="options">
+        ${q.options.map(o=>`
+          <div class="opt ${selected===o.v?"selected":""}" onclick="select('${o.v}')">
+            <div class="radio"></div>
+            <div class="body">
+              <div class="label">${o.label}</div>
+              <div class="desc">${o.desc}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="nav">
+        <button class="btn btn-ghost" onclick="prev()" ${step===0?"disabled":""}>← Назад</button>
+        <button class="btn btn-primary" onclick="next()" ${!selected?"disabled":""}>
+          ${step===QUESTIONS.length-1?"Результат":"Далее →"}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function select(v){ answers[QUESTIONS[step].id] = v; renderQuestion(); }
+function next(){
+  if(!answers[QUESTIONS[step].id]) return;
+  if(step < QUESTIONS.length-1){ step++; renderQuestion(); }
+  else renderResult();
+}
+function prev(){ if(step>0){ step--; renderQuestion(); } }
+
+function renderResult(){
+  renderProgress();
+  const s = score(answers);
+  const ranked = Object.entries(s).sort((a,b)=>b[1]-a[1]);
+  const bestKey = ranked[0][0];
+  const best = TOOLS[bestKey];
+  const maxScore = Math.max(...Object.values(s), 1);
+
+  const bars = ranked.map(([k,val])=>{
+    const pct = Math.max(0, Math.round(val/maxScore*100));
+    const cls = k===bestKey ? "best" : pct>=50 ? "mid" : "low";
+    return `
+      <div class="score-row">
+        <div class="name">${TOOLS[k].icon} ${TOOLS[k].name}</div>
+        <div class="bar"><div class="fill ${cls}" style="width:${pct}%"></div></div>
+        <div class="pct">${val}</div>
+      </div>`;
+  }).join("");
+
+  const answersList = QUESTIONS.map(q=>{
+    const opt = q.options.find(o=>o.v===answers[q.id]);
+    return `<div class="row"><div class="q">${q.title}</div><div class="a">${opt?opt.label:"—"}</div></div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="result-hero">
+        <div class="icon">${best.icon}</div>
+        <div class="rec">Рекомендуем</div>
+        <h2>${best.name}</h2>
+        <p class="sub">${best.short}</p>
+      </div>
+
+      <div class="score-bar">${bars}</div>
+
+      <div class="grid2">
+        <div class="panel pros">
+          <h4>✅ Плюсы</h4>
+          <ul>${best.pros.map(p=>`<li>${p}</li>`).join("")}</ul>
+        </div>
+        <div class="panel cons">
+          <h4>⚠️ Минусы</h4>
+          <ul>${best.cons.map(c=>`<li>${c}</li>`).join("")}</ul>
+        </div>
+      </div>
+
+      <div class="panel steps" style="margin-top:8px">
+        <h4>🚀 План внедрения</h4>
+        <ol>${best.steps.map(st=>`<li>${st}</li>`).join("")}</ol>
+      </div>
+
+      <div class="answers">
+        <h4>Ваши ответы</h4>
+        ${answersList}
+      </div>
+
+      <div class="actions-end">
+        <button class="btn btn-ghost" onclick="restart()">↺ Заново</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨 PDF</button>
+      </div>
+    </div>
+  `;
+}
+
+function restart(){ step = 0; answers = {}; renderQuestion(); }
+
+renderQuestion();
+</script>
+</body>
+</html>
