@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=560"><title>Реестр мероприятий</title>
+<style>
+*{box-sizing:border-box;font:10px/1.3 system-ui,Arial;margin:0}
+body{background:#fff;color:#1f2937;max-width:560px;margin:0 auto;padding:6px}
+h1{font-size:12px;margin-bottom:4px}
+.p{border:1px solid #e5e7eb;border-radius:5px;padding:5px 6px;margin-bottom:4px}
+.p h3{font-size:9px;color:#6b7280;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between}
+.m{border:1px solid #e5e7eb;border-radius:4px;padding:4px 5px;margin-bottom:3px;font-size:9px}
+.m .top{display:flex;justify-content:space-between;gap:4px;align-items:center}
+.m .name{font-weight:600;flex:1}
+.m .meta{color:#6b7280;font-size:8px;margin-top:1px}
+.m .act{margin-top:2px;display:flex;gap:2px;flex-wrap:wrap}
+.m .act button{padding:1px 5px;font-size:8px;border-radius:3px}
+.b{display:inline-block;padding:0 4px;border-radius:5px;font-size:7px;font-weight:600;color:#fff;line-height:10px}
+.g{background:#16a34a}.y{background:#eab308;color:#111827}.r{background:#dc2626}.gray{background:#9ca3af}.blue{background:#2563eb}
+button{cursor:pointer;background:#2563eb;color:#fff;border:1px solid #2563eb;font-family:inherit}
+button:hover{background:#1d4ed8}
+button.g2{background:#fff;color:#2563eb;border-color:#93c5fd}
+button.g2:hover{background:#eff6ff}
+.nf{border-left:3px solid #eab308;background:#fefce8;padding:3px 5px;border-radius:3px;margin-bottom:2px;font-size:9px}
+.nf.bad{border-color:#dc2626;background:#fef2f2}
+.nf b{display:block;font-size:9px}
+dialog{border:1px solid #e5e7eb;border-radius:6px;padding:8px;width:96%;max-width:520px;background:#fff;color:#1f2937}
+dialog::backdrop{background:rgba(0,0,0,.25)}
+dialog label{display:block;font-size:8px;color:#6b7280;margin:3px 0 1px}
+dialog input,dialog select,dialog textarea{width:100%;padding:3px 5px;border:1px solid #d1d5db;border-radius:3px;font-size:9px;font-family:inherit}
+dialog textarea{resize:vertical;min-height:30px}
+.row{display:flex;gap:3px;justify-content:flex-end;margin-top:5px}
+.muted{color:#9ca3af;font-size:8px;text-align:center;padding:3px}
+</style></head><body>
+
+<h1>Реестр корректирующих мероприятий</h1>
+
+<div class="p">
+  <h3>Мероприятия <span id="cnt"></span></h3>
+  <div id="list"></div>
+  <div style="margin-top:4px"><button onclick="openEdit()" style="width:100%;padding:2px;font-size:9px">+ Мероприятие</button></div>
+</div>
+
+<div class="p">
+  <h3>Уведомления и эскалация</h3>
+  <div id="nf"></div>
+</div>
+
+<dialog id="dlg">
+  <b id="dlgTitle">Мероприятие</b>
+  <input type="hidden" id="fId">
+  <label>Что сделать</label>
+  <input id="fName" placeholder="Устранить течь сальника">
+  <label>Ответственный (человек, не отдел)</label>
+  <input id="fOwner" placeholder="Сидоров С.С.">
+  <div style="display:flex;gap:3px">
+    <div style="flex:1"><label>Срок</label><input type="date" id="fDate"></div>
+    <div style="flex:1"><label>Статус</label>
+      <select id="fStatus">
+        <option value="work">В работе</option>
+        <option value="done">Устранено</option>
+        <option value="rejected">Отклонено</option>
+        <option value="overdue">Просрочено</option>
+      </select></div>
+  </div>
+  <label>Подтверждение закрытия (фото, акт, проверка)</label>
+  <input id="fProof" placeholder="Акт №12 / фотоотчёт">
+  <div class="row">
+    <button class="g2" onclick="dlg.close()">Отмена</button>
+    <button onclick="save()">Сохранить</button>
+  </div>
+</dialog>
+
+<dialog id="extDlg">
+  <b>Продление срока</b>
+  <label>Новый срок</label>
+  <input type="date" id="eDate">
+  <label>Обоснование (видно руководителю)</label>
+  <textarea id="eReason" placeholder="Почему срок продлевается"></textarea>
+  <div class="row">
+    <button class="g2" onclick="extDlg.close()">Отмена</button>
+    <button onclick="extend()">Продлить</button>
+  </div>
+</dialog>
+
+<script>
+const $=id=>document.getElementById(id);
+const D=864e5, T=(()=>{const d=new Date();d.setHours(0,0,0,0);return d})();
+const iso=d=>new Date(d).toISOString().slice(0,10);
+const ago=n=>iso(new Date(+T-n*D));
+const fwd=n=>iso(new Date(+T+n*D));
+const left=d=>Math.ceil((new Date(d)-T)/D);
+
+let ITEMS=[
+ {id:1,name:"Устранить течь сальника",owner:"Сидоров С.С.",date:fwd(5),status:"work",proof:"",history:[]},
+ {id:2,name:"Повторная экспертиза ЭПБ",owner:"Петров П.П.",date:fwd(12),status:"work",proof:"",history:[]},
+ {id:3,name:"Замена манометра",owner:"Петров П.П.",date:ago(3),status:"work",proof:"",history:[]},
+ {id:4,name:"Инструктаж подрядчика",owner:"Кузнецов К.К.",date:ago(10),status:"work",proof:"",history:[]},
+ {id:5,name:"Ремонт задвижки",owner:"Сидоров С.С.",date:fwd(-2),status:"done",proof:"Акт №12",history:[]}
+];
+let editing=null, extending=null;
+
+const log=(id,txt)=>{
+  const m=ITEMS.find(x=>x.id===id);
+  m.history.push(`[${new Date().toLocaleString("ru-RU")}] ${txt}`);
+};
+
+function effStatus(m){
+  if(m.status==="done"||m.status==="rejected")return m.status;
+  return left(m.date)<0?"overdue":"work";
+}
+function statusBadge(st){
+  return {work:{l:"в работе",c:"blue"},done:{l:"устранено",c:"g"},overdue:{l:"просрочено",c:"r"},rejected:{l:"отклонено",c:"gray"}}[st];
+}
+
+function render(){
+  $("list").innerHTML=ITEMS.map(m=>{
+    const st=effStatus(m), b=statusBadge(st), dl=left(m.date);
+    return `<div class="m">
+      <div class="top">
+        <div class="name">${m.name}</div>
+        <span class="b ${b.c}">${b.l}</span>
+      </div>
+      <div class="meta">${m.owner} · срок ${m.date} (${dl<0?'+'+(-dl):dl} дн.)${m.proof?' · ✔ '+m.proof:''}${m.history.length?' · правок '+m.history.length:''}</div>
+      <div class="act">
+        ${st!=="done"&&st!=="rejected"?`<button class="g2" onclick="closeItem(${m.id})">✔ Закрыть</button>`:''}
+        ${st!=="done"&&st!=="rejected"?`<button class="g2" onclick="openExt(${m.id})">⏱ Продлить</button>`:''}
+        <button class="g2" onclick="openEdit(${m.id})">✎</button>
+        <button class="g2" style="color:#dc2626;border-color:#fca5a5" onclick="del(${m.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join("");
+  const over=ITEMS.filter(m=>effStatus(m)==="overdue").length;
+  const soon=ITEMS.filter(m=>{const l=left(m.date);return l>=0&&l<=14&&effStatus(m)==="work"}).length;
+  $("cnt").textContent=`${ITEMS.length} всего · ${over} просрочено · ${soon} на подходе`;
+}
+
+function renderNf(){
+  const items=[];
+  ITEMS.forEach(m=>{
+    const st=effStatus(m);
+    if(st==="overdue")items.push({bad:1,t:"🔴 ПРОСРОЧЕНО — эскалация руководителю",x:`${m.name} · ${m.owner} · просрочено на ${-left(m.date)} дн.`});
+    else if(st==="work"){
+      const l=left(m.date);
+      if(l<=7)items.push({t:"🟡 Напоминание за 7 дней",x:`${m.name} · ${m.owner} · срок ${m.date}`});
+      else if(l<=14)items.push({t:"🟢 Напоминание за 14 дней",x:`${m.name} · ${m.owner} · срок ${m.date}`});
+    }
+    if(m.history.length && m.history.some(h=>h.includes("Продление")))
+      items.push({t:"⏱ Срок продлевался",x:`${m.name}: ${m.history.filter(h=>h.includes("Продление")).slice(-1)[0]}`});
+  });
+  $("nf").innerHTML=items.length?items.map(n=>`<div class="nf ${n.bad?'bad':''}"><b>${n.t}</b>${n.x}</div>`).join(""):'<div class="muted">Активных уведомлений нет</div>';
+}
+
+function renderAll(){render();renderNf()}
+
+function openEdit(id){
+  editing=id||null;
+  const m=id?ITEMS.find(x=>x.id===id):null;
+  $("dlgTitle").textContent=m?"Редактирование":"Новое мероприятие";
+  $("fId").value=m?m.id:"";
+  $("fName").value=m?m.name:"";
+  $("fOwner").value=m?m.owner:"";
+  $("fDate").value=m?m.date:fwd(14);
+  $("fStatus").value=m?m.status:"work";
+  $("fProof").value=m?m.proof:"";
+  dlg.showModal();
+}
+function save(){
+  const id=$("fId").value;
+  const data={
+    name:$("fName").value.trim(),
+    owner:$("fOwner").value.trim(),
+    date:$("fDate").value,
+    status:$("fStatus").value,
+    proof:$("fProof").value.trim()
+  };
+  if(!data.name||!data.owner||!data.date){alert("Заполните название, ответственного и срок");return}
+  if(id){
+    const m=ITEMS.find(x=>x.id==id);
+    const changed=m.date!==data.date||m.status!==data.status||m.owner!==data.owner;
+    Object.assign(m,data);
+    if(changed)log(m.id,"Изменение мероприятия");
+  }else{
+    ITEMS.push({id:Date.now(),...data,history:[]});
+  }
+  dlg.close();
+  renderAll();
+}
+
+function closeItem(id){
+  const m=ITEMS.find(x=>x.id===id);
+  const proof=prompt("Подтверждение закрытия (фото, акт, проверка):");
+  if(proof===null)return;
+  if(!proof.trim()){alert("Без подтверждения закрыть нельзя");return}
+  m.status="done"; m.proof=proof.trim();
+  log(id,`Закрыто: ${proof.trim()}`);
+  renderAll();
+}
+
+function openExt(id){
+  extending=id;
+  const m=ITEMS.find(x=>x.id===id);
+  $("eDate").value=fwd(14);
+  $("eReason").value="";
+  extDlg.showModal();
+}
+function extend(){
+  const id=extending;
+  const m=ITEMS.find(x=>x.id===id);
+  const d=$("eDate").value, r=$("eReason").value.trim();
+  if(!d||!r){alert("Нужны новый срок и обоснование");return}
+  const old=m.date;
+  m.date=d; m.status="work";
+  log(id,`Продление срока: ${old} → ${d}. Обоснование: ${r}`);
+  extDlg.close();
+  renderAll();
+}
+
+function del(id){
+  if(!confirm("Удалить мероприятие?"))return;
+  ITEMS=ITEMS.filter(x=>x.id!==id);
+  renderAll();
+}
+
+renderAll();
+</script></body></html>
