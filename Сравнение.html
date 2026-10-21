@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=560"><title>Нейросети, автоматизация, цифровизация</title>
+<style>
+*{box-sizing:border-box;font:11px/1.4 system-ui,Arial;margin:0}
+body{background:#fff;color:#1f2937;max-width:560px;margin:0 auto;padding:10px}
+h1{font-size:13px;margin-bottom:2px;color:#111827}
+p.sub{font-size:10px;color:#6b7280;margin-bottom:10px}
+.tabs{display:flex;gap:3px;margin-bottom:10px}
+.tabs button{flex:1;padding:6px 2px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;transition:.2s}
+.tabs button.on{background:#2563eb;color:#fff;border-color:#2563eb}
+.tabs button:hover:not(.on){background:#eff6ff}
+.card{border:1px solid #e5e7eb;border-radius:8px;padding:12px;display:none}
+.card.on{display:block}
+.card h2{font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card h2 span{background:#eff6ff;color:#2563eb;padding:2px 6px;border-radius:4px;font-size:10px}
+.row{display:flex;gap:8px;margin-bottom:6px;font-size:11px;align-items:flex-start}
+.row .k{width:70px;flex:0 0 70px;color:#6b7280;font-weight:600;font-size:10px;padding-top:1px}
+.row .v{flex:1;color:#111827}
+.row .v b{color:#111827}
+.tag{display:inline-block;padding:1px 5px;border-radius:4px;font-size:9px;font-weight:600;background:#f3f4f6;color:#4b5563;margin-right:3px;margin-bottom:2px}
+.tag.blue{background:#eff6ff;color:#1e40af}
+.tag.green{background:#f0fdf4;color:#15803d}
+.tag.purple{background:#f5f3ff;color:#6d28d9}
+.visual{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;margin-top:8px;font-size:10px;color:#374151;line-height:1.5}
+.visual b{color:#111827}
+.visual .arrow{color:#9ca3af;margin:0 4px}
+</style></head><body>
+
+<h1>Три уровня цифровой ПБ</h1>
+<p class="sub">Как связаны нейросети, автоматизация и цифровизация на ОПО</p>
+
+<div class="tabs">
+  <button id="tab1" class="on" onclick="setTab(1)">🧠 Нейросети</button>
+  <button id="tab2" onclick="setTab(2)">⚙️ Автоматизация</button>
+  <button id="tab3" onclick="setTab(3)">🌐 Цифровизация</button>
+</div>
+
+<!-- НЕЙРОСЕТИ -->
+<div class="card on" id="card1">
+  <h2><span>Инструмент</span> Искусственный интеллект</h2>
+  <div class="row"><div class="k">Что это</div><div class="v">Программа, которая распознаёт образы и текст, находит закономерности и генерирует решения на основе обученной модели.</div></div>
+  <div class="row"><div class="k">Задача</div><div class="v">Помочь человеку быстрее анализировать данные и принимать решения.</div></div>
+  <div class="row"><div class="k">Пример на ОПО</div><div class="v">
+    <span class="tag purple">Распознавание</span> Чат-бот отвечает на вопросы по ПБ.<br>
+    <span class="tag purple">Анализ</span> Нейросеть ищет аномалии в журналах обходов.<br>
+    <span class="tag purple">Генерация</span> Автоматический черновик акта проверки.
+  </div></div>
+  <div class="row"><div class="k">Результат</div><div class="v">Экономия времени специалиста, подсказки, поиск скрытых связей.</div></div>
+  <div class="visual">
+    <b>Без нейросети:</b> инженер вручную читает 50 актов и ищет повторяющиеся причины.<br>
+    <span class="arrow">↓</span><br>
+    <b>С нейросетью:</b> загружает акты, получает список из 3 повторяющихся проблем и черновик отчёта.
+  </div>
+</div>
+
+<!-- АВТОМАТИЗАЦИЯ -->
+<div class="card" id="card2">
+  <h2><span>Механизм</span> Выполнение правил</h2>
+  <div class="row"><div class="k">Что это</div><div class="v">Замена ручных операций машинными по заданному алгоритму. Программа делает то, что раньше делал человек руками.</div></div>
+  <div class="row"><div class="k">Задача</div><div class="v">Убрать рутину, ускорить процессы и исключить человеческий фактор.</div></div>
+  <div class="row"><div class="k">Пример на ОПО</div><div class="v">
+    <span class="tag blue">Сроки</span> Система сама ставит задачу за 14 дней до истечения ЭПБ.<br>
+    <span class="tag blue">Статусы</span> Просроченное мероприятие красится в красный.<br>
+    <span class="tag blue">Проверки</span> Чек-лист не даёт закрыть пункт без фото.
+  </div></div>
+  <div class="row"><div class="k">Результат</div><div class="v">Скорость, точность, отсутствие забытых сроков и потерянных бумаг.</div></div>
+  <div class="visual">
+    <b>Без автоматизации:</b> инженер ведёт таблицу сроков в Excel и ставит напоминания в телефоне.<br>
+    <span class="arrow">↓</span><br>
+    <b>С автоматизацией:</b> система сама рассылает уведомления, блокирует просроченные действия и формирует отчёт.
+  </div>
+</div>
+
+<!-- ЦИФРОВИЗАЦИЯ -->
+<div class="card" id="card3">
+  <h2><span>Среда</span> Новые процессы</h2>
+  <div class="row"><div class="k">Что это</div><div class="v">Перестройка самих процессов и связей на основе данных. Не просто «бумага в цифру», а новая логика работы.</div></div>
+  <div class="row"><div class="k">Задача</div><div class="v">Связать всё в единую систему, где данные и решения работают вместе.</div></div>
+  <div class="row"><div class="k">Пример на ОПО</div><div class="v">
+    <span class="tag green">Единый контур</span> Чек-лист создаёт нарушение, нарушение — мероприятие, мероприятие — индикатор.<br>
+    <span class="tag green">Дашборд</span> Руководитель видит картину в реальном времени.<br>
+    <span class="tag green">Мобильность</span> Обходы с планшета сразу попадают в систему.
+  </div></div>
+  <div class="row"><div class="k">Результат</div><div class="v">Прозрачность, управляемость и непрерывное управление риском.</div></div>
+  <div class="visual">
+    <b>Без цифровизации:</b> данные лежат в разных отделах, отчёты собираются вручную, решения принимаются «по памяти».<br>
+    <span class="arrow">↓</span><br>
+    <b>С цифровизацией:</b> единый реестр, автоматические связи, дашборд и предиктивные индикаторы.
+  </div>
+</div>
+
+<script>
+function setTab(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById("tab"+i).classList.toggle("on",i===n);
+    document.getElementById("card"+i).classList.toggle("on",i===n);
+  });
+}
+</script></body></html>
