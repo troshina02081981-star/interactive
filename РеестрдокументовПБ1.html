@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Реестр документации ПБ</title>
+<style>
+  :root{
+    --bg:#fff;--card:#fff;--border:#d0d7e2;--border-2:#e5eaf1;--text:#1f2937;--muted:#6b7280;
+    --primary:#2563eb;--primary-d:#1d4ed8;--soft:#eff6ff;
+    --ok:#16a34a;--ok-bg:#dcfce7;--warn:#f59e0b;--warn-bg:#fef3c7;
+    --danger:#dc2626;--danger-bg:#fee2e2;--arch:#6b7280;--arch-bg:#e5e7eb;
+    --shadow:0 1px 6px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    font-size:13px;line-height:1.35}
+  .wrap{max-width:560px;margin:0 auto;padding:12px}
+
+  .hdr{background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+       padding:10px 12px;box-shadow:var(--shadow);margin-bottom:8px}
+  .hdr-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .hdr h1{margin:0;font-size:14px;color:#1e3a8a;font-weight:600}
+  .hdr .user{font-size:10.5px;color:var(--muted);text-align:right;white-space:nowrap}
+  .hdr .user b{color:var(--text);display:block;font-size:11.5px}
+  .role-bar{display:flex;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-2)}
+  .role-bar button{flex:1;padding:5px 4px;border:1.5px solid var(--border);border-radius:6px;
+    background:#fff;font-size:10.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:.15s}
+  .role-bar button:hover{border-color:var(--primary);color:var(--primary)}
+  .role-bar button.on{background:var(--soft);border-color:var(--primary);color:var(--primary-d);font-weight:600}
+
+  .summary{background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+           padding:10px 12px;box-shadow:var(--shadow);margin-bottom:8px}
+  .summary h2{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+              color:var(--muted);font-weight:600}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .stat{border:1.5px solid var(--border);border-radius:7px;padding:6px 4px;text-align:center;background:#fff}
+  .stat .n{font-size:16px;font-weight:700;line-height:1.1}
+  .stat .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+  .stat.s-ok{border-color:#bbf7d0;background:#f0fdf4} .stat.s-ok .n{color:var(--ok)}
+  .stat.s-warn{border-color:#fde68a;background:#fffbeb} .stat.s-warn .n{color:#92400e}
+  .stat.s-over{border-color:#fecaca;background:#fef2f2} .stat.s-over .n{color:var(--danger)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding-top:8px;
+          border-top:1px solid var(--border-2);font-size:10px;color:var(--muted)}
+  .legend .item{display:flex;align-items:center;gap:3px}
+  .legend .sw{width:9px;height:9px;border-radius:2px}
+  .sw-ok{background:var(--ok)} .sw-warn{background:var(--warn)}
+  .sw-over{background:var(--danger)} .sw-arch{background:var(--arch)}
+
+  .notifs{margin-bottom:8px}
+  .notif{background:#fffbeb;border:1.5px solid #fde68a;border-left:4px solid var(--warn);
+         border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:11px;color:#92400e}
+  .notif.esc{background:#fef2f2;border-color:#fecaca;border-left-color:var(--danger);color:#991b1b}
+  .notif .tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+              display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(0,0,0,.06);margin-bottom:3px}
+  .notif.esc .tag{background:#fee2e2;color:#991b1b}
+  .notif .txt{line-height:1.35}
+
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+                 color:var(--muted);font-weight:600;margin:0 0 6px 2px}
+
+  .filters{display:flex;gap:4px;margin-bottom:8px}
+  .filters input,.filters select{flex:1;min-width:0;padding:6px 8px;border:1.5px solid var(--border);
+        border-radius:7px;font-size:11.5px;background:#fff;color:var(--text);outline:none}
+  .filters input:focus,.filters select:focus{border-color:var(--primary)}
+  .filters select{flex:0 0 110px}
+
+  .opo{background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+       margin-bottom:8px;box-shadow:var(--shadow);overflow:hidden}
+  .opo-head{padding:9px 11px;cursor:pointer;display:flex;justify-content:space-between;
+            align-items:center;gap:8px;transition:.15s}
+  .opo-head:hover{background:#f8fafc}
+  .opo.open .opo-head{background:var(--soft);border-bottom:1.5px solid var(--border)}
+  .opo-head .nm{font-weight:600;font-size:12.5px;color:var(--primary-d);display:flex;
+                align-items:center;gap:6px}
+  .opo-head .nm .chev{font-size:9px;color:var(--muted);transition:.2s;display:inline-block}
+  .opo.open .opo-head .nm .chev{transform:rotate(90deg)}
+  .opo-head .mt{font-size:10.5px;color:var(--muted);margin-top:1px;padding-left:15px}
+  .opo-head .right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+  .opo-head .cnt{font-size:10px;background:#fff;border:1px solid var(--border);
+                 color:var(--primary-d);padding:1px 7px;border-radius:999px;font-weight:600}
+  .opo-head .alarm{font-size:9.5px;background:var(--danger-bg);color:var(--danger);
+                   padding:1px 6px;border-radius:999px;font-weight:600}
+  .opo-body{display:none;padding:10px 11px}
+  .opo.open .opo-body{display:block}
+
+  .opo-props{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-bottom:10px;
+             padding:8px 10px;background:#f8fafc;border:1px solid var(--border-2);border-radius:8px}
+  .opo-props .p{display:flex;flex-direction:column;gap:1px}
+  .opo-props .p .k{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .opo-props .p .v{font-size:11.5px;font-weight:500}
+  .opo-props .p.full{grid-column:1 / -1}
+
+  .doc-head{display:flex;align-items:center;gap:6px;margin:12px 0 5px;font-size:10px;
+            text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:600}
+  .doc-head .line{flex:1;height:1px;background:var(--border-2)}
+  .doc{border:1.5px solid var(--border);border-left:4px solid var(--border);
+       border-radius:8px;padding:8px 10px;margin-bottom:6px;background:#fff;transition:.15s}
+  .doc.st-ok{border-left-color:var(--ok)}
+  .doc.st-warn{border-left-color:var(--warn);background:#fffdf5}
+  .doc.st-over{border-left-color:var(--danger);background:#fef7f7}
+  .doc.st-arch{border-left-color:var(--arch);background:#fafafa;opacity:.85}
+
+  .doc-top{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+  .doc-title{flex:1;min-width:0}
+  .doc-title .n{font-weight:600;font-size:12px;line-height:1.3}
+  .doc-title .num{font-size:10.5px;color:var(--muted);margin-top:1px}
+  .badge{font-size:9.5px;padding:2px 7px;border-radius:999px;white-space:nowrap;
+         font-weight:600;flex-shrink:0;border:1px solid transparent}
+  .b-ok{background:var(--ok-bg);color:#166534;border-color:#bbf7d0}
+  .b-warn{background:var(--warn-bg);color:#92400e;border-color:#fde68a}
+  .b-over{background:var(--danger-bg);color:#991b1b;border-color:#fecaca}
+  .b-arch{background:var(--arch-bg);color:#374151;border-color:#d1d5db}
+
+  .doc-fields{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:6px;font-size:10.5px}
+  .doc-fields .f{display:flex;flex-direction:column;gap:0}
+  .doc-fields .f .k{color:var(--muted);font-size:9.5px}
+  .doc-fields .f .v{font-weight:500;font-size:11px}
+  .doc-fields .f .v.warn{color:#92400e;font-weight:600}
+  .doc-fields .f .v.over{color:var(--danger);font-weight:600}
+
+  .sign{display:flex;align-items:center;gap:5px;margin-top:6px;padding-top:6px;
+        border-top:1px dashed var(--border-2);font-size:10.5px}
+  .sign .ic{font-size:11px}
+  .sign.ok{color:var(--ok)} .sign.no{color:#92400e}
+  .sign .fp{margin-left:auto;font-family:ui-monospace,monospace;font-size:9.5px;
+            color:var(--muted);background:#f8fafc;padding:1px 5px;border-radius:4px;
+            border:1px solid var(--border-2)}
+
+  .doc-actions{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+  .btn{padding:4px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;
+       font-size:10.5px;font-weight:500;cursor:pointer;color:var(--text);transition:.15s;
+       display:inline-flex;align-items:center;gap:3px;font-family:inherit}
+  .btn:hover{background:#f8fafc;border-color:#b8c2d1}
+  .btn-p{background:var(--primary);border-color:var(--primary);color:#fff}
+  .btn-p:hover{background:var(--primary-d)}
+  .btn-d{background:#fff;border-color:#fecaca;color:var(--danger)}
+  .btn-d:hover{background:var(--danger-bg)}
+
+  .add-doc{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border-2)}
+
+  .hist{margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-2);display:none}
+  .hist.on{display:block}
+  .hist h5{margin:0 0 4px;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .hist .row{font-size:10px;color:var(--muted);margin-bottom:2px;display:flex;gap:6px}
+  .hist .row .tm{color:#9ca3af;flex-shrink:0;font-family:ui-monospace,monospace}
+
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;
+           align-items:center;justify-content:center;padding:12px;z-index:100}
+  .overlay.on{display:flex}
+  .modal{background:#fff;border-radius:12px;width:100%;max-width:520px;max-height:92vh;
+         overflow:auto;border:1.5px solid var(--border);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .modal-h{padding:11px 14px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;
+           display:flex;justify-content:space-between;align-items:center}
+  .modal-h .x{background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer}
+  .modal-b{padding:12px 14px}
+  .fld{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+  .fld label{font-size:10.5px;color:var(--muted);font-weight:500}
+  .fld input,.fld select{padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;
+        font-size:12px;font-family:inherit;outline:none;background:#fff}
+  .fld input:focus,.fld select:focus{border-color:var(--primary)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .modal-f{padding:10px 14px;border-top:1px solid var(--border);display:flex;
+           justify-content:flex-end;gap:6px;background:#fafbfc}
+
+  .hint{font-size:10.5px;color:var(--muted);background:#f8fafc;border:1px dashed var(--border);
+        border-radius:8px;padding:7px 9px;margin-top:8px}
+  .hint b{color:var(--text)}
+  .empty{text-align:center;color:var(--muted);padding:20px;font-size:12px;
+         background:#fff;border:1.5px solid var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="hdr-top">
+      <h1>📋 Реестр документации ПБ</h1>
+      <div class="user"><b id="u-name">—</b><span id="u-role">—</span></div>
+    </div>
+    <div class="role-bar" id="roles">
+      <button data-role="admin" class="on">Админ</button>
+      <button data-role="resp">Ответственный</button>
+      <button data-role="head">Руководитель</button>
+      <button data-role="view">Просмотр</button>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>Сводка по реестру</h2>
+    <div class="stats" id="stats"></div>
+    <div class="legend">
+      <div class="item"><span class="sw sw-ok"></span>Действует</div>
+      <div class="item"><span class="sw sw-warn"></span>Истекает ≤14 дн.</div>
+      <div class="item"><span class="sw sw-over"></span>Просрочен</div>
+      <div class="item"><span class="sw sw-arch"></span>Архив</div>
+    </div>
+  </div>
+
+  <div class="notifs" id="notifs"></div>
+
+  <h2 class="section-title">Реестр по ОПО</h2>
+  <div class="filters">
+    <input id="q" placeholder="🔍 Документ, номер, ОПО, ответственный…">
+    <select id="fst">
+      <option value="">Все статусы</option>
+      <option value="ok">Действует</option>
+      <option value="soon">Истекает</option>
+      <option value="over">Просрочен</option>
+      <option value="arch">Архив</option>
+    </select>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="hint">
+    <b>Демо:</b> роль переключается сверху. Данные — в localStorage браузера.
+    Уведомления: за 14 и 7 дней — ответственному; при просрочке — руководителю.
+    ЭП — имитация (SHA-256 через Web Crypto).
+  </div>
+</div>
+
+<div class="overlay" id="ov">
+  <div class="modal">
+    <div class="modal-h"><span id="m-title">Документ</span>
+      <button class="x" onclick="closeM()">×</button></div>
+    <div class="modal-b" id="m-body"></div>
+    <div class="modal-f">
+      <button class="btn" onclick="closeM()">Отмена</button>
+      <button class="btn btn-p" onclick="saveDoc()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ ДАННЫЕ ============ */
+const DEMO = {
+  opo:[
+    {id:"opo1", name:"Резервуарный парк", type:"Площадка нефтебазы", cls:"II",
+     reg:"А01-12345", addr:"ул. Промышленная, 12, стр. 3", resp:"Сидоров В.Н.",
+     docs:[
+       {id:"d1", name:"Лицензия на эксплуатацию взрывопожароопасных ОПО", num:"Л-045-2023",
+        issued:"2023-03-15", expiry:"2028-03-14", owner:"Петров А.С.", signed:true, history:[]},
+       {id:"d2", name:"Заключение экспертизы промышленной безопасности", num:"ЭПБ-112/2024",
+        issued:"2024-02-01", expiry:"2027-02-01", owner:"Сидоров В.Н.", signed:true, history:[]},
+       {id:"d3", name:"Паспорт безопасности ОПО", num:"ПБ-2022-07",
+        issued:"2022-06-10", expiry:"2027-06-09", owner:"Сидоров В.Н.", signed:false, history:[]}
+     ]},
+    {id:"opo2", name:"Компрессорная станция", type:"Площадка компрессорной", cls:"III",
+     reg:"А02-67890", addr:"ул. Промышленная, 12, стр. 5", resp:"Иванов И.И.",
+     docs:[
+       {id:"d4", name:"Разрешение на применение технического устройства", num:"РТ-998-2023",
+        issued:"2023-09-01", expiry:"2026-09-01", owner:"Иванов И.И.", signed:true, history:[]},
+       {id:"d5", name:"Протокол технического освидетельствования", num:"ТО-55/2025",
+        issued:"2025-09-01", expiry:"2026-09-01", owner:"Иванов И.И.", signed:false, history:[]}
+     ]},
+    {id:"opo3", name:"Котёл КВ-2", type:"Котельная установка", cls:"IV",
+     reg:"А03-11223", addr:"ул. Промышленная, 12, стр. 7", resp:"Морозов П.Р.",
+     docs:[
+       {id:"d6", name:"Декларация промышленной безопасности", num:"ДПБ-2021-04",
+        issued:"2021-04-20", expiry:"2026-04-19", owner:"Морозов П.Р.", signed:true, history:[]},
+       {id:"d7", name:"Приказ о назначении ответственного за ПБ", num:"Пр-88",
+        issued:"2025-01-10", expiry:"2026-01-10", owner:"Морозов П.Р.", signed:true, history:[]}
+     ]}
+  ]
+};
+
+const ROLES = {
+  admin:{name:"Петров А.С.", label:"Администратор ПБ",
+         can:{edit:true, sign:true, archive:true, delete:true}},
+  resp:{name:"Сидоров В.Н.", label:"Ответственный за ПБ",
+         can:{edit:true, sign:true, archive:false, delete:false}},
+  head:{name:"Директор", label:"Руководитель",
+         can:{edit:false, sign:false, archive:false, delete:false}},
+  view:{name:"Наблюдатель", label:"Только просмотр",
+         can:{edit:false, sign:false, archive:false, delete:false}}
+};
+let role = "admin";
+let data = load();
+let openId = null, editId = null, editingOpoId = null;
+
+function load(){
+  try{ const r = localStorage.getItem("pb_registry_v3"); if(r) return JSON.parse(r); }catch(e){}
+  return structuredClone(DEMO);
+}
+function save(){ localStorage.setItem("pb_registry_v3", JSON.stringify(data)); }
+
+/* ============ СРОКИ ============ */
+function daysLeft(d){
+  if(!d.expiry) return null;
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.ceil((new Date(d.expiry) - t)/86400000);
+}
+function statusOf(d){
+  if(d.archived) return "arch";
+  const n = daysLeft(d);
+  if(n === null) return "ok";
+  if(n < 0) return "over";
+  if(n <= 14) return "soon";
+  return "ok";
+}
+const ST_LABEL = {ok:"Действует", soon:"Истекает", over:"Просрочен", arch:"Архив"};
+const ST_CLASS = {ok:"b-ok", soon:"b-warn", over:"b-over", arch:"b-arch"};
+
+function allDocs(){
+  return data.opo.flatMap(o=>o.docs.map(d=>({...d, _opoId:o.id, _opoName:o.name})));
+}
+
+/* ============ РЕНДЕР ============ */
+function render(){
+  const r = ROLES[role];
+  document.getElementById("u-name").textContent = r.name;
+  document.getElementById("u-role").textContent = r.label;
+  document.querySelectorAll("#roles button").forEach(b=>
+    b.classList.toggle("on", b.dataset.role === role));
+
+  const docs = allDocs();
+  const c = {ok:0,soon:0,over:0,arch:0};
+  docs.forEach(d=>c[statusOf(d)]++);
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><div class="n">${docs.length}</div><div class="l">Всего</div></div>
+    <div class="stat s-ok"><div class="n">${c.ok}</div><div class="l">Действ.</div></div>
+    <div class="stat s-warn"><div class="n">${c.soon}</div><div class="l">Истекает</div></div>
+    <div class="stat s-over"><div class="n">${c.over}</div><div class="l">Просроч.</div></div>`;
+
+  renderNotifs(docs);
+  renderList();
+}
+
+function renderNotifs(docs){
+  const box = document.getElementById("notifs");
+  const items = [];
+  const isResp = role === "resp" || role === "admin";
+  const isHead = role === "head" || role === "admin";
+  docs.forEach(d=>{
+    const n = daysLeft(d);
+    if(n === null || d.archived) return;
+    if(n < 0 && isHead){
+      items.push(`<div class="notif esc"><span class="tag">⚠ Эскалация руководителю</span>
+        <div class="txt"><b>${esc(d.name)}</b> (№ ${esc(d.num)}) по ОПО «${esc(d._opoName)}»
+        просрочен на <b>${Math.abs(n)} дн.</b> Ответственный: ${esc(d.owner)}.</div></div>`);
+    } else if(n >= 0 && n <= 7 && isResp){
+      items.push(`<div class="notif"><span class="tag">🔔 За 7 дней</span>
+        <div class="txt"><b>${esc(d.name)}</b> (№ ${esc(d.num)}) истекает ${fmt(d.expiry)}.
+        Осталось <b>${n} дн.</b></div></div>`);
+    } else if(n > 7 && n <= 14 && isResp){
+      items.push(`<div class="notif"><span class="tag">🔔 За 14 дней</span>
+        <div class="txt"><b>${esc(d.name)}</b> (№ ${esc(d.num)}) истекает ${fmt(d.expiry)}.
+        Осталось <b>${n} дн.</b></div></div>`);
+    }
+  });
+  box.innerHTML = items.slice(0,5).join("");
+}
+
+function renderList(){
+  const q = document.getElementById("q").value.toLowerCase().trim();
+  const fst = document.getElementById("fst").value;
+  const box = document.getElementById("list");
+  const can = ROLES[role].can;
+
+  const html = data.opo.map(o=>{
+    const docs = o.docs.filter(d=>{
+      const st = statusOf(d);
+      if(fst && st !== fst) return false;
+      if(q){
+        const hay = [d.name,d.num,d.owner,o.name].join(" ").toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    if((q || fst) && docs.length === 0) return "";
+
+    const overCount = o.docs.filter(d=>statusOf(d)==="over").length;
+    const isOpen = openId === o.id;
+
+    return `
+      <div class="opo ${isOpen?"open":""}">
+        <div class="opo-head" onclick="toggleOpo('${o.id}')">
+          <div style="flex:1;min-width:0">
+            <div class="nm"><span class="chev">▶</span>${esc(o.name)}</div>
+            <div class="mt">${esc(o.type)} · класс ${esc(o.cls)} · ${esc(o.reg)}</div>
+          </div>
+          <div class="right">
+            <span class="cnt">${o.docs.length} док.</span>
+            ${overCount?`<span class="alarm">⚠ ${overCount}</span>`:""}
+          </div>
+        </div>
+        <div class="opo-body">
+          <div class="opo-props">
+            <div class="p"><span class="k">Тип объекта</span><span class="v">${esc(o.type)}</span></div>
+            <div class="p"><span class="k">Класс опасности</span><span class="v">${esc(o.cls)}</span></div>
+            <div class="p"><span class="k">Рег. номер</span><span class="v">${esc(o.reg)}</span></div>
+            <div class="p"><span class="k">Ответственный</span><span class="v">${esc(o.resp)}</span></div>
+            <div class="p full"><span class="k">Адрес</span><span class="v">${esc(o.addr)}</span></div>
+          </div>
+
+          <div class="doc-head">Документы <span class="line"></span></div>
+          ${docs.map(d=>renderDoc(d,o,can)).join("") || `<div style="font-size:11px;color:var(--muted);padding:4px 0">Нет документов по фильтру</div>`}
+
+          ${can.edit ? `<div class="add-doc"><button class="btn btn-p" onclick="openDocForm('${o.id}')">＋ Добавить документ</button></div>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+
+  box.innerHTML = html || `<div class="empty">Ничего не найдено</div>`;
+}
+
+function renderDoc(d, opo, can){
+  const st = statusOf(d);
+  const n = daysLeft(d);
+  const arch = d.archived;
+  const remainCls = n<0 ? "over" : n<=14 ? "warn" : "";
+
+  return `
+    <div class="doc st-${st}">
+      <div class="doc-top">
+        <div class="doc-title">
+          <div class="n">${esc(d.name)}</div>
+          <div class="num">№ ${esc(d.num)}</div>
+        </div>
+        <span class="badge ${ST_CLASS[st]}">${ST_LABEL[st]}</span>
+      </div>
+
+      <div class="doc-fields">
+        <div class="f"><span class="k">Выдан</span><span class="v">${fmt(d.issued)}</span></div>
+        <div class="f"><span class="k">Действует до</span><span class="v">${fmt(d.expiry)}</span></div>
+        <div class="f"><span class="k">Осталось</span>
+          <span class="v ${arch?"":remainCls}">${arch?"—":(n===null?"—":(n<0?`просрочен ${Math.abs(n)} дн.`:`${n} дн.`))}</span>
+        </div>
+        <div class="f"><span class="k">Ответственный</span><span class="v">${esc(d.owner)}</span></div>
+      </div>
+
+      <div class="sign ${d.signed?"ok":"no"}">
+        <span class="ic">${d.signed?"🔏":"⚠"}</span>
+        <span>${d.signed?"Подписано ЭП":"Не подписано"}</span>
+        ${d.signature?`<span class="fp">${esc(d.signature)}</span>`:""}
+      </div>
+
+      <div class="doc-actions">
+        ${can.edit && !arch ? `<button class="btn" onclick="openDocForm('${opo.id}','${d.id}')">✏ Изменить</button>`:""}
+        ${can.sign && !arch && !d.signed ? `<button class="btn" onclick="signDoc('${opo.id}','${d.id}')">🔏 Подписать</button>`:""}
+        ${can.archive && !arch ? `<button class="btn" onclick="archiveDoc('${opo.id}','${d.id}')">📦 В архив</button>`:""}
+        ${can.archive && arch ? `<button class="btn" onclick="restoreDoc('${opo.id}','${d.id}')">↩ Вернуть</button>`:""}
+        ${can.delete ? `<button class="btn btn-d" onclick="deleteDoc('${opo.id}','${d.id}')">🗑</button>`:""}
+        ${d.history && d.history.length ? `<button class="btn" onclick="toggleHist('${d.id}')">🕓 История</button>`:""}
+      </div>
+      <div class="hist" id="hist-${d.id}">
+        <h5>История версий</h5>
+        ${(d.history||[]).map(h=>`<div class="row"><span class="tm">${esc(h.at)}</span><span>${esc(h.what)}</span></div>`).join("") || `<div class="row">—</div>`}
+      </div>
+    </div>`;
+}
+
+/* ============ ДЕЙСТВИЯ ============ */
+function toggleOpo(id){ openId = openId === id ? null : id; render(); }
+
+function findDoc(opoId, docId){
+  const o = data.opo.find(x=>x.id===opoId);
+  const d = o?.docs.find(x=>x.id===docId);
+  return {o,d};
+}
+
+function pushHistory(d, what){
+  if(!d.history) d.history = [];
+  d.history.unshift({at: new Date().toLocaleString("ru-RU"), what});
+}
+
+async function signDoc(opoId, docId){
+  const {d} = findDoc(opoId, docId);
+  if(!d) return;
+  const payload = [d.name,d.num,d.issued,d.expiry,d.owner].join("|");
+  const hash = await sha256(payload);
+  d.signature = hash.slice(0,16).toUpperCase();
+  d.signed = true;
+  pushHistory(d, `
