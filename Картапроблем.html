@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практический результат</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-white: #ffffff;
+            --text: #333333;
+            --border: #e2e8f0;
+            --success: #27ae60;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 560px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        .title {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Секция проблем */
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .problem-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .problem-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-input input {
+            flex-grow: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background-color: #fafbfc;
+        }
+
+        .problem-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: #ffffff;
+        }
+
+        .problem-input input::placeholder {
+            color: #cbd5e1;
+        }
+
+        /* Секция выбора процесса */
+        .select-section {
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .select-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .select-wrapper label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .select-wrapper select {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Кнопка */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .action-btn:hover { background-color: #2980b9; }
+        .action-btn:active { transform: scale(0.98); }
+
+        /* Результат */
+        .result-box {
+            display: none;
+            background-color: #e8f8f5;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            color: #1e293b;
+            line-height: 1.5;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-box.active {
+            display: block;
+        }
+
+        .result-box strong {
+            color: var(--success);
+        }
+
+        .result-list {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .result-list li {
+            margin-bottom: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">Ваш практический результат</h2>
+    <p class="subtitle">Заполните блокнот, чтобы сформировать карту проблем и выбрать процесс для пилота</p>
+
+    <!-- Шаг 1: Проблемы -->
+    <div class="section-title">Шаг 1. Найдите 3–5 проблем</div>
+    <div class="problem-list">
+        <div class="problem-input">
+            <input type="text" id="prob1" placeholder="Например: теряются сроки освидетельствований" oninput="updateSelectOptions()">
+        </div>
+        <div class="problem-input">
+            <input type="text" id="prob2" placeholder="Например: журналы заполняются с ошибками" oninput="updateSelectOptions()">
+        </div>
+        <div class="problem-input">
+            <input type="text" id="prob3" placeholder="Например: ремонт происходит после поломки" oninput="updateSelectOptions()">
+        </div>
+        <div class="problem-input">
+            <input type="text" id="prob4" placeholder="Например: отчеты собираются вручную" oninput="updateSelectOptions()">
+        </div>
+        <div class="problem-input">
+            <input type="text" id="prob5" placeholder="Например: нет связи между участками" oninput="updateSelectOptions()">
+        </div>
+    </div>
+
+    <!-- Шаг 2: Выбор процесса -->
+    <div class="section-title">Шаг 2. Выберите первый процесс</div>
+    <div class="select-section">
+        <div class="select-wrapper">
+            <label for="processSelect">С чего начнете цифровизацию?</label>
+            <select id="processSelect">
+                <option value="">-- Выберите проблему из списка выше --</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Кнопка -->
+    <button class="action-btn" onclick="showResult()">Сформировать карту ➔</button>
+
+    <!-- Результат -->
+    <div class="result-box" id="resultBox">
+        <strong>✓ Ваша карта готова!</strong>
+        <p style="margin: 8px 0 4px 0;">Ваши проблемы:</p>
+        <ul class="result-list" id="resultProblemsList">
+            <!-- Сюда вставятся проблемы -->
+        </ul>
+        <p style="margin: 12px 0 0 0;"><strong>Процесс для пилота:</strong> <span id="resultProcess"></span></p>
+    </div>
+</div>
+
+<script>
+    // Функция для обновления выпадающего списка
+    function updateSelectOptions() {
+        const inputs = document.querySelectorAll('.problem-input input');
+        const select = document.getElementById('processSelect');
+        
+        // Сохраняем текущее выбранное значение (если было), чтобы не сбрасывать выбор
+        const currentValue = select.value;
+        
+        // Очищаем список, оставляя заглушку
+        select.innerHTML = '<option value="">-- Выберите проблему из списка выше --</option>';
+        
+        // Перебираем все поля ввода
+        inputs.forEach(input => {
+            const val = input.value.trim();
+            if (val !== '') {
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val;
+                
+                // Если это значение было выбрано ранее, восстанавливаем выбор
+                if (val === currentValue) {
+                    option.selected = true;
+                }
+                
+                select.appendChild(option);
+            }
+        });
+    }
+
+    function showResult() {
+        const inputs = document.querySelectorAll('.problem-input input');
+        const select = document.getElementById('processSelect');
+        const resultBox = document.getElementById('resultBox');
+        const resultProblemsList = document.getElementById('resultProblemsList');
+        const resultProcess = document.getElementById('resultProcess');
+
+        // Собираем заполненные проблемы
+        let problems = [];
+        inputs.forEach(input => {
+            if (input.value.trim() !== '') {
+                problems.push(input.value.trim());
+            }
+        });
+
+        // Проверки
+        if (problems.length < 3) {
+            alert("Пожалуйста, опишите минимум 3 проблемы (Шаг 1).");
+            return;
+        }
+
+        if (!select.value) {
+            alert("Пожалуйста, выберите процесс для пилота (Шаг 2).");
+            return;
+        }
+
+        // Формируем результат
+        resultProblemsList.innerHTML = '';
+        problems.forEach(prob => {
+            const li = document.createElement('li');
+            li.textContent = prob;
+            resultProblemsList.appendChild(li);
+        });
+
+        resultProcess.textContent = select.value;
+
+        // Показываем блок результата
+        resultBox.classList.add('active');
+        
+        // Скроллим к результату
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Инициализация списка при загрузке (если вдруг поля уже заполнены)
+    document.addEventListener("DOMContentLoaded", () => {
+        updateSelectOptions();
+    });
+</script>
+
+</body>
+</html>
