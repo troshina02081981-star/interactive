@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>График ТОиР: Интерактив</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-white: #ffffff;
+            --text: #333333;
+            --border: #e2e8f0;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px; /* Уменьшено */
+            max-width: 560px; /* Строго 560px */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .title {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px; /* Уменьшено */
+            font-weight: 700;
+        }
+
+        /* --- ЭТАП 1: НАСТРОЙКА --- */
+        .setup-panel {
+            transition: opacity 0.4s ease;
+        }
+
+        .setup-panel.hidden {
+            display: none;
+        }
+
+        .setup-panel > p {
+            font-size: 12px; 
+            color: #475569; 
+            margin-top: 0; 
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .equipment-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px; /* Уменьшено */
+            margin-bottom: 10px;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .eq-info h4 {
+            margin: 0 0 2px 0;
+            color: var(--primary);
+            font-size: 13px; /* Уменьшено */
+        }
+
+        .eq-info p {
+            margin: 0;
+            font-size: 11px; /* Уменьшено */
+            color: var(--gray);
+        }
+
+        .select-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .select-group select {
+            padding: 4px 8px; /* Уменьшено */
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+            max-width: 150px;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 10px; /* Уменьшено */
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px; /* Уменьшено */
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .action-btn:hover { background-color: #2980b9; }
+        .action-btn:active { transform: scale(0.98); }
+
+        /* --- ЭТАП 2: ГРАФИК --- */
+        .result-panel {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-panel.active {
+            display: block;
+        }
+
+        .chart-container {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px; /* Уменьшено */
+            background: #fafbfc;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+
+        .chart-header {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            font-size: 10px; /* Уменьшено */
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .chart-header .col-name { width: 120px; flex-shrink: 0; } /* Уменьшена ширина */
+        .chart-header .col-timeline { flex-grow: 1; display: flex; justify-content: space-between; }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px; /* Уменьшено */
+            font-size: 12px;
+        }
+
+        .chart-row .col-name { 
+            width: 120px; /* Уменьшена ширина */
+            flex-shrink: 0; 
+            font-weight: 600;
+            color: var(--primary);
+            padding-right: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chart-row .col-timeline { 
+            flex-grow: 1; 
+            position: relative; 
+            height: 20px; /* Уменьшена высота */
+            background-color: #edf2f7;
+            border-radius: 4px;
+        }
+
+        /* Полосы графика */
+        .bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px; /* Уменьшено */
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: growBar 0.8s ease-out;
+        }
+
+        .bar.daily { background-color: var(--warning); }
+        .bar.monthly { background-color: var(--accent); }
+        .bar.yearly { background-color: var(--success); }
+
+        /* Подписи дат под графиком */
+        .timeline-axis {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px; /* Уменьшено */
+            color: var(--gray);
+            margin-top: 4px;
+            padding-left: 120px; /* Выравнивание */
+        }
+
+        @keyframes growBar {
+            from { transform: scaleX(0); transform-origin: left; opacity: 0; }
+            to { transform: scaleX(1); transform-origin: left; opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">📅 От паспорта к графику ТОиР</h2>
+
+    <!-- ЭТАП 1: НАСТРОЙКА -->
+    <div class="setup-panel" id="setupPanel">
+        <p>
+            Система берет данные из паспорта. Ваша задача — задать нормативную периодичность обслуживания.
+        </p>
+
+        <div class="equipment-card">
+            <div class="eq-info">
+                <h4>Насос центробежный НА-2045</h4>
+                <p>Цех №3, уч. Б</p>
+            </div>
+            <div class="select-group">
+                <label>Периодичность:</label>
+                <select id="freq1">
+                    <option value="daily">Ежедневный осмотр</option>
+                    <option value="monthly" selected>Ежемесячное ТО</option>
+                    <option value="yearly">Кап. ремонт</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="equipment-card">
+            <div class="eq-info">
+                <h4>Компрессор КВ-102</h4>
+                <p>Цех №1</p>
+            </div>
+            <div class="select-group">
+                <label>Периодичность:</label>
+                <select id="freq2">
+                    <option value="daily">Ежедневный осмотр</option>
+                    <option value="monthly">Ежемесячное ТО</option>
+                    <option value="yearly" selected>Кап. ремонт</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="equipment-card">
+            <div class="eq-info">
+                <h4>Кран мостовой К-12</h4>
+                <p>Склад готовой продукции</p>
+            </div>
+            <div class="select-group">
+                <label>Периодичность:</label>
+                <select id="freq3">
+                    <option value="daily" selected>Ежедневный осмотр</option>
+                    <option value="monthly">Ежемесячное ТО</option>
+                    <option value="yearly">Кап. ремонт</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="action-btn" onclick="generateChart()">Построить график ➔</button>
+    </div>
+
+    <!-- ЭТАП 2: РЕЗУЛЬТАТ (ГРАФИК) -->
+    <div class="result-panel" id="resultPanel">
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="col-name">Оборудование</div>
+                <div class="col-timeline">
+                    <span>Сейчас</span>
+                    <span>+3 мес</span>
+                    <span>+6 мес</span>
+                    <span>+1 год</span>
+                </div>
+            </div>
+            
+            <div id="chartBody">
+                <!-- Строки добавятся через JS -->
+            </div>
+        </div>
+
+        <button class="action-btn" onclick="resetView()" style="background-color: var(--gray); margin-top: 10px;">⟲ Начать заново</button>
+    </div>
+</div>
+
+<script>
+    function generateChart() {
+        const f1 = document.getElementById('freq1').value;
+        const f2 = document.getElementById('freq2').value;
+        const f3 = document.getElementById('freq3').value;
+
+        const eqData = [
+            { name: 'Насос НА-2045', freq: f1 },
+            { name: 'Компрессор КВ-102', freq: f2 },
+            { name: 'Кран К-12', freq: f3 }
+        ];
+
+        const chartBody = document.getElementById('chartBody');
+        chartBody.innerHTML = '';
+
+        const totalDays = 365;
+
+        eqData.forEach(item => {
+            let barLeft = 0;
+            let barWidth = 0;
+            let barClass = '';
+            let barText = '';
+
+            if (item.freq === 'daily') {
+                barLeft = 0;
+                barWidth = 100;
+                barClass = 'daily';
+                barText = 'Ежедневно';
+            } else if (item.freq === 'monthly') {
+                barLeft = 0;
+                barWidth = (30 / totalDays) * 100;
+                barClass = 'monthly';
+                barText = 'ТО';
+            } else if (item.freq === 'yearly') {
+                barLeft = 50; 
+                barWidth = (15 / totalDays) * 100;
+                if (barWidth < 5) barWidth = 5; 
+                barClass = 'yearly';
+                barText = 'КР';
+            }
+
+            const row = document.createElement('div');
+            row.className = 'chart-row';
+            row.innerHTML = `
+                <div class="col-name" title="${item.name}">${item.name}</div>
+                <div class="col-timeline">
+                    <div class="bar ${barClass}" style="left: ${barLeft}%; width: ${barWidth}%;">${barText}</div>
+                </div>
+            `;
+            chartBody.appendChild(row);
+        });
+
+        const axis = document.createElement('div');
+        axis.className = 'timeline-axis';
+        axis.innerHTML = `
+            <span>0</span>
+            <span>90 дн</span>
+            <span>180 дн</span>
+            <span>270 дн</span>
+            <span>365 дн</span>
+        `;
+        chartBody.appendChild(axis);
+
+        document.getElementById('setupPanel').classList.add('hidden');
+        document.getElementById('resultPanel').classList.add('active');
+    }
+
+    function resetView() {
+        document.getElementById('setupPanel').classList.remove('hidden');
+        document.getElementById('resultPanel').classList.remove('active');
+    }
+</script>
+
+</body>
+</html>
