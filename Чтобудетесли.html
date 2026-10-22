@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контроль освидетельствований: Сценарии</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-white: #ffffff;
+            --text: #333333;
+            --border: #e2e8f0;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 560px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .title {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Переключатель */
+        .toggle-container {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .toggle-btn.active {
+            background-color: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Сценарий */
+        .scenario-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .scenario-step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Вертикальная линия между шагами */
+        .scenario-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 30px;
+            bottom: -15px;
+            width: 2px;
+            background-color: var(--border);
+            z-index: 1;
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            z-index: 2;
+            background-color: #f8fafc;
+            border: 2px solid var(--border);
+        }
+
+        .step-text {
+            padding-top: 6px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        .step-text strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Стили для "плохого" сценария */
+        .bad-scenario .step-icon { border-color: var(--danger); color: var(--danger); }
+        .bad-scenario .step-text strong { color: var(--danger); }
+        
+        /* Стили для "хорошего" сценария */
+        .good-scenario .step-icon { border-color: var(--success); color: var(--success); }
+        .good-scenario .step-text strong { color: var(--success); }
+
+        .highlight-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .bad-scenario .highlight-box { border-left-color: var(--danger); background-color: #fdedec; }
+        .good-scenario .highlight-box { border-left-color: var(--success); background-color: #e8f8f5; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">⏱️ Что будет, если...</h2>
+
+    <!-- Переключатель сценариев -->
+    <div class="toggle-container">
+        <div class="toggle-btn active" onclick="setScenario('paper')" id="btnPaper">Без системы</div>
+        <div class="toggle-btn" onclick="setScenario('digital')" id="btnDigital">С системой</div>
+    </div>
+
+    <!-- СЦЕНАРИЙ 1: БЕЗ СИСТЕМЫ -->
+    <div class="scenario-content bad-scenario" id="scenarioPaper">
+        <div class="scenario-step">
+            <div class="step-icon">📅</div>
+            <div class="step-text">
+                <strong>Срок подходит незаметно</strong>
+                Даты освидетельствования записаны в бумажном журнале или в голове механика. Завал на производстве — и про срок никто не вспомнил.
+            </div>
+        </div>
+        <div class="scenario-step">
+            <div class="step-icon">❌</div>
+            <div class="step-text">
+                <strong>Срок просрочен</strong>
+                Оборудование продолжает работать. Визуально оно выглядит нормально, поэтому никто не бьет тревогу.
+            </div>
+        </div>
+        <div class="scenario-step">
+            <div class="step-icon">👮</div>
+            <div class="step-text">
+                <strong>Приходит инспектор</strong>
+                Проверка выявляет просрочку. Вы получаете предписание, штраф и требование остановить эксплуатацию до устранения.
+            </div>
+        </div>
+        <div class="highlight-box">
+            ⚠️ <strong>Итог:</strong> Вы узнаете о проблеме от инспектора, когда исправлять уже поздно. Оборудование останавливается, производство несет убытки.
+        </div>
+    </div>
+
+    <!-- СЦЕНАРИЙ 2: С СИСТЕМОЙ -->
+    <div class="scenario-content good-scenario" id="scenarioDigital" style="display: none;">
+        <div class="scenario-step">
+            <div class="step-icon">🔔</div>
+            <div class="step-text">
+                <strong>Заблаговременное уведомление</strong>
+                За 30 дней система автоматически формирует задачу ответственному: «Подготовить насос НА-2045 к освидетельствованию».
+            </div>
+        </div>
+        <div class="scenario-step">
+            <div class="step-icon">✅</div>
+            <div class="step-text">
+                <strong>Работа выполнена в срок</strong>
+                Специалист проводит проверку, вносит результаты в электронный паспорт. Система фиксирует дату и закрывает задачу.
+            </div>
+        </div>
+        <div class="scenario-step">
+            <div class="step-icon">😌</div>
+            <div class="step-text">
+                <strong>Инспектор приходит впустую</strong>
+                Все документы в порядке. Оборудование работает, сроки соблюдены. Никаких предписаний и штрафов.
+            </div>
+        </div>
+        <div class="highlight-box">
+            💡 <strong>Итог:</strong> Вы управляете сроками, а не они вами. Просрочка исключена, потому что система напомнила заранее.
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function setScenario(type) {
+        const paper = document.getElementById('scenarioPaper');
+        const digital = document.getElementById('scenarioDigital');
+        const btnPaper = document.getElementById('btnPaper');
+        const btnDigital = document.getElementById('btnDigital');
+
+        if (type === 'paper') {
+            paper.style.display = 'block';
+            digital.style.display = 'none';
+            btnPaper.classList.add('active');
+            btnDigital.classList.remove('active');
+        } else {
+            paper.style.display = 'none';
+            digital.style.display = 'block';
+            btnDigital.classList.add('active');
+            btnPaper.classList.remove('active');
+        }
+    }
+</script>
+
+</body>
+</html>
