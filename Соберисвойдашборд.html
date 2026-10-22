@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор дашборда</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-white: #ffffff;
+            --text: #333333;
+            --border: #e2e8f0;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 560px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .title {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* --- ШАГ 1: ВЫБОР ВИДЖЕТОВ --- */
+        .setup-panel {
+            transition: opacity 0.3s;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: #fafbfc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent);
+            background-color: #f0f7ff;
+        }
+
+        .option-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            margin: 0;
+        }
+
+        .option-item label {
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .action-btn:hover { background-color: #2980b9; }
+
+        /* --- ШАГ 2: ДАШБОРД --- */
+        .dashboard-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .dashboard-panel.active {
+            display: block;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Карточки виджетов */
+        .widget {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 110px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .widget:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.1);
+        }
+
+        .widget-icon { font-size: 24px; margin-bottom: 5px; }
+        
+        .widget-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .widget-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .widget-value.alert { color: var(--danger); }
+
+        /* Кнопка внутри виджета */
+        .widget-btn {
+            margin-top: 8px;
+            padding: 5px 10px;
+            font-size: 11px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .widget-btn:hover { background-color: #2980b9; }
+
+        /* Выпадающая панель внутри виджета */
+        .widget-details {
+            display: none;
+            font-size: 11px;
+            color: #475569;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            text-align: left;
+            line-height: 1.4;
+            animation: slideDown 0.3s ease;
+            width: 100%;
+        }
+
+        .widget-details.show {
+            display: block;
+        }
+
+        /* Задачи */
+        .task-list {
+            grid-column: span 2;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .task-item:last-child { margin-bottom: 0; }
+        
+        .task-item.done {
+            opacity: 0.6;
+            text-decoration: line-through;
+            background-color: #f1f5f9;
+        }
+
+        .task-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .task-btn:hover { background-color: #219150; }
+        .task-btn:disabled { background-color: var(--gray); cursor: default; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">Собери свой первый дашборд</h2>
+
+    <!-- ШАГ 1: ВЫБОР -->
+    <div class="setup-panel" id="setupPanel">
+        <p class="subtitle">Выберите виджеты, которые хотите видеть на рабочем экране</p>
+        
+        <div class="options-list">
+            <div class="option-item">
+                <input type="checkbox" id="w1" checked>
+                <label for="w1">📅 Сроки освидетельствований</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="w2" checked>
+                <label for="w2">⚠️ Просроченные задачи</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="w3">
+                <label for="w3">📊 План-график ТОиР</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="w4">
+                <label for="w4">⚙️ Реестр оборудования</label>
+            </div>
+            <div class="option-item">
+                <input type="checkbox" id="w5" checked>
+                <label for="w5">📱 Мои задачи на сегодня</label>
+            </div>
+        </div>
+
+        <button class="action-btn" onclick="buildDashboard()">Собрать дашборд ➔</button>
+    </div>
+
+    <!-- ШАГ 2: ДАШБОРД -->
+    <div class="dashboard-panel" id="dashboardPanel">
+        
+        <div class="dash-grid" id="dashGrid">
+            <!-- Сюда вставятся виджеты -->
+        </div>
+
+        <button class="action-btn" onclick="resetDashboard()" style="background-color: var(--gray);">⟲ Пересобрать</button>
+    </div>
+</div>
+
+<script>
+    let pendingTasks = 2;
+
+    function buildDashboard() {
+        const dashGrid = document.getElementById('dashGrid');
+        dashGrid.innerHTML = '';
+
+        const isW1 = document.getElementById('w1').checked;
+        const isW2 = document.getElementById('w2').checked;
+        const isW3 = document.getElementById('w3').checked;
+        const isW4 = document.getElementById('w4').checked;
+        const isW5 = document.getElementById('w5').checked;
+
+        // 1. Сроки освидетельствований
+        if (isW1) {
+            dashGrid.innerHTML += `
+                <div class="widget">
+                    <div class="widget-icon">📅</div>
+                    <div class="widget-title">Сроки освид.</div>
+                    <div class="widget-value">14 дн.</div>
+                    <button class="widget-btn" onclick="toggleWidgetDetails('details1')">Подробнее</button>
+                    <div class="widget-details" id="details1">
+                        Ближайшее: <b>Кран К-12</b> (через 14 дней).<br>
+                        Следующее: Насос НА-2045 (через 30 дней).
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. Просроченные задачи
+        if (isW2) {
+            dashGrid.innerHTML += `
+                <div class="widget">
+                    <div class="widget-icon">⚠️</div>
+                    <div class="widget-title">Просрочено</div>
+                    <div class="widget-value alert" id="overdueCount">1</div>
+                    <button class="widget-btn success" id="btnResolve" onclick="resolveOverdue()">Решить</button>
+                    <div class="widget-details" id="detailsOverdue" style="display:none; color:var(--success);">
+                        Задача по компрессору КВ-102 закрыта!
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. График ТОиР
+        if (isW3) {
+            dashGrid.innerHTML += `
+                <div class="widget">
+                    <div class="widget-icon">📊</div>
+                    <div class="widget-title">План ТОиР</div>
+                    <div class="widget-value">5</div>
+                    <button class="widget-btn" onclick="toggleWidgetDetails('details3')">Список</button>
+                    <div class="widget-details" id="details3">
+                        1. Замена масла (Насос)<br>
+                        2. Проверка датчиков (Компрессор)<br>
+                        3. Осмотр крана...
+                    </div>
+                </div>
+            `;
+        }
+
+        // 4. Реестр оборудования
+        if (isW4) {
+            dashGrid.innerHTML += `
+                <div class="widget">
+                    <div class="widget-icon">⚙️</div>
+                    <div class="widget-title">Оборудование</div>
+                    <div class="widget-value">120+</div>
+                    <button class="widget-btn" onclick="toggleWidgetDetails('details4')">Открыть</button>
+                    <div class="widget-details" id="details4">
+                        Всего 124 единицы.<br>
+                        5 требуют внимания.
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. Мои задачи
+        if (isW5) {
+            dashGrid.innerHTML += `
+                <div class="task-list">
+                    <div style="font-weight:600; font-size:13px; margin-bottom:10px; color:var(--primary);">📱 Мои задачи на сегодня (Осталось: <span id="taskCounter">${pendingTasks}</span>)</div>
+                    
+                    <div class="task-item" id="task1">
+                        <span>Проверить наряд-допуск в Цех №3</span>
+                        <button class="task-btn" onclick="completeTask('task1')">Выполнено</button>
+                    </div>
+                    <div class="task-item" id="task2">
+                        <span>Связаться с подрядчиком по КВ-102</span>
+                        <button class="task-btn" onclick="completeTask('task2')">Выполнено</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (!isW1 && !isW2 && !isW3 && !isW4 && !isW5) {
+            dashGrid.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#94a3b8; font-size:13px; padding:20px;">Вы не выбрали ни одного виджета.</div>';
+        }
+
+        document.getElementById('setupPanel').style.display = 'none';
+        document.getElementById('dashboardPanel').classList.add('active');
+    }
+
+    // Функция для раскрытия деталей внутри виджета
+    function toggleWidgetDetails(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.toggle('show');
+        }
+    }
+
+    // Логика для виджета "Просрочено"
+    function resolveOverdue() {
+        const countEl = document.getElementById('overdueCount');
+        const btn = document.getElementById('btnResolve');
+        const details = document.getElementById('detailsOverdue');
+        
+        if (countEl.textContent === '0') return;
+
+        countEl.textContent = '0';
+        countEl.style.color = 'var(--success)';
+        btn.style.display = 'none'; // Прячем кнопку "Решить"
+        details.style.display = 'block'; // Показываем текст успеха
+    }
+
+    // Логика для чек-листа задач
+    function completeTask(taskId) {
+        const taskItem = document.getElementById(taskId);
+        if (taskItem.classList.contains('done')) return;
+
+        taskItem.classList.add('done');
+        const btn = taskItem.querySelector('.task-btn');
+        btn.textContent = '✓';
+        btn.disabled = true;
+
+        pendingTasks--;
+        const counter = document.getElementById('taskCounter');
+        if (counter) counter.textContent = pendingTasks;
+
+        if (pendingTasks === 0) {
+            // Вместо alert, можно добавить плашку, но мы оставим простой вывод
+            const header = document.querySelector('.task-list > div');
+            header.innerHTML = '🎉 Все задачи выполнены!';
+            header.style.color = 'var(--success)';
+        }
+    }
+
+    function resetDashboard() {
+        document.getElementById('dashboardPanel').classList.remove('active');
+        document.getElementById('setupPanel').style.display = 'block';
+        pendingTasks = 2;
+    }
+</script>
+
+</body>
+</html>
