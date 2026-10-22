@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Три слоя цифровизации</title>
+    <style>
+        :root {
+            --bg-white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --layer-1: #f59e0b; /* Оранжевый - Данные */
+            --layer-2: #3b82f6; /* Синий - Платформы */
+            --layer-3: #10b981; /* Зеленый - Технологии */
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-white);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            max-width: 560px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* Пирамида */
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Общие стили слоев */
+        .layer {
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .layer:hover {
+            transform: translateY(-2px);
+        }
+
+        .layer.active {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: currentColor;
+        }
+
+        /* Слой 3: Технологии (Верхушка) */
+        .layer-3 {
+            width: 60%;
+            color: var(--layer-3);
+            border-bottom: 3px solid var(--layer-3);
+        }
+        .layer-3 .layer-header { background-color: #ecfdf5; }
+        
+        /* Слой 2: Платформы (Середина) */
+        .layer-2 {
+            width: 80%;
+            color: var(--layer-2);
+            border-bottom: 3px solid var(--layer-2);
+        }
+        .layer-2 .layer-header { background-color: #eff6ff; }
+
+        /* Слой 1: Данные (Основание) */
+        .layer-1 {
+            width: 100%;
+            color: var(--layer-1);
+            border-bottom: 3px solid var(--layer-1);
+        }
+        .layer-1 .layer-header { background-color: #fffbeb; }
+
+        .layer-header {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .layer-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arrow-icon {
+            font-size: 10px;
+            color: inherit;
+            transition: transform 0.3s;
+        }
+
+        .layer.active .arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        .layer-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background-color: #ffffff;
+        }
+
+        .layer.active .layer-content {
+            max-height: 300px;
+            border-top: 1px solid var(--border);
+        }
+
+        .layer-inner {
+            padding: 15px;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .layer-inner strong {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">Из чего состоит цифровизация?</h2>
+    <p class="subtitle">Нажмите на каждый слой, чтобы узнать его роль</p>
+
+    <div class="pyramid-container">
+        
+        <!-- Слой 3: Технологии -->
+        <div class="layer layer-3" onclick="toggleLayer(this)">
+            <div class="layer-header">
+                <div class="layer-title">
+                    <span>🧠</span> 3. Технологии
+                </div>
+                <span class="arrow-icon">▼</span>
+            </div>
+            <div class="layer-content">
+                <div class="layer-inner">
+                    <strong>Видеоаналитика, цифровые двойники, предиктивная аналитика.</strong> 
+                    Они добавляют интеллект там, где простых правил недостаточно. Система не просто собирает данные, а понимает их и предсказывает события.
+                </div>
+            </div>
+        </div>
+
+        <!-- Слой 2: Платформы -->
+        <div class="layer layer-2" onclick="toggleLayer(this)">
+            <div class="layer-header">
+                <div class="layer-title">
+                    <span>🗄️</span> 2. Платформы
+                </div>
+                <span class="arrow-icon">▼</span>
+            </div>
+            <div class="layer-content">
+                <div class="layer-inner">
+                    <strong>Единое информационное поле предприятия.</strong> 
+                    Здесь данные хранятся, связываются между собой и превращаются в понятную картину. Это «мозг» системы, который собирает разрозненные факты воедино.
+                </div>
+            </div>
+        </div>
+
+        <!-- Слой 1: Данные -->
+        <div class="layer layer-1" onclick="toggleLayer(this)">
+            <div class="layer-header">
+                <div class="layer-title">
+                    <span>📡</span> 1. Данные
+                </div>
+                <span class="arrow-icon">▼</span>
+            </div>
+            <div class="layer-content">
+                <div class="layer-inner">
+                    <strong>Датчики загазованности, камеры, носимые устройства, «интернет вещей».</strong> 
+                    Они собирают факты о том, что происходит в реальности. Без них платформы и аналитика бесполезны — это фундамент всей системы.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleLayer(element) {
+        // Переключаем активный класс
+        element.classList.toggle('active');
+        
+        // Закрываем другие открытые слои (эффект аккордеона)
+        const allLayers = document.querySelectorAll('.layer');
+        allLayers.forEach(layer => {
+            if (layer !== element) {
+                layer.classList.remove('active');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
