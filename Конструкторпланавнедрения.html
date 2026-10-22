@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор плана внедрения</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-white: #ffffff;
+            --text: #333333;
+            --border: #e2e8f0;
+            --success: #27ae60;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .interactive-wrapper {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 560px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        .title {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            background-color: #fafbfc;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: #ffffff;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+
+        .action-btn:hover { background-color: #2980b9; }
+
+        /* Результат */
+        .result-panel {
+            display: none;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-panel.active {
+            display: block;
+        }
+
+        .doc-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed var(--border);
+        }
+
+        .doc-section {
+            margin-bottom: 15px;
+        }
+
+        .doc-section h4 {
+            margin: 0 0 5px 0;
+            font-size: 13px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-section p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        .doc-list {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--gray);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .reset-btn:hover { background-color: #64748b; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="interactive-wrapper">
+    <h2 class="title">Конструктор плана внедрения</h2>
+    <p class="subtitle">Ответьте на несколько вопросов, чтобы получить готовый план на одну смену и инструкцию для сотрудников.</p>
+
+    <div id="formPanel">
+        <div class="form-group">
+            <label>1. Что именно вы внедряете? (Инструмент)</label>
+            <input type="text" id="toolName" placeholder="Например: электронный чек-лист обходов" value="электронный чек-лист обходов">
+        </div>
+
+        <div class="form-group">
+            <label>2. На каком участке будет проходить пилот?</label>
+            <input type="text" id="areaName" placeholder="Например: Цех №3, участок Б" value="Цех №3, участок Б">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>3. Кто ответственный (Мастер)?</label>
+                <input type="text" id="managerName" placeholder="Иванов И.И." value="Иванов И.И.">
+            </div>
+            <div class="form-group">
+                <label>4. Кто исполнитель (Оператор)?</label>
+                <input type="text" id="workerName" placeholder="Петров П.П." value="Петров П.П.">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>5. Как часто заполнять данные?</label>
+            <select id="frequency">
+                <option value="в начале каждой смены">В начале каждой смены</option>
+                <option value="каждые 2 часа">Каждые 2 часа</option>
+                <option value="в конце смены">В конце смены</option>
+                <option value="только при выявлении дефекта">Только при выявлении дефекта</option>
+            </select>
+        </div>
+
+        <button class="action-btn" onclick="generatePlan()">Сформировать план ➔</button>
+    </div>
+
+    <!-- Результат -->
+    <div class="result-panel" id="resultPanel">
+        <div class="doc-title" id="docTitle">План внедрения</div>
+        
+        <div class="doc-section">
+            <h4>Суть пилота</h4>
+            <p id="resTool"></p>
+        </div>
+
+        <div class="doc-section">
+            <h4>Зона ответственности</h4>
+            <p id="resArea"></p>
+            <ul class="doc-list" id="resRoles"></ul>
+        </div>
+
+        <div class="doc-section">
+            <h4>Инструкция для сотрудника</h4>
+            <p id="resInstruction"></p>
+        </div>
+
+        <button class="reset-btn" onclick="resetForm()">⟲ Составить заново</button>
+    </div>
+</div>
+
+<script>
+    function generatePlan() {
+        // Получаем значения из формы
+        const tool = document.getElementById('toolName').value || 'цифровой инструмент';
+        const area = document.getElementById('areaName').value || 'пилотный участок';
+        const manager = document.getElementById('managerName').value || 'Руководитель';
+        const worker = document.getElementById('workerName').value || 'Сотрудник';
+        const freq = document.getElementById('frequency').value;
+
+        // Заполняем результат
+        document.getElementById('resTool').innerHTML = `Внедряем <strong>«${tool}»</strong> на участке: <em>${area}</em>. Цель пилота — проверить удобство, собрать обратную связь и убедиться, что данные заполняются без сбоев в течение одной смены.`;
+
+        document.getElementById('resArea').innerHTML = `Пилот запускается в ограниченной зоне: <strong>${area}</strong>.`;
+        
+        document.getElementById('resRoles').innerHTML = `
+            <li><strong>${manager}</strong> — отвечает за запуск, следит за сроками и помогает решать технические вопросы.</li>
+            <li><strong>${worker}</strong> — выполняет работу, заполняет данные и сообщает о неудобствах.</li>
+        `;
+
+        document.getElementById('resInstruction').innerHTML = `
+            <strong>Кому:</strong> ${worker}<br>
+            <strong>Что делать:</strong> Открыть «${tool}» на планшете/смартфоне.<br>
+            <strong>Когда:</strong> ${freq}.<br>
+            <strong>В каком порядке:</strong> Пройти по маршруту, отметить галочками состояние оборудования, приложить фото при обнаружении дефекта.<br>
+            <strong>Зачем:</strong> Чтобы данные сразу попадали в систему, а не переписывались в журнал в конце смены.
+        `;
+
+        // Переключаем экраны
+        document.getElementById('formPanel').style.display = 'none';
+        document.getElementById('resultPanel').classList.add('active');
+        
+        // Скролл к результату
+        document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function resetForm() {
+        document.getElementById('resultPanel').classList.remove('active');
+        document.getElementById('formPanel').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
