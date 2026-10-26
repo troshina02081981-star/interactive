@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>План на 3 месяца</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ---------- Рамка ---------- */
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border: 2px solid #111827;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .head {
+    padding: .9rem 1rem;
+    border-bottom: 1px solid #d1d5db;
+  }
+  .head h1 { font-size: 1.05rem; font-weight: 800; }
+  .head p  { font-size: .75rem; color: #6b7280; line-height: 1.4; margin-top: .2rem; }
+
+  /* ---------- Секции ---------- */
+  .section { padding: .85rem 1rem; border-bottom: 1px solid #d1d5db; }
+  .section:last-of-type { border-bottom: none; }
+
+  .section h2 { font-size: .85rem; font-weight: 800; }
+  .section .hint { font-size: .7rem; color: #6b7280; margin: .1rem 0 .55rem; line-height: 1.35; }
+
+  /* ---------- Показатели ---------- */
+  .kpi {
+    display: grid;
+    grid-template-columns: 1fr 68px 68px;
+    gap: .35rem;
+    margin-bottom: .35rem;
+    align-items: center;
+  }
+  .kpi-head {
+    font-size: .6rem;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 0 .1rem;
+  }
+  .kpi input {
+    width: 100%;
+    padding: .4rem .5rem;
+    font-family: inherit;
+    font-size: .76rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #111827;
+  }
+  .kpi input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+  }
+  .kpi input::placeholder { color: #b6bcc6; }
+
+  /* ---------- Действия ---------- */
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .4rem;
+  }
+  .col {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: .45rem;
+    background: #ffffff;
+    border-top-width: 3px;
+  }
+  .col.do    { border-top-color: #2563eb; }
+  .col.teach { border-top-color: #16a34a; }
+  .col.scale { border-top-color: #d97706; }
+
+  .col h3 {
+    font-size: .68rem;
+    font-weight: 800;
+    margin-bottom: .3rem;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+  }
+  .do    h3 { color: #1d4ed8; }
+  .teach h3 { color: #15803d; }
+  .scale h3 { color: #b45309; }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .do    .dot { background: #2563eb; }
+  .teach .dot { background: #16a34a; }
+  .scale .dot { background: #d97706; }
+
+  .col textarea {
+    width: 100%;
+    min-height: 78px;
+    resize: vertical;
+    padding: .38rem .45rem;
+    font-family: inherit;
+    font-size: .7rem;
+    line-height: 1.4;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #111827;
+  }
+  .do    textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.15); }
+  .teach textarea:focus { outline: none; border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22,163,74,.15); }
+  .scale textarea:focus { outline: none; border-color: #d97706; box-shadow: 0 0 0 2px rgba(217,119,6,.15); }
+
+  /* ---------- Кнопки ---------- */
+  .bar {
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid #d1d5db;
+  }
+  button {
+    padding: .45rem .9rem;
+    font-family: inherit;
+    font-size: .74rem;
+    font-weight: 700;
+    border-radius: 5px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #111827;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  button:hover { background: #f3f4f6; }
+  button.primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+  }
+  button.primary:hover { background: #1d4ed8; }
+
+  /* ---------- Результат ---------- */
+  #result {
+    display: none;
+    padding: .85rem 1rem;
+    background: #f0fdf4;
+    border-top: 1px solid #bbf7d0;
+  }
+  #result.show { display: block; }
+  #result h2 { font-size: .78rem; font-weight: 800; margin-bottom: .45rem; color: #166534; }
+  #result pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: .72rem;
+    line-height: 1.5;
+    color: #14532d;
+  }
+
+  @media (max-width: 480px) {
+    .actions { grid-template-columns: 1fr; }
+    .kpi { grid-template-columns: 1fr 56px 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <h1>План на 3 месяца</h1>
+    <p>Заполните показатели и действия — получите готовый план: что доработать, кого обучить, где масштабировать.</p>
+  </div>
+
+  <!-- Показатели -->
+  <div class="section">
+    <h2>Показатели эффективности</h2>
+    <p class="hint">2–3 измеримых показателя: что есть сейчас и к чему стремимся.</p>
+
+    <div class="kpi kpi-head">
+      <div>Показатель</div>
+      <div>Сейчас</div>
+      <div>Цель</div>
+    </div>
+    <div class="kpi">
+      <input type="text" placeholder="Доля ручного переноса" data-kpi="name">
+      <input type="text" placeholder="40%" data-kpi="now">
+      <input type="text" placeholder="10%" data-kpi="target">
+    </div>
+    <div class="kpi">
+      <input type="text" placeholder="Время на отчёт" data-kpi="name">
+      <input type="text" placeholder="2 дня" data-kpi="now">
+      <input type="text" placeholder="4 ч" data-kpi="target">
+    </div>
+    <div class="kpi">
+      <input type="text" placeholder="Систем без интеграции" data-kpi="name">
+      <input type="text" placeholder="8" data-kpi="now">
+      <input type="text" placeholder="3" data-kpi="target">
+    </div>
+  </div>
+
+  <!-- Действия -->
+  <div class="section">
+    <h2>Действия на 3 месяца</h2>
+    <p class="hint">Одна строка — одно действие.</p>
+
+    <div class="actions">
+      <div class="col do">
+        <h3><span class="dot"></span>Доработать</h3>
+        <textarea placeholder="Настроить обмен склад ↔ 1С&#10;Свести справочники" data-action="do"></textarea>
+      </div>
+      <div class="col teach">
+        <h3><span class="dot"></span>Обучить</h3>
+        <textarea placeholder="Обучение по системе&#10;Ответственный за интеграцию" data-action="teach"></textarea>
+      </div>
+      <div class="col scale">
+        <h3><span class="dot"></span>Масштабировать</h3>
+        <textarea placeholder="Подключить второй склад&#10;Тиражировать коннектор" data-action="scale"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Кнопки -->
+  <div class="bar">
+    <button class="primary" id="buildBtn">Сформировать план</button>
+    <button id="copyBtn">Скопировать</button>
+    <button id="resetBtn">Очистить</button>
+  </div>
+
+  <!-- Результат -->
+  <div id="result">
+    <h2>Ваш план</h2>
+    <pre id="resultText"></pre>
+  </div>
+</div>
+
+<script>
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+function buildPlan() {
+  const kpis = [];
+  $$('.kpi').forEach(row => {
+    const name = row.querySelector('[data-kpi="name"]');
+    if (!name) return;
+    const n = name.value.trim();
+    if (!n) return;
+    kpis.push({
+      n,
+      now:    row.querySelector('[data-kpi="now"]').value.trim(),
+      target: row.querySelector('[data-kpi="target"]').value.trim()
+    });
+  });
+
+  const acts = {
+    do:    $('[data-action="do"]').value.trim(),
+    teach: $('[data-action="teach"]').value.trim(),
+    scale: $('[data-action="scale"]').value.trim()
+  };
+
+  let text = 'ПОКАЗАТЕЛИ ЭФФЕКТИВНОСТИ\n';
+  if (!kpis.length) {
+    text += '— не заполнены —\n';
+  } else {
+    kpis.forEach((k, i) => {
+      text += `${i + 1}. ${k.n}`;
+      if (k.now || k.target) text += ` (сейчас: ${k.now || '—'} → цель: ${k.target || '—'})`;
+      text += '\n';
+    });
+  }
+
+  text += '\nПЛАН НА 3 МЕСЯЦА\n';
+  const block = (label, val) => {
+    text += `\n${label}:\n`;
+    if (!val) { text += '  — не заполнено —\n'; return; }
+    val.split('\n').filter(s => s.trim()).forEach(line => {
+      text += `  • ${line.replace(/^[-•*]\s*/, '')}\n`;
+    });
+  };
+  block('Доработать', acts.do);
+  block('Обучить', acts.teach);
+  block('Масштабировать', acts.scale);
+
+  return text;
+}
+
+$('#buildBtn').addEventListener('click', () => {
+  $('#resultText').textContent = buildPlan();
+  $('#result').classList.add('show');
+});
+
+$('#copyBtn').addEventListener('click', async () => {
+  const text = $('#result').classList.contains('show')
+    ? $('#resultText').textContent
+    : buildPlan();
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = $('#copyBtn');
+    const old = btn.textContent;
+    btn.textContent = 'Скопировано ✓';
+    setTimeout(() => btn.textContent = old, 1500);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+});
+
+$('#resetBtn').addEventListener('click', () => {
+  $$('input, textarea').forEach(el => el.value = '');
+  $('#result').classList.remove('show');
+});
+</script>
+</body>
+</html>
