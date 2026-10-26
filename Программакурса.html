@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Структура программы</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* ---------- Заголовок ---------- */
+  .page-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    text-align: center;
+    line-height: 1.25;
+    margin-bottom: .2rem;
+  }
+  .page-subtitle {
+    font-size: .75rem;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+
+  /* ---------- Сетка 2x2 ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem;
+  }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Карточка (блок) ---------- */
+  .course-card {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-top: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: .8rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 4px rgba(0,0,0,.02);
+  }
+
+  .course-card h2 {
+    font-size: .85rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+    color: #0f172a;
+  }
+
+  /* ---------- Аккордеон ---------- */
+  .acc-item {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f1f5f9;
+    margin-bottom: .3rem;
+    overflow: hidden;
+  }
+  .acc-item:last-child { margin-bottom: 0; }
+
+  .acc-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .5rem .6rem;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: .68rem;
+    font-weight: 600;
+    color: #334155;
+    text-align: left;
+    cursor: pointer;
+  }
+  .acc-header:hover { background: #e2e8f0; }
+  .acc-item.open .acc-header { background: #e2e8f0; }
+
+  .acc-icon { font-size: .8rem; flex-shrink: 0; }
+  .acc-title { flex: 1; line-height: 1.15; }
+
+  .acc-chevron {
+    flex-shrink: 0;
+    color: #94a3b8;
+    font-size: .5rem;
+    transition: transform .2s;
+  }
+  .acc-item.open .acc-chevron { transform: rotate(180deg); }
+
+  /* Тело аккордеона */
+  .acc-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .2s ease;
+    background: #ffffff;
+  }
+  .acc-item.open .acc-body { grid-template-rows: 1fr; }
+  .acc-body-inner { overflow: hidden; }
+  
+  .acc-content {
+    padding: .5rem .6rem;
+    font-size: .65rem;
+    line-height: 1.4;
+    color: #4b5563;
+    border-top: 1px solid #e2e8f0;
+  }
+  .acc-content ul { padding-left: .9rem; margin: 0; }
+  .acc-content li { margin-bottom: .3rem; }
+  .acc-content li:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="page-title">Нейросети, автоматизация и цифровизация</h1>
+  <p class="page-subtitle">Программа курса</p>
+
+  <div class="grid">
+
+    <!-- БЛОК 1. НЕЙРОСЕТИ -->
+    <div class="course-card">
+      <h2>Нейросети</h2>
+      
+      <div class="acc-item">
+        <button class="acc-header">
+          <span class="acc-icon">🧠</span>
+          <span class="acc-title">Список тем</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-content">
+              <ul>
+                <li>Что такое промпт и как его составлять</li>
+                <li>Как работать с нейросетями для документооборота</li>
+                <li>Как работать с нейросетями для обучения сотрудников</li>
+                <li>Как использовать нейросети для прогнозирования рисков и видеомониторинга</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- БЛОК 2. АВТОМАТИЗАЦИЯ -->
+    <div class="course-card">
+      <h2>Автоматизация</h2>
+      
+      <div class="acc-item">
+        <button class="acc-header">
+          <span class="acc-icon">⚙️</span>
+          <span class="acc-title">Список тем</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-content">
+              <ul>
+                <li>Автоматизация промышленной безопасности: что это, зачем нужна и с чего начать</li>
+                <li>Диагностика перед автоматизацией: где болит, сколько это стоит и что делать первым</li>
+                <li>Как выбрать, купить и внедрить автоматизацию: от интеграции до аргументов для руководства</li>
+                <li>Документация ОПО: как перестать терять сроки и доказывать свою правоту за пять минут</li>
+                <li>Автоматизация производственного контроля на ОПО: практическое руководство</li>
+                <li>Автоматизация технического обслуживания и ремонта на ОПО: как перестать узнавать о дефектах из аварий</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- БЛОК 3. ВЗАИМОСВЯЗЬ -->
+    <div class="course-card">
+      <h2>Взаимосвязь</h2>
+      
+      <div class="acc-item">
+        <button class="acc-header">
+          <span class="acc-icon">🔗</span>
+          <span class="acc-title">Список тем</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-content">
+              <ul>
+                <li>Почему нейросети, автоматизация и цифровизация не работают по отдельности</li>
+                <li>Цифровая эволюция: почему это необходимость</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- БЛОК 4. ЦИФРОВИЗАЦИЯ -->
+    <div class="course-card">
+      <h2>Цифровизация</h2>
+      
+      <div class="acc-item">
+        <button class="acc-header">
+          <span class="acc-icon">🌐</span>
+          <span class="acc-title">Список тем</span>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-content">
+              <ul>
+                <li>Диагностика ОПО: что и зачем цифровизировать</li>
+                <li>Инструменты цифровизации: как создать рабочее решение</li>
+                <li>Как внедрить цифровизацию: от прототипа к рабочему процессу</li>
+                <li>Развитие цифровизации: как закрепить результат и масштабировать</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const accHeaders = document.querySelectorAll('.acc-header');
+  accHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const item = header.parentElement;
+      const isOpen = item.classList.contains('open');
+      
+      // Закрываем все открытые в этой же карточке
+      const card = item.closest('.course-card');
+      card.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+
+      // Если был закрыт — открываем
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
