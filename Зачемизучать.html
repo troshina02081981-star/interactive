@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зачем нужен курс</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border: 2px solid #111827;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .head {
+    padding: .85rem 1rem;
+    border-bottom: 1px solid #d1d5db;
+  }
+  .head h1 { font-size: 1rem; font-weight: 800; }
+  .head p  { font-size: .72rem; color: #6b7280; margin-top: .15rem; line-height: 1.4; }
+
+  /* ---------- Пункты ---------- */
+  .item { border-bottom: 1px solid #e5e7eb; }
+  .item:last-child { border-bottom: none; }
+
+  .item-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .65rem 1rem;
+    background: #ffffff;
+    border: none;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #111827;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .item-header:hover { background: #f9fafb; }
+  .item.open .item-header { background: #f3f4f6; }
+
+  .num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .68rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  /* цвета номеров — по классам, не по порядку */
+  .c1 .num { background: #2563eb; }
+  .c2 .num { background: #7c3aed; }
+  .c3 .num { background: #dc2626; }
+  .c4 .num { background: #d97706; }
+  .c5 .num { background: #16a34a; }
+
+  .title { flex: 1; }
+
+  .chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    font-size: .65rem;
+    transition: transform .2s;
+  }
+  .item.open .chevron { transform: rotate(180deg); }
+
+  /* ---------- Тело ---------- */
+  .item-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .22s ease;
+  }
+  .item.open .item-body { grid-template-rows: 1fr; }
+  .item-body-inner { overflow: hidden; }
+
+  .item-body p {
+    padding: 0 1rem .75rem 2.6rem;
+    font-size: .76rem;
+    line-height: 1.55;
+    color: #4b5563;
+  }
+  .item-body p strong { color: #111827; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <h1>Зачем нужен курс</h1>
+    <p>Пять причин — раскройте каждую, чтобы увидеть суть.</p>
+  </div>
+
+  <div class="item c1">
+    <button class="item-header">
+      <span class="num">1</span>
+      <span class="title">Понимать, что уже работает</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Газоанализаторы, контроль доступа, носимые устройства с тревожной кнопкой и видеоаналитика с ИИ уже следят за концентрацией газов, проверяют наличие каски и жилета, замечают работу на высоте без страховки. <strong>Предиктивный мониторинг предсказывает отказы до аварии</strong> — системы перестают фиксировать инциденты постфактум и начинают их предотвращать.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item c2">
+    <button class="item-header">
+      <span class="num">2</span>
+      <span class="title">Видеть перспективу</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Промышленный интернет вещей, компьютерное зрение, предиктивная аналитика, коллаборативные роботы и цифровые двойники — не абстракции, а направления, которые определят рынок в ближайшие 5–10 лет. <strong>Интеграционные платформы</strong> уже связывают контроль доступа, алкотестирование, медосмотры и инструктажи в единую систему «логического доступа».</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item c3">
+    <button class="item-header">
+      <span class="num">3</span>
+      <span class="title">Обходить барьеры</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Дорого, сложно интегрировать со старыми системами, не хватает кадров, люди опасаются «тотальной слежки», нет стратегии. Эти проблемы повторяются из предприятия в предприятие — <strong>курс дает инструменты, чтобы их проходить</strong>, а не наступать на те же грабли. Уход иностранных поставщиков подталкивает к отечественным решениям и беспроводным технологиям — и к этому тоже нужно быть готовым.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item c4">
+    <button class="item-header">
+      <span class="num">4</span>
+      <span class="title">Ориентироваться в нормативной базе</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Базовые законы основу дают, но для облачных платформ и носимых устройств методик сертификации пока нет — это оставляет место для маневра. Важно понимать, <strong>где можно внедрять инновации, не увязая в бюрократии</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item c5">
+    <button class="item-header">
+      <span class="num">5</span>
+      <span class="title">Готовиться к главным вызовам</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Кибербезопасность, этика наблюдения и подготовка кадров — то, с чем придется иметь дело при переходе к <strong>автономным системам безопасности</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const items = document.querySelectorAll('.item');
+
+items.forEach(item => {
+  const header = item.querySelector('.item-header');
+  header.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    items.forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// первый открыт по умолчанию
+items[0].classList.add('open');
+</script>
+</body>
+</html>
