@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Технические барьеры</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border: 1.5px solid #111827;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .item { border-bottom: 1px solid #d1d5db; }
+  .item:last-child { border-bottom: none; }
+
+  .item-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: .75rem 1.1rem;
+    background: #ffffff;
+    border: none;
+    font-family: inherit;
+    font-size: .92rem;
+    font-weight: 700;
+    color: #111827;
+    text-align: left;
+    cursor: pointer;
+  }
+  .item-header:hover { background: #f9fafb; }
+  .item.open .item-header { background: #f3f4f6; }
+
+  .num {
+    flex-shrink: 0;
+    width: 20px;
+    color: #6b7280;
+    font-weight: 700;
+  }
+  .item.open .num { color: #111827; }
+
+  .title { flex: 1; }
+
+  .chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    font-size: .7rem;
+    transition: transform .2s;
+  }
+  .item.open .chevron { transform: rotate(180deg); }
+
+  .item-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .22s ease;
+  }
+  .item.open .item-body { grid-template-rows: 1fr; }
+  .item-body-inner { overflow: hidden; }
+
+  .item-body p {
+    padding: 0 1.1rem .9rem 2.8rem;
+    font-size: .85rem;
+    line-height: 1.55;
+    color: #4b5563;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="item">
+    <button class="item-header">
+      <span class="num">1</span>
+      <span class="title">«Зоопарк» систем</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>На предприятии уже работают десятки разных программ, которые не видят друг друга. Единой точки входа нет, данные дублируются вручную.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <button class="item-header">
+      <span class="num">2</span>
+      <span class="title">Проблемы интеграции и несовместимость форматов</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Данные из одной системы не переносятся в другую без ручной правки: даты, суммы и коды записаны по-разному. Перенос занимает время и приводит к ошибкам.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <button class="item-header">
+      <span class="num">3</span>
+      <span class="title">Ограниченные бюджеты</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="item-body">
+      <div class="item-body-inner">
+        <p>Не всегда есть возможность закупить готовое решение целиком. Бюджета хватает только на часть систем — остальные остаются в «зоопарке».</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const items = document.querySelectorAll('.item');
+
+items.forEach(item => {
+  const header = item.querySelector('.item-header');
+  header.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    items.forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// первый открыт по умолчанию
+items[0].classList.add('open');
+</script>
+</body>
+</html>
