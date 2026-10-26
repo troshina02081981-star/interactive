@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Типичные причины</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border: 2px solid #111827;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .head {
+    padding: .85rem 1rem;
+    border-bottom: 1px solid #d1d5db;
+  }
+  .head h1 { font-size: 1rem; font-weight: 800; }
+  .head p  { font-size: .72rem; color: #6b7280; margin-top: .15rem; line-height: 1.4; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .78rem;
+  }
+
+  thead th {
+    text-align: left;
+    padding: .55rem .8rem;
+    font-size: .62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6b7280;
+    border-bottom: 1px solid #d1d5db;
+    background: #f9fafb;
+  }
+
+  tbody td {
+    padding: .65rem .8rem;
+    line-height: 1.45;
+    vertical-align: top;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* первая колонка — причина */
+  tbody td:first-child {
+    width: 30%;
+    font-weight: 700;
+    border-left: 3px solid transparent;
+  }
+  tbody tr:nth-child(1) td:first-child { border-left-color: #dc2626; color: #b91c1c; }
+  tbody tr:nth-child(2) td:first-child { border-left-color: #d97706; color: #b45309; }
+  tbody tr:nth-child(3) td:first-child { border-left-color: #2563eb; color: #1d4ed8; }
+
+  /* вторая колонка — суть */
+  tbody td:nth-child(2) { color: #374151; }
+
+  /* третья колонка — что делать */
+  tbody td:last-child {
+    width: 30%;
+    color: #166534;
+    background: #f0fdf4;
+    font-size: .74rem;
+  }
+
+  @media (max-width: 560px) {
+    table, thead, tbody, th, td, tr { display: block; }
+    thead { display: none; }
+    tbody tr {
+      border-bottom: 1px solid #d1d5db;
+      padding: .4rem 0;
+    }
+    tbody td {
+      border: none;
+      padding: .3rem .8rem;
+    }
+    tbody td:first-child { width: auto; border-left: none; }
+    tbody td:last-child { width: auto; }
+    tbody td::before {
+      content: attr(data-label) ": ";
+      font-weight: 700;
+      color: #6b7280;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <h1>Почему сотрудники не пользуются системой</h1>
+    <p>Причины чаще всего типичны — и у каждой есть понятный ответ.</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Причина</th>
+        <th>В чем суть</th>
+        <th>Что делать</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="Причина">Плохие данные</td>
+        <td data-label="Суть">Система работает, но информация грязная, неполная или вводится с ошибками.</td>
+        <td data-label="Что делать">Почистить справочники, ввести правила ввода и проверки.</td>
+      </tr>
+      <tr>
+        <td data-label="Причина">Неудобный интерфейс</td>
+        <td data-label="Суть">Сотрудникам сложно пользоваться инструментом — он отнимает время, и они саботируют не из вредности.</td>
+        <td data-label="Что делать">Упростить сценарии, убрать лишние шаги, обучить.</td>
+      </tr>
+      <tr>
+        <td data-label="Причина">Нет мотивации</td>
+        <td data-label="Суть">Никто не объяснил, зачем это нужно, и не показал выгоду лично для них.</td>
+        <td data-label="Что делать">Объяснить смысл и показать личную выгоду: время, деньги, нервы.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
