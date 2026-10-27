@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Флипчарт: План на 3 месяца</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1rem .75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .flipchart {
+    width: 100%;
+    max-width: 600px;
+    perspective: 1400px;
+  }
+
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    min-height: 560px;
+    transform-style: preserve-3d;
+    transition: transform .7s cubic-bezier(.4,.2,.2,1);
+  }
+
+  .flipchart.flipped .flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .side {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: #ffffff;
+    border: 2px solid #111827;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .side.back { transform: rotateY(180deg); }
+
+  .head {
+    padding: .6rem .75rem;
+    border-bottom: 1px solid #d1d5db;
+    flex-shrink: 0;
+    background: #ffffff;
+  }
+  .head h1 { font-size: .95rem; font-weight: 800; }
+  .head p  { font-size: .68rem; color: #6b7280; line-height: 1.3; margin-top: .1rem; }
+
+  .body-scroll { flex: 1; overflow-y: auto; background: #ffffff; }
+
+  .section { padding: .55rem .75rem; border-bottom: 1px solid #d1d5db; background: #ffffff; }
+  .section:last-of-type { border-bottom: none; }
+
+  .section h2 { font-size: .78rem; font-weight: 800; }
+  .section .hint { font-size: .64rem; color: #6b7280; margin: .05rem 0 .35rem; line-height: 1.3; }
+
+  .kpi {
+    display: grid;
+    grid-template-columns: 1fr 60px 60px;
+    gap: .25rem;
+    margin-bottom: .25rem;
+    align-items: center;
+  }
+  .kpi-head {
+    font-size: .56rem;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    padding: 0 .05rem;
+  }
+  .kpi input {
+    width: 100%;
+    padding: .28rem .4rem;
+    font-family: inherit;
+    font-size: .7rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+    color: #111827;
+  }
+  .kpi input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+  }
+  .kpi input::placeholder { color: #b6bcc6; }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .3rem;
+  }
+  .col {
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    padding: .3rem;
+    background: #ffffff;
+    border-top-width: 2px;
+  }
+  .col.do    { border-top-color: #2563eb; }
+  .col.teach { border-top-color: #16a34a; }
+  .col.scale { border-top-color: #d97706; }
+
+  .col h3 {
+    font-size: .62rem;
+    font-weight: 800;
+    margin-bottom: .2rem;
+    display: flex;
+    align-items: center;
+    gap: .2rem;
+  }
+  .do    h3 { color: #1d4ed8; }
+  .teach h3 { color: #15803d; }
+  .scale h3 { color: #b45309; }
+
+  .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .do    .dot { background: #2563eb; }
+  .teach .dot { background: #16a34a; }
+  .scale .dot { background: #d97706; }
+
+  .col textarea {
+    width: 100%;
+    min-height: 58px;
+    resize: vertical;
+    padding: .28rem .35rem;
+    font-family: inherit;
+    font-size: .66rem;
+    line-height: 1.3;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+    color: #111827;
+  }
+  .do    textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.15); }
+  .teach textarea:focus { outline: none; border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22,163,74,.15); }
+  .scale textarea:focus { outline: none; border-color: #d97706; box-shadow: 0 0 0 2px rgba(217,119,6,.15); }
+
+  .bar {
+    display: flex;
+    gap: .3rem;
+    flex-wrap: wrap;
+    padding: .55rem .75rem;
+    border-top: 1px solid #d1d5db;
+    flex-shrink: 0;
+    background: #ffffff;
+  }
+  button {
+    padding: .35rem .7rem;
+    font-family: inherit;
+    font-size: .68rem;
+    font-weight: 700;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #111827;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  button:hover { background: #f3f4f6; }
+  button.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+  button.primary:hover { background: #1d4ed8; }
+  button.download { background: #16a34a; border-color: #16a34a; color: #fff; }
+  button.download:hover { background: #15803d; }
+
+  .result-head {
+    padding: .55rem .75rem;
+    border-bottom: 1px solid #d1d5db;
+    background: #ffffff;
+    flex-shrink: 0;
+  }
+  .result-head h2 { font-size: .78rem; font-weight: 800; color: #166534; }
+  .result-head p  { font-size: .64rem; color: #166534; margin-top: .05rem; }
+
+  .result-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: .6rem .75rem;
+    background: #ffffff;
+  }
+
+  .plan-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .68rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    margin-bottom: .55rem;
+  }
+
+  .plan-table caption {
+    caption-side: top;
+    text-align: left;
+    font-size: .62rem;
+    font-weight: 800;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: .3rem .5rem .2rem;
+  }
+
+  .plan-table th {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: .58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    padding: .3rem .45rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .plan-table td {
+    padding: .3rem .45rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+    line-height: 1.35;
+  }
+
+  .plan-table tr:last-child td { border-bottom: none; }
+
+  .plan-table .num {
+    width: 22px;
+    color: #9ca3af;
+    font-weight: 700;
+    font-size: .62rem;
+  }
+
+  .plan-table .metric { font-weight: 600; }
+
+  .plan-table .target { color: #15803d; font-weight: 700; }
+
+  .badge {
+    display: inline-block;
+    padding: .08rem .35rem;
+    border-radius: 99px;
+    font-size: .56rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .badge.do    { background: #dbeafe; color: #1d4ed8; }
+  .badge.teach { background: #dcfce7; color: #15803d; }
+  .badge.scale { background: #fef3c7; color: #b45309; }
+
+  .empty-note {
+    font-size: .66rem;
+    color: #9ca3af;
+    font-style: italic;
+    padding: .25rem .1rem;
+  }
+
+  .flip-hint {
+    text-align: center;
+    font-size: .64rem;
+    color: #6b7280;
+    margin-top: .4rem;
+  }
+
+  @media (max-width: 480px) {
+    .actions { grid-template-columns: 1fr; }
+    .kpi { grid-template-columns: 1fr 50px 50px; }
+    .flip-inner { min-height: 700px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="flipchart" id="flipchart">
+  <div class="flip-inner">
+
+    <div class="side front">
+      <div class="head">
+        <h1>План на 3 месяца</h1>
+        <p>Заполните показатели и действия — переверните карточку, чтобы получить готовый план.</p>
+      </div>
+
+      <div class="body-scroll">
+        <div class="section">
+          <h2>Показатели эффективности</h2>
+          <p class="hint">2–3 измеримых показателя: что есть сейчас и к чему стремимся.</p>
+
+          <div class="kpi kpi-head">
+            <div>Показатель</div>
+            <div>Сейчас</div>
+            <div>Цель</div>
+          </div>
+          <div class="kpi">
+            <input type="text" placeholder="Доля ручного переноса" data-kpi="name">
+            <input type="text" placeholder="40%" data-kpi="now">
+            <input type="text" placeholder="10%" data-kpi="target">
+          </div>
+          <div class="kpi">
+            <input type="text" placeholder="Время на отчёт" data-kpi="name">
+            <input type="text" placeholder="2 дня" data-kpi="now">
+            <input type="text" placeholder="4 ч" data-kpi="target">
+          </div>
+          <div class="kpi">
+            <input type="text" placeholder="Систем без интеграции" data-kpi="name">
+            <input type="text" placeholder="8" data-kpi="now">
+            <input type="text" placeholder="3" data-kpi="target">
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Действия на 3 месяца</h2>
+          <p class="hint">Одна строка — одно действие.</p>
+
+          <div class="actions">
+            <div class="col do">
+              <h3><span class="dot"></span>Доработать</h3>
+              <textarea placeholder="Настроить обмен склад ↔ 1С&#10;Свести справочники" data-action="do"></textarea>
+            </div>
+            <div class="col teach">
+              <h3><span class="dot"></span>Обучить</h3>
+              <textarea placeholder="Обучение по системе&#10;Ответственный за интеграцию" data-action="teach"></textarea>
+            </div>
+            <div class="col scale">
+              <h3><span class="dot"></span>Масштабировать</h3>
+              <textarea placeholder="Подключить второй склад&#10;Тиражировать коннектор" data-action="scale"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar">
+        <button class="primary" id="buildBtn">Сформировать план →</button>
+        <button id="resetBtn">Очистить</button>
+      </div>
+    </div>
+
+    <div class="side back">
+      <div class="result-head">
+        <h2>Ваш план</h2>
+        <p>Готово к скачиванию и печати.</p>
+      </div>
+      <div class="result-scroll" id="resultArea"></div>
+      <div class="bar">
+        <button class="download" id="downloadBtn">Скачать план</button>
+        <button id="backBtn">← Назад</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="flip-hint">Нажмите «Сформировать план», чтобы перевернуть карточку</p>
+
+<script>
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+const ACTION_META = {
+  do:    { label: 'Доработать',    cls: 'do'    },
+  teach: { label: 'Обучить',       cls: 'teach' },
+  scale: { label: 'Масштабировать', cls: 'scale' }
+};
+
+function collectData() {
+  const kpis = [];
+  $$('.kpi').forEach(row => {
+    const name = row.querySelector('[data-kpi="name"]');
+    if (!name) return;
+    const n = name.value.trim();
+    if (!n) return;
+    kpis.push({
+      n,
+      now:    row.querySelector('[data-kpi="now"]').value.trim(),
+      target: row.querySelector('[data-kpi="target"]').value.trim()
+    });
+  });
+
+  const acts = {};
+  Object.keys(ACTION_META).forEach(key => {
+    const raw = $(`[data-action="${key}"]`).value.trim();
+    acts[key] = raw
+      ? raw.split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
+      : [];
+  });
+
+  return { kpis, acts };
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function buildTableHTML(data) {
+  const { kpis, acts } = data;
+
+  let html = '<table class="plan-table">';
+  html += '<caption>Показатели эффективности</caption>';
+  html += '<thead><tr><th class="num">#</th><th>Показатель</th><th>Сейчас</th><th>Цель</th></tr></thead><tbody>';
+  if (!kpis.length) {
+    html += '<tr><td colspan="4" class="empty-note">Показатели не заполнены</td></tr>';
+  } else {
+    kpis.forEach((k, i) => {
+      html += `<tr>
+        <td class="num">${i + 1}</td>
+        <td class="metric">${esc(k.n)}</td>
+        <td>${k.now ? esc(k.now) : '<span class="empty-note">—</span>'}</td>
+        <td>${k.target ? `<span class="target">${esc(k.target)}</span>` : '<span class="empty-note">—</span>'}</td>
+      </tr>`;
+    });
+  }
+  html += '</tbody></table>';
+
+  html += '<table class="plan-table">';
+  html += '<caption>Действия на 3 месяца</caption>';
+  html += '<thead><tr><th class="num">#</th><th>Направление</th><th>Действие</th></tr></thead><tbody>';
+
+  let rowIndex = 0;
+  let hasActions = false;
+  Object.keys(ACTION_META).forEach(key => {
+    const meta = ACTION_META[key];
+    acts[key].forEach(action => {
+      hasActions = true;
+      rowIndex++;
+      html += `<tr>
+        <td class="num">${rowIndex}</td>
+        <td><span class="badge ${meta.cls}">${meta.label}</span></td>
+        <td>${esc(action)}</td>
+      </tr>`;
+    });
+  });
+
+  if (!hasActions) {
+    html += '<tr><td colspan="3" class="empty-note">Действия не заполнены</td></tr>';
+  }
+  html += '</tbody></table>';
+
+  return html;
+}
+
+function renderResult() {
+  const data = collectData();
+  $('#resultArea').innerHTML = buildTableHTML(data);
+  return data;
+}
+
+$('#buildBtn').addEventListener('click', () => {
+  renderResult();
+  $('#flipchart').classList.add('flipped');
+});
+
+$('#backBtn').addEventListener('click', () => {
+  $('#flipchart').classList.remove('flipped');
+});
+
+$('#resetBtn').addEventListener('click', () => {
+  $$('input, textarea').forEach(el => el.value = '');
+  $('#flipchart').classList.remove('flipped');
+});
+
+$('#downloadBtn').addEventListener('click', () => {
+  const data = collectData();
+  const tableHTML = buildTableHTML(data);
+
+  const doc = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>План на 3 месяца</title>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: #111827; background: #fff; padding: 20px; max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  .sub { font-size: .74rem; color: #6b7280; margin-bottom: 12px; }
+  .plan-table { width: 100%; border-collapse: collapse; font-size: .76rem; margin-bottom: 12px; }
+  .plan-table caption { caption-side: top; text-align: left; font-size: .66rem; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px 3px; }
+  .plan-table th { background: #f3f4f6; color: #374151; font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; padding: 5px 6px; text-align: left; border: 1px solid #e5e7eb; }
+  .plan-table td { padding: 5px 6px; border: 1px solid #e5e7eb; vertical-align: top; line-height: 1.35; }
+  .plan-table .num { width: 24px; color: #9ca3af; font-weight: 700; }
+  .plan-table .metric { font-weight: 600; }
+  .plan-table .target { color: #15803d; font-weight: 700; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 99px; font-size: .6rem; font-weight: 800; white-space: nowrap; }
+  .badge.do { background: #dbeafe; color: #1d4ed8; }
+  .badge.teach { background: #dcfce7; color: #15803d; }
+  .badge.scale { background: #fef3c7; color: #b45309; }
+  .empty-note { color: #9ca3af; font-style: italic; }
+  @media print { body { padding: 0; } .plan-table th { background: #eee; } }
+</style>
+</head>
+<body>
+  <h1>План на 3 месяца</h1>
+  <div class="sub">Сформирован ${new Date().toLocaleDateString('ru-RU')}</div>
+  ${tableHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'План_на_3_месяца.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
