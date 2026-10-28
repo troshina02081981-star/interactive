@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Игра: Проверка через «Инспектор»</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: #ffffff;
+    color: #1a2530;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px 12px;
+    line-height: 1.4;
+  }
+
+  .game {
+    width: 560px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e3e9f0;
+    box-shadow: 0 8px 30px rgba(13, 59, 102, 0.08);
+    overflow: hidden;
+  }
+
+  .game__head {
+    background: linear-gradient(135deg, #0d3b66, #14528c);
+    color: #fff;
+    padding: 14px 18px;
+  }
+
+  .game__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .game__sub {
+    font-size: 0.66rem;
+    color: #b8d0e8;
+    margin-top: 3px;
+  }
+
+  .game__body { padding: 14px 16px 16px; }
+
+  .progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    color: #5a6b7b;
+    margin-bottom: 10px;
+  }
+
+  .progress b { color: #0d3b66; }
+
+  .bar {
+    height: 5px;
+    background: #eef1f5;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .bar__fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #0d3b66, #2a9d8f);
+    border-radius: 3px;
+    transition: width 0.35s ease;
+  }
+
+  .q__tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #c1121f;
+    background: #fdecee;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .q__text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a2530;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .answers { display: flex; flex-direction: column; gap: 7px; }
+
+  .answer {
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.74rem;
+    color: #3a4a5a;
+    background: #ffffff;
+    border: 1px solid #dfe6ee;
+    border-radius: 8px;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+    line-height: 1.35;
+  }
+
+  .answer:hover:not(:disabled) {
+    border-color: #0d3b66;
+    background: #f7f9fc;
+  }
+
+  .answer:active:not(:disabled) { transform: scale(0.99); }
+
+  .answer:disabled { cursor: default; }
+
+  .answer.correct {
+    border-color: #2a9d8f;
+    background: #eaf7f5;
+    color: #14655b;
+  }
+
+  .answer.wrong {
+    border-color: #c1121f;
+    background: #fdecee;
+    color: #8d0e17;
+  }
+
+  .answer.dim { opacity: 0.55; }
+
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    line-height: 1.45;
+    background: #f7f9fc;
+    border-left: 3px solid #0d3b66;
+    color: #3a4a5a;
+  }
+
+  .feedback.show { display: block; }
+  .feedback b { color: #0d3b66; }
+
+  .next {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    background: #0d3b66;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .next:hover { background: #14528c; }
+  .next.show { display: block; }
+
+  /* Финал */
+  .final { display: none; text-align: center; padding: 8px 0 4px; }
+  .final.show { display: block; }
+
+  .final__icon { font-size: 2.2rem; margin-bottom: 6px; }
+
+  .final__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0d3b66;
+    margin-bottom: 6px;
+  }
+
+  .final__score {
+    font-size: 0.78rem;
+    color: #3a4a5a;
+    margin-bottom: 10px;
+  }
+
+  .final__score b { color: #0d3b66; font-size: 1.1rem; }
+
+  .final__verdict {
+    font-size: 0.74rem;
+    color: #3a4a5a;
+    background: #f7f9fc;
+    border-radius: 8px;
+    padding: 10px 12px;
+    line-height: 1.45;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .restart {
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #0d3b66;
+    background: #ffffff;
+    border: 1px solid #0d3b66;
+    border-radius: 8px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .restart:hover { background: #0d3b66; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="game">
+  <div class="game__head">
+    <div class="game__title">Проверка через «Инспектор»</div>
+    <div class="game__sub">Дистанционный визит: выберите реакцию на вопрос инспектора</div>
+  </div>
+
+  <div class="game__body">
+    <div class="progress">
+      <span>Вопрос <b id="qNum">1</b> из <b id="qTotal">5</b></span>
+      <span>Баллы: <b id="scoreNow">0</b></span>
+    </div>
+    <div class="bar"><div class="bar__fill" id="barFill"></div></div>
+
+    <div id="quiz">
+      <span class="q__tag" id="qTag">Ловушка</span>
+      <div class="q__text" id="qText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next" id="nextBtn">Дальше</button>
+    </div>
+
+    <div class="final" id="final">
+      <div class="final__icon" id="finalIcon"></div>
+      <div class="final__title" id="finalTitle"></div>
+      <div class="final__score">Результат: <b id="finalScore">0</b> из 10</div>
+      <div class="final__verdict" id="finalVerdict"></div>
+      <button class="restart" id="restartBtn">Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var QUESTIONS = [
+    {
+      tag: 'Вход в проверку',
+      text: 'Инспектор звонит через «Инспектор». Видеосвязь нестабильна, ответственный за ЭДО в отпуске. Ваша реакция?',
+      answers: [
+        { text: 'Отложить звонок и перезвонить, когда всё наладится.', score: 0, fb: 'Проверка не ждёт. Откладывание — повод для замечания о неготовности к дистанционному формату.' },
+        { text: 'Включить видео, подтвердить геолокацию и подключить второго специалиста с доступом к ЭДО.', score: 2, fb: 'Верно: готовность к видеосвязи, геолокации и наличие резервного ответственного — базовая гигиена дистанционной проверки.' },
+        { text: 'Сказать, что приложение у вас не установлено.', score: 0, fb: 'Приложение — государственный инструмент, его отсутствие не отменяет проверку, а лишь фиксирует неготовность.' }
+      ]
+    },
+    {
+      tag: 'Ловушка №1',
+      text: 'Инспектор просит показать сведения об ОПО. Выясняется: после замены оборудования изменения в реестр не внесены.',
+      answers: [
+        { text: 'Сказать, что оборудование аналогичное, поэтому изменения не требуются.', score: 0, fb: 'Замена оборудования — основание для актуализации сведений. Формальная отговорка только усугубит замечание.' },
+        { text: 'Признать нарушение, показать план актуализации и сроки подачи заявления через Госуслуги с КЭП.', score: 2, fb: 'Верно: признание + план + понимание процедуры (Госуслуги, КЭП) — конструктивная позиция.' },
+        { text: 'Сослаться на то, что заявку подавал подрядчик.', score: 0, fb: 'Ответственность за актуализацию ОПО лежит на эксплуатирующей организации, а не на подрядчике.' }
+      ]
+    },
+    {
+      tag: 'Ловушка №2',
+      text: 'В журнале нарядов-допусков одна запись без подписи ответственного. Инспектор просит объяснить.',
+      answers: [
+        { text: 'Заявить, что подпись есть в другом экземпляре.', score: 0, fb: 'Ссылка на «другой экземпляр» без подтверждения — риск признания документа недостоверным.' },
+        { text: 'Показать регламент допуска, зафиксировать нарушение и предложить проверку остальных записей.', score: 2, fb: 'Верно: прозрачность и готовность к самопроверке снижают риск предписания.' },
+        { text: 'Промолчать и перелистнуть страницу.', score: 0, fb: 'Умолчание — худшая стратегия: инспектор всё равно зафиксирует нарушение, но уже с отягчающим оттенком.' }
+      ]
+    },
+    {
+      tag: 'Ловушка №3',
+      text: 'Заключение ЭПБ подписано только экспертной организацией, без КЭП заказчика. Инспектор указывает: заключение юридически не существует.',
+      answers: [
+        { text: 'Возразить: экспертиза проведена, значит, заключение действительно.', score: 0, fb: 'Без КЭП заказчика заключение не имеет юридической силы, а эксплуатация объекта блокируется.' },
+        { text: 'Признать: без КЭП заказчика заключение недействительно, эксплуатация приостановлена, вот план подписания и возобновления.', score: 2, fb: 'Верно: понимание роли КЭП обеих сторон и готовность действовать — ключевой навык.' },
+        { text: 'Пообещать «дослать подпись позже».', score: 0, fb: 'Обещание без процедуры и сроков не снимает блокировку эксплуатации.' }
+      ]
+    },
+    {
+      tag: 'Устранение',
+      text: 'Инспектор фиксирует нарушение по СИЗ. Как подтвердить устранение дистанционно?',
+      answers: [
+        { text: 'Прислать инспектору фото на почту.', score: 0, fb: 'Вне приложения фото не имеет юридического следа: нет геометки, нет подписи, нет фиксации в системе.' },
+        { text: 'Через «Госключ» подписать уведомление и отправить фото/видео «до/после» с геометкой.', score: 2, fb: 'Верно: устранение через приложение с УНЭП/УКЭП и геометкой — законный дистанционный способ закрыть нарушение.' },
+        { text: 'Дождаться повторной выездной проверки.', score: 0, fb: 'Это лишние время и риск: дистанционное подтверждение существует именно для того, чтобы не ждать выезда.' }
+      ]
+    }
+  ];
+
+  var current = 0;
+  var score = 0;
+  var answered = false;
+
+  var qNum = document.getElementById('qNum');
+  var qTotal = document.getElementById('qTotal');
+  var scoreNow = document.getElementById('scoreNow');
+  var barFill = document.getElementById('barFill');
+  var qTag = document.getElementById('qTag');
+  var qText = document.getElementById('qText');
+  var answersBox = document.getElementById('answers');
+  var feedback = document.getElementById('feedback');
+  var nextBtn = document.getElementById('nextBtn');
+  var quiz = document.getElementById('quiz');
+  var final = document.getElementById('final');
+
+  qTotal.textContent = QUESTIONS.length;
+
+  function render() {
+    answered = false;
+    var q = QUESTIONS[current];
+    qNum.textContent = current + 1;
+    qTag.textContent = q.tag;
+    qText.textContent = q.text;
+    answersBox.innerHTML = '';
+    feedback.className = 'feedback';
+    feedback.innerHTML = '';
+    nextBtn.className = 'next';
+    nextBtn.textContent = current === QUESTIONS.length - 1 ? 'Показать результат' : 'Дальше';
+
+    q.answers.forEach(function (a) {
+      var btn = document.createElement('button');
+      btn.className = 'answer';
+      btn.type = 'button';
+      btn.textContent = a.text;
+      btn.addEventListener('click', function () { pick(btn, a); });
+      answersBox.appendChild(btn);
+    });
+
+    updateBar();
+  }
+
+  function pick(btn, a) {
+    if (answered) return;
+    answered = true;
+
+    var buttons = answersBox.querySelectorAll('.answer');
+    buttons.forEach(function (b) {
+      b.disabled = true;
+      if (b !== btn) b.classList.add('dim');
+    });
+
+    if (a.score > 0) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('wrong');
+    }
+
+    score += a.score;
+    scoreNow.textContent = score;
+
+    feedback.innerHTML = '<b>' + (a.score > 0 ? 'Верно. ' : 'Неверно. ') + '</b>' + a.fb;
+    feedback.classList.add('show');
+    nextBtn.classList.add('show');
+  }
+
+  function updateBar() {
+    var pct = (current / QUESTIONS.length) * 100;
+    barFill.style.width = pct + '%';
+  }
+
+  nextBtn.addEventListener('click', function () {
+    current++;
+    if (current < QUESTIONS.length) {
+      render();
+    } else {
+      showFinal();
+    }
+  });
+
+  function showFinal() {
+    quiz.style.display = 'none';
+    final.classList.add('show');
+    barFill.style.width = '100%';
+
+    document.getElementById('finalScore').textContent = score;
+
+    var icon, title, verdict;
+
+    if (score >= 9) {
+      icon = '🟢';
+      title = 'Нарушений не выявлено';
+      verdict = 'Вы готовы к дистанционной проверке: видеосвязь, геолокация, КЭП и конструктивный тон — на месте.';
+    } else if (score >= 6) {
+      icon = '🟡';
+      title = 'Замечания';
+      verdict = 'Основа есть, но есть провалы: часть ловушек вы не заметили сами. Проверьте готовность к ЭДО и работу с КЭП.';
+    } else if (score >= 3) {
+      icon = '🟠';
+      title = 'Предписание';
+      verdict = 'Дистанционный формат пока не отработан: документы и процедуры не готовы к проверке через приложение.';
+    } else {
+      icon = '🔴';
+      title = 'Критические нарушения';
+      verdict = 'Проверка через «Инспектор» застала предприятие врасплох. Начните с базового порядка в данных и КЭП.';
+    }
+
+    document.getElementById('finalIcon').textContent = icon;
+    document.getElementById('finalTitle').textContent = title;
+    document.getElementById('finalVerdict').textContent = verdict;
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', function () {
+    current = 0;
+    score = 0;
+    scoreNow.textContent = '0';
+    final.classList.remove('show');
+    quiz.style.display = 'block';
+    render();
+  });
+
+  render();
+</script>
+
+</body>
+</html>
