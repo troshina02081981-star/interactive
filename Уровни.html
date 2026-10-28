@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Интерактив: Архитектура системы мониторинга</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: #ffffff;
+    color: #1a2530;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px 12px;
+    line-height: 1.4;
+  }
+
+  .flipchart {
+    width: 560px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e3e9f0;
+    box-shadow: 0 8px 30px rgba(13, 59, 102, 0.08);
+    overflow: hidden;
+  }
+
+  .flipchart__title {
+    background: linear-gradient(135deg, #0d3b66, #14528c);
+    color: #fff;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .flipchart__title small {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 400;
+    color: #b8d0e8;
+    margin-top: 3px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px;
+    perspective: 1400px;
+  }
+
+  .card {
+    position: relative;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 110px;
+    transition: min-height 0.5s ease;
+  }
+
+  .card__inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .card.is-flipped .card__inner {
+    transform: rotateY(180deg);
+  }
+
+  .card__face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 9px;
+    padding: 10px 12px;
+    overflow: hidden;
+  }
+
+  .card__front {
+    background: #ffffff;
+    border: 1px solid #e3e9f0;
+    border-top: 4px solid #0d3b66;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .card:nth-of-type(2) .card__front { border-top-color: #c1121f; }
+  .card:nth-of-type(3) .card__front { border-top-color: #2a9d8f; }
+  .card:nth-of-type(4) .card__front { border-top-color: #e9a23b; }
+
+  .card__num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #0d3b66;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card:nth-of-type(2) .card__num { background: #c1121f; }
+  .card:nth-of-type(3) .card__num { background: #2a9d8f; }
+  .card:nth-of-type(4) .card__num { background: #e9a23b; }
+
+  .card__label {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #0d3b66;
+    line-height: 1.25;
+  }
+
+  .card__hint {
+    font-size: 0.56rem;
+    color: #8a9aa8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .card__back {
+    background: #ffffff;
+    border: 1px solid #e3e9f0;
+    border-top: 4px solid #0d3b66;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card:nth-of-type(2) .card__back { border-top-color: #c1121f; }
+  .card:nth-of-type(3) .card__back { border-top-color: #2a9d8f; }
+  .card:nth-of-type(4) .card__back { border-top-color: #e9a23b; }
+
+  .card__back ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  .card__back li {
+    position: relative;
+    padding-left: 10px;
+    margin-bottom: 3px;
+    font-size: 0.64rem;
+    color: #3a4a5a;
+    line-height: 1.3;
+  }
+
+  .card__back li:last-child { margin-bottom: 0; }
+
+  .card__back li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 3.5px;
+    height: 3.5px;
+    border-radius: 50%;
+    background: #0d3b66;
+  }
+
+  .card:nth-of-type(2) .card__back li::before { background: #c1121f; }
+  .card:nth-of-type(3) .card__back li::before { background: #2a9d8f; }
+  .card:nth-of-type(4) .card__back li::before { background: #e9a23b; }
+
+  .card__back li b { color: #1a2530; font-weight: 600; }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="flipchart">
+  <div class="flipchart__title">
+    Собери архитектуру системы мониторинга
+    <small>Переверните карточку — узнайте, что входит в уровень</small>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1 -->
+    <div class="card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card__inner">
+        <div class="card__face card__front">
+          <div class="card__num">1</div>
+          <div class="card__label">Уровень сбора данных</div>
+          <div class="card__hint">Что внутри?</div>
+        </div>
+        <div class="card__face card__back">
+          <ul>
+            <li>Датчики и средства измерения на оборудовании.</li>
+            <li><b>Параметры:</b> давление, температура, уровень, расход, вибрация.</li>
+            <li>Положение запорной арматуры.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card__inner">
+        <div class="card__face card__front">
+          <div class="card__num">2</div>
+          <div class="card__label">Уровень обработки и анализа</div>
+          <div class="card__hint">Что внутри?</div>
+        </div>
+        <div class="card__face card__back">
+          <ul>
+            <li>Программное обеспечение обработки сигналов.</li>
+            <li>Выявление отклонений.</li>
+            <li>Оценка риска аварии по заданным критериям.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card__inner">
+        <div class="card__face card__front">
+          <div class="card__num">3</div>
+          <div class="card__label">Уровень передачи данных</div>
+          <div class="card__hint">Что внутри?</div>
+        </div>
+        <div class="card__face card__back">
+          <ul>
+            <li>Защищённый канал связи.</li>
+            <li>Передача в автоматизированную систему сбора данных Ростехнадзора.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card__inner">
+        <div class="card__face card__front">
+          <div class="card__num">4</div>
+          <div class="card__label">Уровень защиты информации</div>
+          <div class="card__hint">Что внутри?</div>
+        </div>
+        <div class="card__face card__back">
+          <ul>
+            <li>Сертифицированные средства защиты.</li>
+            <li>Криптографические средства.</li>
+            <li>Защита канала и данных.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var cards = document.querySelectorAll('.card');
+
+    function frontHeight(card) {
+      return card.querySelector('.card__front').scrollHeight;
+    }
+
+    function backHeight(card) {
+      return card.querySelector('.card__back').scrollHeight;
+    }
+
+    function setHeight(card) {
+      var h = card.classList.contains('is-flipped')
+        ? Math.max(frontHeight(card), backHeight(card))
+        : frontHeight(card);
+      card.style.minHeight = h + 'px';
+    }
+
+    function toggle(card) {
+      card.classList.toggle('is-flipped');
+      card.setAttribute('aria-pressed', card.classList.contains('is-flipped'));
+      setHeight(card);
+    }
+
+    cards.forEach(function (card) {
+      setHeight(card);
+
+      card.addEventListener('click', function () { toggle(card); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle(card);
+        }
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      cards.forEach(setHeight);
+    });
+  })();
+</script>
+
+</body>
+</html>
