@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Структура программы</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* ---------- Заголовок ---------- */
+  .page-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    text-align: center;
+    line-height: 1.25;
+    margin-bottom: .2rem;
+  }
+  .page-subtitle {
+    font-size: .75rem;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+
+  /* ---------- Сетка ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem;
+    align-items: start; /* Чтобы карточки не растягивались на всю высоту ряда */
+  }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Карточка ---------- */
+  .course-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---------- Лицевая панель (переворачивается) ---------- */
+  .card-front-wrapper {
+    perspective: 1000px;
+    position: relative;
+    z-index: 2; /* Перекрывает тень от выпадающего списка */
+  }
+
+  .card-front-inner {
+    position: relative;
+    width: 100%;
+    min-height: 90px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  }
+
+  .course-card.is-flipped .card-front-inner {
+    transform: rotateX(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    border-top: 4px solid #3b82f6;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: .8rem;
+  }
+
+  .card-face h2 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    line-height: 1.2;
+  }
+
+  .card-hint {
+    font-size: .6rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-top: 6px;
+  }
+
+  /* Задняя часть лицевой панели (когда перевернулась) */
+  .card-back-face {
+    transform: rotateX(180deg);
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1e3a8a;
+    font-size: .75rem;
+    font-weight: 600;
+  }
+
+  /* ---------- Выпадающий список тем ---------- */
+  .card-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -4px; /* Прилипает к лицевой панели */
+    transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    padding: 0 .8rem;
+  }
+
+  .course-card.is-flipped .card-dropdown {
+    max-height: 400px; /* Достаточно для самого длинного списка */
+    padding: .8rem;
+    opacity: 1;
+  }
+
+  .card-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card-dropdown li {
+    position: relative;
+    padding-left: 12px;
+    margin-bottom: 6px;
+    font-size: .68rem;
+    color: #334155;
+    line-height: 1.35;
+  }
+
+  .card-dropdown li:last-child { margin-bottom: 0; }
+
+  .card-dropdown li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #3b82f6;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="page-title">Нейросети, автоматизация и цифровизация</h1>
+  <p class="page-subtitle">Программа курса</p>
+
+  <div class="grid">
+
+    <!-- БЛОК 1. НЕЙРОСЕТИ -->
+    <div class="course-card" tabindex="0" role="button" aria-pressed="false">
+      <!-- Лицевая панель -->
+      <div class="card-front-wrapper">
+        <div class="card-front-inner">
+          <div class="card-face">
+            <h2>Нейросети</h2>
+            <div class="card-hint">Список тем</div>
+          </div>
+          <div class="card-face card-back-face">
+            Нейросети
+          </div>
+        </div>
+      </div>
+      <!-- Выпадающий список -->
+      <div class="card-dropdown">
+        <ul>
+          <li>Что такое промпт и как его составлять</li>
+          <li>Как работать с нейросетями для документооборота</li>
+          <li>Как работать с нейросетями для обучения сотрудников</li>
+          <li>Как использовать нейросети для прогнозирования рисков и видеомониторинга</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- БЛОК 2. АВТОМАТИЗАЦИЯ -->
+    <div class="course-card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card-front-wrapper">
+        <div class="card-front-inner">
+          <div class="card-face">
+            <h2>Автоматизация</h2>
+            <div class="card-hint">Список тем</div>
+          </div>
+          <div class="card-face card-back-face">
+            Автоматизация
+          </div>
+        </div>
+      </div>
+      <div class="card-dropdown">
+        <ul>
+          <li>Автоматизация промышленной безопасности: что это, зачем нужна и с чего начать</li>
+          <li>Диагностика перед автоматизацией: где болит, сколько это стоит и что делать первым</li>
+          <li>Как выбрать, купить и внедрить автоматизацию: от интеграции до аргументов для руководства</li>
+          <li>Документация ОПО: как перестать терять сроки и доказывать свою правоту за пять минут</li>
+          <li>Автоматизация производственного контроля на ОПО: практическое руководство</li>
+          <li>Автоматизация технического обслуживания и ремонта на ОПО: как перестать узнавать о дефектах из аварий</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- БЛОК 3. ВЗАИМОСВЯЗЬ -->
+    <div class="course-card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card-front-wrapper">
+        <div class="card-front-inner">
+          <div class="card-face">
+            <h2>Взаимосвязь</h2>
+            <div class="card-hint">Список тем</div>
+          </div>
+          <div class="card-face card-back-face">
+            Взаимосвязь
+          </div>
+        </div>
+      </div>
+      <div class="card-dropdown">
+        <ul>
+          <li>Почему нейросети, автоматизация и цифровизация не работают по отдельности</li>
+          <li>Цифровая эволюция: почему это необходимость</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- БЛОК 4. ЦИФРОВИЗАЦИЯ -->
+    <div class="course-card" tabindex="0" role="button" aria-pressed="false">
+      <div class="card-front-wrapper">
+        <div class="card-front-inner">
+          <div class="card-face">
+            <h2>Цифровизация</h2>
+            <div class="card-hint">Список тем</div>
+          </div>
+          <div class="card-face card-back-face">
+            Цифровизация
+          </div>
+        </div>
+      </div>
+      <div class="card-dropdown">
+        <ul>
+          <li>Диагностика ОПО: что и зачем цифровизировать</li>
+          <li>Инструменты цифровизации: как создать рабочее решение</li>
+          <li>От подписи к процедуре: цифровые инструменты в работе с Ростехнадзором</li>
+          <li>Мониторинг и «Инспектор»: два разных подхода к дистанционному надзору</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const cards = document.querySelectorAll('.course-card');
+
+  function toggleCard(card) {
+    card.classList.toggle('is-flipped');
+    card.setAttribute('aria-pressed', card.classList.contains('is-flipped'));
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => toggleCard(card));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleCard(card);
+      }
+    });
+  });
+</script>
+</body>
+</html>
