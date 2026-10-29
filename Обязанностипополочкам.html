@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обязанности по полочкам</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 560px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .header h1 {
+        color: #1a3a6b;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .header p {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 15px; /* Чуть увеличили отступ по вертикали */
+        align-items: end;
+    }
+
+    .shelf-group {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* Контейнер для анимации выезда */
+    .books-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.4s ease-out;
+        margin-bottom: 6px; /* Расстояние от книг до полки */
+    }
+
+    .shelf-group.active .books-wrapper {
+        grid-template-rows: 1fr;
+    }
+
+    /* Стопка документов */
+    .books {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 0 2px 5px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease-out;
+    }
+
+    .shelf-group.active .books {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .book {
+        background: #ffffff;
+        border: 1.5px solid #b0cceb;
+        border-radius: 4px;
+        color: #1a3a6b;
+        padding: 7px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 2px 0 #eaf2fb;
+        transition: all 0.2s;
+    }
+
+    .shelf-group.active .book {
+        border-color: #2c5aa0;
+        box-shadow: 0 2px 0 #2c5aa0;
+        background: #f4f8fd;
+    }
+
+    /* Деревянная полка (стала толще) */
+    .shelf-plank {
+        background: linear-gradient(to bottom, #c99b6b, #a87a4d);
+        height: 26px; /* Увеличили высоту для текста */
+        border-radius: 4px;
+        box-shadow: 0 5px 8px rgba(0,0,0,0.15), inset 0 2px 2px rgba(255,255,255,0.3);
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 4px solid #8b5a2b; /* Тень дерева */
+        transition: filter 0.2s;
+    }
+
+    .shelf-group:hover .shelf-plank {
+        filter: brightness(1.05);
+    }
+
+    .shelf-group.active .shelf-plank {
+        filter: brightness(0.95);
+    }
+
+    /* НАЗВАНИЕ КАТЕГОРИИ (внутри полки) */
+    .shelf-title {
+        color: #ffffff;
+        font-size: 11.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.4); /* Для читаемости на дереве */
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Подсказка (плюс/минус) */
+    .shelf-title::after {
+        content: '+';
+        font-size: 14px;
+        font-weight: 400;
+        color: #f4d8b8;
+        transition: content 0.2s;
+    }
+
+    .shelf-group.active .shelf-title::after {
+        content: '−';
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Обязанности по полочкам</h1>
+        <p>Нажмите на полку, чтобы раскрыть содержимое</p>
+    </div>
+
+    <div class="grid">
+
+        <!-- 1. Регистрация -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">Идентификация</div>
+                    <div class="book">Регистрация</div>
+                    <div class="book">Страхование</div>
+                    <div class="book">Лицензирование</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">1. Регистрация</div>
+            </div>
+        </div>
+
+        <!-- 2. Контроль -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">Акты проверок</div>
+                    <div class="book">Профилактика</div>
+                    <div class="book">Устранение нарушений</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">2. Контроль</div>
+            </div>
+        </div>
+
+        <!-- 3. Персонал -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">Протоколы</div>
+                    <div class="book">ДПО</div>
+                    <div class="book">График аттестаций</div>
+                    <div class="book">Проверка знаний</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">3. Персонал</div>
+            </div>
+        </div>
+
+        <!-- 4. ЛНА -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">СУПБ</div>
+                    <div class="book">ПМЛА</div>
+                    <div class="book">Приказ о ПК</div>
+                    <div class="book">Положение о ПК</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">4. ЛНА</div>
+            </div>
+        </div>
+
+        <!-- 5. Отчеты -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">Сведения о ПК</div>
+                    <div class="book">Отчет инцидентов</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">5. Отчеты</div>
+            </div>
+        </div>
+
+        <!-- 6. Происшествия -->
+        <div class="shelf-group" onclick="toggleShelf(this)">
+            <div class="books-wrapper">
+                <div class="books">
+                    <div class="book">Учет</div>
+                    <div class="book">Аварии</div>
+                    <div class="book">Инциденты</div>
+                    <div class="book">Несчастные случаи</div>
+                </div>
+            </div>
+            <div class="shelf-plank">
+                <div class="shelf-title">6. Происшествия</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function toggleShelf(clickedShelf) {
+        clickedShelf.classList.toggle('active');
+    }
+</script>
+</body>
+</html>
