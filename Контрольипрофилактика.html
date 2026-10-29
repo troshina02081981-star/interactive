@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вертикальный флипчарт (560px)</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 560px; /* СТРОГО 560px */
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        color: #1a3a6b;
+        font-size: 16px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .header p {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .flipchart {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* КАРТОЧКА */
+    .flip-card {
+        perspective: 1000px;
+        height: 170px; /* Фиксированная высота, чтобы карточки были ровными */
+        cursor: pointer;
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+
+    /* Эффект переворота сверху вниз */
+    .flip-card.active .flip-card-inner {
+        transform: rotateX(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 8px;
+        border: 1.5px solid #b0cceb;
+        padding: 15px;
+    }
+
+    /* ЛИЦЕВАЯ СТОРОНА */
+    .flip-card-front {
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .step-badge {
+        background: #2c5aa0;
+        color: #ffffff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .front-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1a3a6b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .front-hint {
+        font-size: 11px;
+        color: #8ec5ff;
+        margin-top: 8px;
+        font-style: italic;
+    }
+
+    /* ОБРАТНАЯ СТОРОНА */
+    .flip-card-back {
+        background: #f8fbff;
+        transform: rotateX(180deg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .back-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: #2c5aa0;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .back-content {
+        font-size: 11.5px;
+        color: #333;
+        line-height: 1.45;
+    }
+
+    .back-content ul {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .back-content li {
+        position: relative;
+        padding-left: 12px;
+        margin-bottom: 3px;
+    }
+
+    .back-content li::before {
+        content: '—';
+        position: absolute;
+        left: 0;
+        color: #2c5aa0;
+        font-weight: bold;
+    }
+
+    /* Итоговая плашка */
+    .result-box {
+        margin-top: 20px;
+        padding: 12px 15px;
+        background: #eaf2fb;
+        border-left: 4px solid #2c5aa0;
+        border-radius: 0 8px 8px 0;
+        font-size: 12px;
+        color: #1a3a6b;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease;
+    }
+
+    .result-box.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Контроль и профилактика</h1>
+        <p>Нажмите на карточку, чтобы перевернуть</p>
+    </div>
+
+    <div class="flipchart">
+
+        <!-- Карточка 1 -->
+        <div class="flip-card" id="card1" onclick="flipCard('card1')">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="step-badge">1</div>
+                    <div class="front-title">Контроль</div>
+                    <div class="front-hint">нажмите, чтобы узнать</div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-title">Суть контроля</div>
+                    <div class="back-content">
+                        Регулярные проверки. Специалисту необходимо знать:
+                        <ul>
+                            <li>Правила работ на ОПО;</li>
+                            <li>Порядок содержания оборудования;</li>
+                            <li>Периодичность освидетельствований.</li>
+                        </ul>
+                        <strong>Результат:</strong> фиксация нарушений и надзор за их устранением.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карточка 2 -->
+        <div class="flip-card" id="card2" onclick="flipCard('card2')">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="step-badge">2</div>
+                    <div class="front-title">Профилактика</div>
+                    <div class="front-hint">нажмите, чтобы узнать</div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-title">Суть профилактики</div>
+                    <div class="back-content">
+                        Устранить нарушение — мало. Нужно найти <strong>коренную причину</strong>, почему оно произошло, и исключить его повторение.
+                        <br><br>
+                        <em>В этом заключается суть профилактики.</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="result-box" id="result">
+        Контроль и профилактика дополняют друг друга: сначала фиксируем проблему, затем устраняем её первопричину.
+    </div>
+</div>
+
+<script>
+    function flipCard(id) {
+        const card = document.getElementById(id);
+        card.classList.toggle('active');
+        checkBothFlipped();
+    }
+
+    function checkBothFlipped() {
+        const card1 = document.getElementById('card1').classList.contains('active');
+        const card2 = document.getElementById('card2').classList.contains('active');
+        const result = document.getElementById('result');
+
+        if (card1 && card2) {
+            result.classList.add('show');
+        } else {
+            result.classList.remove('show');
+        }
+    }
+</script>
+</body>
+</html>
