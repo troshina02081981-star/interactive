@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Схема отчетности</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        color: #1a3a6b;
+        font-size: 16px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Таблица */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #b0cceb;
+        padding: 10px;
+        text-align: left;
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+    th {
+        background: #2c5aa0;
+        color: #ffffff;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11px;
+        text-align: center;
+    }
+
+    /* Левая колонка (название отчета) */
+    td:first-child {
+        background: #f4f8fd;
+        font-weight: 700;
+        color: #1a3a6b;
+        width: 35%;
+    }
+
+    /* Периодичность */
+    .frequency {
+        display: inline-block;
+        background: #eaf2fb;
+        color: #2c5aa0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    /* Детали */
+    .details {
+        color: #333;
+        font-size: 11.5px;
+        line-height: 1.4;
+    }
+
+    .highlight {
+        color: #1a3a6b;
+        font-weight: 600;
+    }
+
+    /* Итоговая плашка */
+    .note {
+        margin-top: 15px;
+        padding: 12px;
+        background: #eaf2fb;
+        border-left: 4px solid #2c5aa0;
+        border-radius: 0 8px 8px 0;
+        font-size: 11.5px;
+        color: #1a3a6b;
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Отчетность по промбезопасности</h1>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Документ</th>
+                <th>Периодичность и суть</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    📄 Годовой отчет
+                    <br><span style="font-size:10px; color:#666; font-weight:400;">(Сведения о производственном контроле)</span>
+                </td>
+                <td>
+                    <span class="frequency">1 раз в год</span>
+                    <div class="details">
+                        Объемный документ. <span class="highlight">Заполняется в течение всего года</span>, а не в последний месяц.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ✉️ Письмо об инцидентах
+                    <br><span style="font-size:10px; color:#666; font-weight:400;">(Информационное письмо)</span>
+                </td>
+                <td>
+                    <span class="frequency">4 раза в год (ежеквартально)</span>
+                    <div class="details">
+                        Направляется в надзорные органы раз в квартал. <span class="highlight">Обязательно, даже если инцидентов не было.</span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note">
+        Итог: 1 годовой отчет + 4 квартальных письма = 5 документов в год.
+    </div>
+</div>
+
+</body>
+</html>
