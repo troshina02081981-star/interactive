@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обязанности специалиста (560px, белый фон)</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff; /* Белый фон страницы */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .wrapper {
+        width: 100%;
+        max-width: 560px; /* СТРОГО 560px */
+        height: 520px;
+        background: #ffffff; /* Белый фон контейнера */
+        border: 1px solid #e0e0e0; /* Легкая рамка, чтобы отделить от фона, если нужно */
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Заголовок */
+    .header {
+        text-align: center;
+        padding: 15px 15px 5px;
+        z-index: 10;
+        background: #ffffff;
+    }
+
+    .header h1 {
+        color: #1a3a6b;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+    }
+
+    .header p {
+        color: #2c5aa0;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    /* ЗОНА ХАОСА */
+    .chaos-zone {
+        position: relative;
+        flex-grow: 1;
+        width: 100%;
+    }
+
+    /* Центральный персонаж */
+    .character {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90px;
+        height: 90px;
+        background: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 45px;
+        z-index: 1;
+        box-shadow: 0 0 25px rgba(44, 90, 160, 0.15);
+        border: 2px dashed #b0cceb;
+        animation: pulse 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 15px rgba(44, 90, 160, 0.1); }
+        100% { box-shadow: 0 0 35px rgba(44, 90, 160, 0.3); }
+    }
+
+    /* Термины (стикеры) */
+    .tag {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        color: #2c5aa0;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid #b0cceb;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        user-select: none;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 5;
+        white-space: nowrap;
+    }
+
+    .tag:hover {
+        z-index: 100 !important;
+        background: #f8fbff;
+        box-shadow: 0 6px 15px rgba(44, 90, 160, 0.25);
+        border-color: #2c5aa0;
+    }
+
+    /* Состояние "Выбрано" */
+    .tag.active {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) rotate(0deg) scale(1.15) !important;
+        background: #2c5aa0;
+        color: #ffffff;
+        border-color: #1a3a6b;
+        z-index: 200 !important;
+        box-shadow: 0 8px 25px rgba(26, 58, 107, 0.4);
+        opacity: 1 !important;
+        pointer-events: none;
+    }
+
+    /* Приглушение остальных */
+    .chaos-zone.has-active .tag:not(.active) {
+        opacity: 0.15;
+        filter: blur(2px);
+        transform: translate(-50%, -50%) scale(0.8) !important;
+    }
+
+    /* ИНФО-ПАНЕЛЬ */
+    .info-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #1a3a6b;
+        color: #ffffff;
+        padding: 15px 15px 20px;
+        border-radius: 15px 15px 0 0;
+        transform: translateY(100%);
+        transition: transform 0.35s ease-out;
+        z-index: 500;
+    }
+
+    .info-panel.show {
+        transform: translateY(0);
+    }
+
+    .info-panel h2 {
+        color: #8ec5ff;
+        font-size: 13px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .info-panel p {
+        font-size: 10.5px;
+        line-height: 1.4;
+        color: #dbe8f7;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        color: #8ec5ff;
+        cursor: pointer;
+        font-size: 14px;
+        background: none;
+        border: none;
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header">
+        <h1>Обязанности специалиста по промбезопасности</h1>
+        <p>Нажмите на любой термин</p>
+    </div>
+
+    <div class="chaos-zone" id="chaos-zone">
+        <div class="character">🤯</div>
+        
+        <!-- Термины -->
+        <div class="tag" data-id="lic">Лицензирование</div>
+        <div class="tag" data-id="reg">Регистрация</div>
+        <div class="tag" data-id="dec">Декларация</div>
+        <div class="tag" data-id="ins">Страхование</div>
+        <div class="tag" data-id="att">Аттестация</div>
+        <div class="tag" data-id="supb">СУПБ</div>
+        <div class="tag" data-id="pmla">ПМЛА</div>
+        <div class="tag" data-id="pc">Пр. контроль</div>
+        <div class="tag" data-id="to">Тех. освид.</div>
+        <div class="tag" data-id="test">Испытания</div>
+        <div class="tag" data-id="diag">Диагностика</div>
+        <div class="tag" data-id="ident">Идентификация</div>
+        <div class="tag" data-id="inc">Инцидент</div>
+        <div class="tag" data-id="av">Авария</div>
+    </div>
+
+    <div class="info-panel" id="info">
+        <button class="close-btn" onclick="closeInfo()">✕</button>
+        <h2><span id="p-icon">📄</span> <span id="p-title">Название</span></h2>
+        <p id="p-desc">Описание...</p>
+    </div>
+</div>
+
+<script>
+    const data = {
+        lic: { title: "Лицензирование", icon: "📜", desc: "Получение государственного разрешения на эксплуатацию опасных объектов." },
+        reg: { title: "Регистрация", icon: "🗂️", desc: "Постановка опасного объекта (ОПО) на учет в реестре Ростехнадзора." },
+        dec: { title: "Декларация", icon: "📝", desc: "Самостоятельная оценка риска аварии и описание мер по его снижению." },
+        ins: { title: "Страхование", icon: "🛡️", desc: "Обязательное страхование ответственности. Выплаты пострадавшим." },
+        att: { title: "Аттестация", icon: "🎓", desc: "Проверка знаний руководителей и специалистов (сдача экзаменов)." },
+        supb: { title: "СУПБ", icon: "⚙️", desc: "Система управления промбезопасностью. Внутренние правила компании." },
+        pmla: { title: "ПМЛА", icon: "🚨", desc: "План мероприятий по локализации аварий. Регламент действий при ЧП." },
+        pc: { title: "Пр. контроль", icon: "🔍", desc: "Регулярный внутренний контроль за состоянием оборудования." },
+        to: { title: "Тех. освид.", icon: "🔧", desc: "Проверка технического состояния оборудования на износ." },
+        test: { title: "Испытания", icon: "🧪", desc: "Проверка оборудования под нагрузкой для подтверждения надежности." },
+        diag: { title: "Диагностика", icon: "🩺", desc: "Глубокое обследование для поиска скрытых дефектов и трещин." },
+        ident: { title: "Идентификация", icon: "🏷️", desc: "Выявление опасных зон и маркировка знаками безопасности." },
+        inc: { title: "Инцидент", icon: "⚠️", desc: "Отказ оборудования или отклонение от режима. «Предвестник» аварии." },
+        av: { title: "Авария", icon: "💥", desc: "Разрушение, взрыв или выброс веществ. Требует немедленного реагирования." }
+    };
+
+    const zone = document.getElementById('chaos-zone');
+    const tags = document.querySelectorAll('.tag');
+    const infoPanel = document.getElementById('info');
+
+    function scatterTags() {
+        const zoneRect = zone.getBoundingClientRect();
+        const centerX = zoneRect.width / 2;
+        const centerY = zoneRect.height / 2;
+        
+        const radii = [75, 115, 155]; 
+
+        tags.forEach((tag, index) => {
+            const orbit = radii[index % radii.length];
+            const angle = (index / tags.length) * Math.PI * 2 + (Math.random() * 0.3 - 0.15);
+            
+            const rotate = Math.floor(Math.random() * 30) - 15;
+            
+            const x = centerX + Math.cos(angle) * orbit;
+            const y = centerY + Math.sin(angle) * orbit;
+
+            tag.style.left = x + 'px';
+            tag.style.top = y + 'px';
+            tag.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
+            tag.style.opacity = (0.7 + Math.random() * 0.3).toFixed(2);
+            tag.style.transitionDelay = (index * 0.02) + 's';
+        });
+    }
+
+    window.onload = scatterTags;
+
+    tags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            zone.classList.add('has-active');
+            tags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+
+            const item = data[tag.getAttribute('data-id')];
+            document.getElementById('p-title').textContent = item.title;
+            document.getElementById('p-desc').textContent = item.desc;
+            document.getElementById('p-icon').textContent = item.icon;
+
+            infoPanel.classList.add('show');
+        });
+    });
+
+    function closeInfo() {
+        infoPanel.classList.remove('show');
+        zone.classList.remove('has-active');
+        tags.forEach(t => t.classList.remove('active'));
+    }
+</script>
+</body>
+</html>
