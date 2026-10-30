@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Схема СУПБ (Идеальное прилегание)</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .diagram-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        position: relative;
+        /* Фиксированная высота, чтобы координаты SVG совпадали с реальными блоками */
+        height: 320px; 
+        padding: 0 10px;
+    }
+
+    /* Общие стили блоков */
+    .node {
+        border-radius: 8px;
+        text-align: center;
+        font-size: 11.5px;
+        font-weight: 600;
+        line-height: 1.35;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        position: absolute;
+    }
+
+    /* Левый и правый блоки (Высота 100px, Центр по Y = 160px) */
+    .node.side {
+        background: #2c5aa0;
+        color: #ffffff;
+        width: 120px;
+        height: 100px;
+        font-size: 13px;
+        font-weight: 700;
+        top: 110px; /* (320 - 100) / 2 = 110 */
+    }
+
+    .node.left { left: 10px; }
+    .node.right { right: 10px; }
+
+    /* Центральные блоки (Ширина 180px, Высота 55px) */
+    .node.center {
+        background: #ffffff;
+        color: #1a3a6b;
+        border: 1.5px solid #b0cceb;
+        width: 180px;
+        height: 55px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Позиции центральных блоков по Y */
+    .node.pos-1 { top: 10px; }
+    .node.pos-2 { top: 80px; }
+    .node.pos-3 { top: 150px; }
+    .node.pos-4 { top: 220px; }
+
+    /* --- СТРЕЛКИ (SVG) --- */
+    .connections {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .connections path {
+        fill: none;
+        stroke: #8ec5ff;
+        stroke-width: 2px;
+    }
+
+    .connections marker path {
+        fill: #8ec5ff;
+        stroke: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="diagram-container">
+    
+    <!-- Слой со стрелками -->
+    <svg class="connections" viewBox="0 0 560 320">
+        <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+        </defs>
+
+        <!-- 
+            Координаты: 
+            Левый блок: x=130 (10 + 120), центр y=160.
+            Правый блок: x=430 (560 - 10 - 120), центр y=160.
+            Центральные блоки: центр x=280. Левая граница = 190, Правая = 370.
+            
+            Стрелки от левого блока (130, 160) к центральным (190, центр блока):
+            pos-1: центр y = 10 + 27.5 = 37.5
+            pos-2: центр y = 80 + 27.5 = 107.5
+            pos-3: центр y = 150 + 27.5 = 177.5
+            pos-4: центр y = 220 + 27.5 = 247.5
+        -->
+
+        <!-- 1. Левый к верхнему -->
+        <path d="M 130 160 C 160 160, 160 37.5, 190 37.5" marker-end="url(#arrow)" />
+        <!-- 2. Левый ко второму -->
+        <path d="M 130 160 C 160 160, 160 107.5, 190 107.5" marker-end="url(#arrow)" />
+        <!-- 3. Левый к третьему -->
+        <path d="M 130 160 C 160 160, 160 177.5, 190 177.5" marker-end="url(#arrow)" />
+        <!-- 4. Левый к нижнему -->
+        <path d="M 130 160 C 160 160, 160 247.5, 190 247.5" marker-end="url(#arrow)" />
+
+        <!-- 
+            Стрелки от центральных (370, центр) к правому (430, 160):
+        -->
+        <!-- 1. От верхнего к правому -->
+        <path d="M 370 37.5 C 400 37.5, 400 160, 430 160" marker-end="url(#arrow)" />
+        <!-- 2. От второго к правому -->
+        <path d="M 370 107.5 C 400 107.5, 400 160, 430 160" marker-end="url(#arrow)" />
+        <!-- 3. От третьего к правому -->
+        <path d="M 370 177.5 C 400 177.5, 400 160, 430 160" marker-end="url(#arrow)" />
+        <!-- 4. От нижнего к правому -->
+        <path d="M 370 247.5 C 400 247.5, 400 160, 430 160" marker-end="url(#arrow)" />
+    </svg>
+
+    <!-- Блоки -->
+    <div class="node side left">СУПБ</div>
+    
+    <div class="node center pos-1">Квалифицированный<br>персонал</div>
+    <div class="node center pos-2">Исправное<br>оборудование</div>
+    <div class="node center pos-3">Безопасное<br>выполнение работ</div>
+    <div class="node center pos-4">Внутренний<br>производственный<br>контроль</div>
+
+    <div class="node side right">Отсутствие аварий<br>и инцидентов<br>на ОПО</div>
+
+</div>
+
+</body>
+</html>
