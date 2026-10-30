@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Структура документации СУПБ</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .diagram-container {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        padding: 30px 15px;
+        border: 1px solid #dce8f5;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(26, 58, 107, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Главный узел */
+    .node-main {
+        background: #1a3a6b;
+        color: #ffffff;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.5px;
+        z-index: 2;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(26, 58, 107, 0.2);
+    }
+
+    /* Вертикальная линия от главного узла */
+    .vertical-line-main {
+        width: 2px;
+        height: 25px;
+        background: #8ec5ff;
+        z-index: 1;
+    }
+
+    /* Горизонтальная линия, соединяющая 5 блоков */
+    .horizontal-line {
+        width: 88%; /* Ширина линии под 5 блоков */
+        height: 2px;
+        background: #8ec5ff;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    /* Вертикальные линии, спускающиеся к дочерним узлам */
+    .vertical-lines-container {
+        width: 88%;
+        display: flex;
+        justify-content: space-between;
+        z-index: 1;
+    }
+
+    .vertical-line-item {
+        width: 2px;
+        height: 20px;
+        background: #8ec5ff;
+    }
+
+    /* Сетка для дочерних блоков */
+    .children-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 5px;
+    }
+
+    /* Дочерние узлы */
+    .node-child {
+        background: #ffffff;
+        border: 1.5px solid #b0cceb;
+        border-radius: 6px;
+        padding: 12px 8px;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #1a3a6b;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100px; /* Фиксированная высота для ровного низа */
+        transition: all 0.2s ease;
+        line-height: 1.35;
+    }
+
+    .node-child:hover {
+        border-color: #2c5aa0;
+        background: #f8fbff;
+        box-shadow: 0 4px 10px rgba(44, 90, 160, 0.08);
+    }
+
+</style>
+</head>
+<body>
+
+<div class="diagram-container">
+    
+    <!-- Главный блок -->
+    <div class="node-main">Документация СУПБ</div>
+
+    <!-- Соединительные линии -->
+    <div class="vertical-line-main"></div>
+    <div class="horizontal-line"></div>
+    
+    <!-- Вертикальные спуски к блокам -->
+    <div class="vertical-lines-container">
+        <div class="vertical-line-item"></div>
+        <div class="vertical-line-item"></div>
+        <div class="vertical-line-item"></div>
+        <div class="vertical-line-item"></div>
+        <div class="vertical-line-item"></div>
+    </div>
+
+    <!-- Дочерние блоки -->
+    <div class="children-grid">
+        <div class="node-child">Положение о<br>СУПБ</div>
+        <div class="node-child">Заявление о<br>политике в<br>области ПБ</div>
+        <div class="node-child">Положение<br>о ПК</div>
+        <div class="node-child">Планы<br>мероприятий по<br>снижению риска<br>аварий</div>
+        <div class="node-child">Иные<br>документы</div>
+    </div>
+
+</div>
+
+</body>
+</html>
