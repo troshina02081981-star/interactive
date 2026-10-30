@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ответственность по ст. 9.1 КоАП</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .info-card {
+        width: 100%;
+        max-width: 560px;
+        background: #ffffff;
+        border: 1px solid #dce8f5;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(26, 58, 107, 0.05);
+        overflow: hidden;
+    }
+
+    /* Заголовок */
+    .card-header {
+        background: #f4f8fd; /* Светлый фон заголовка */
+        padding: 15px 20px;
+        border-bottom: 1px solid #eaf2fb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header h2 {
+        color: #1a3a6b;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    /* Таблица */
+    .penalty-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .penalty-table th {
+        text-align: left;
+        padding: 12px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #5b7ba8;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #eaf2fb;
+    }
+
+    .penalty-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f5fa;
+        font-size: 12.5px;
+        color: #333;
+        line-height: 1.45;
+        vertical-align: top;
+    }
+
+    .penalty-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Стили для субъектов ответственности (левая колонка) */
+    .subject {
+        font-weight: 700;
+        color: #1a3a6b;
+        white-space: nowrap;
+    }
+
+    .subject span {
+        display: block;
+        font-size: 10px;
+        font-weight: 400;
+        color: #666;
+        margin-top: 3px;
+    }
+
+    /* Стили для санкций (правая колонка) */
+    .sanction {
+        color: #333;
+    }
+
+    .sanction strong {
+        color: #1a3a6b;
+        font-weight: 700;
+    }
+
+    .sanction-divider {
+        display: block;
+        height: 1px;
+        background: #eaf2fb;
+        margin: 8px 0;
+    }
+
+    .sanction-or {
+        color: #888;
+        font-size: 11px;
+        font-style: italic;
+        display: block;
+        margin: 4px 0;
+    }
+
+    /* Цветовой маркер слева для визуализации */
+    .penalty-table tr:hover td {
+        background: #fafcff;
+    }
+</style>
+</head>
+<body>
+
+<div class="info-card">
+    <div class="card-header">
+        <h2>Ответственность по ч. 1 ст. 9.1 КоАП РФ</h2>
+    </div>
+    
+    <table class="penalty-table">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Кто несет ответственность</th>
+                <th style="width: 65%;">Вид наказания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="subject">
+                    Должностные лица
+                    <span>(руководитель, главный инженер)</span>
+                </td>
+                <td class="sanction">
+                    Штраф в размере <strong>от 20 000 до 30 000 рублей</strong>.
+                    <span class="sanction-divider"></span>
+                    <span class="sanction-or">или</span>
+                    <strong>Дисквалификация</strong> на срок от 6 месяцев до 1 года.
+                </td>
+            </tr>
+            <tr>
+                <td class="subject">
+                    Юридические лица
+                    <span>(организация, предприятие)</span>
+                </td>
+                <td class="sanction">
+                    Штраф в размере <strong>от 200 000 до 300 000 рублей</strong>.
+                    <span class="sanction-divider"></span>
+                    <span class="sanction-or">или</span>
+                    <strong>Административное приостановление</strong> деятельности на срок до 90 суток.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
