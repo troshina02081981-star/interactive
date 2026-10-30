@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5 задач производственного контроля</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    /* Внешняя рамка для всего блока */
+    .outer-frame {
+        width: 100%;
+        max-width: 560px;
+        border: 2px solid #2c5aa0; /* Синяя рамка */
+        border-radius: 12px;
+        padding: 20px;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(26, 58, 107, 0.08);
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eaf2fb;
+    }
+
+    .header h1 {
+        color: #1a3a6b;
+        font-size: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .header p {
+        color: #666;
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    /* Карточки задач */
+    .task-card {
+        border: 1.5px solid #b0cceb;
+        border-radius: 8px;
+        background: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .task-card:hover {
+        border-color: #2c5aa0;
+        background: #f8fbff;
+    }
+
+    .task-card.active {
+        border-color: #2c5aa0;
+        box-shadow: 0 4px 12px rgba(44, 90, 160, 0.1);
+    }
+
+    /* Заголовок карточки */
+    .card-header {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+    }
+
+    .card-title {
+        color: #1a3a6b;
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    /* Скрытый текст */
+    .card-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+        background: #f4f8fd;
+    }
+
+    .task-card.active .card-details {
+        max-height: 250px;
+    }
+
+    .details-inner {
+        padding: 12px 15px;
+        font-size: 11px;
+        color: #333;
+        line-height: 1.5;
+        border-top: 1px dashed #b0cceb;
+    }
+
+    .details-inner em {
+        color: #5b7ba8;
+        font-style: normal;
+        font-weight: 600;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="outer-frame">
+    <div class="container">
+        <div class="header">
+            <h1>5 задач производственного контроля</h1>
+            <p>Согласно п. 8 Правил № 2168</p>
+        </div>
+
+        <!-- Задача 1 -->
+        <div class="task-card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-title">Анализ состояния промышленной безопасности</div>
+            </div>
+            <div class="card-details">
+                <div class="details-inner">
+                    Анализ состояния промышленной безопасности опасных производственных объектов, в том числе путем организации проведения соответствующих экспертиз и обследований.
+                </div>
+            </div>
+        </div>
+
+        <!-- Задача 2 -->
+        <div class="task-card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-title">Разработка мер по улучшению состояния промбезопасности</div>
+            </div>
+            <div class="card-details">
+                <div class="details-inner">
+                    Организация работ по разработке мер, направленных на улучшение состояния промышленной безопасности, а именно: на предупреждение аварий, инцидентов и несчастных случаев на опасных производственных объектах.
+                </div>
+            </div>
+        </div>
+
+        <!-- Задача 3 -->
+        <div class="task-card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-title">Контроль за соблюдением требований</div>
+            </div>
+            <div class="card-details">
+                <div class="details-inner">
+                    Контроль за соблюдением требований промышленной безопасности, установленных федеральными законами и нормативными правовыми актами, требований <em>обоснования безопасности ОПО</em>, а также локальных нормативных актов эксплуатирующей организации.
+                </div>
+            </div>
+        </div>
+
+        <!-- Задача 4 -->
+        <div class="task-card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-title">Координация работ и готовность к авариям</div>
+            </div>
+            <div class="card-details">
+                <div class="details-inner">
+                    Координация работ, направленных на предупреждение аварий на опасных производственных объектах, и обеспечение готовности к локализации аварий и ликвидации их последствий.
+                </div>
+            </div>
+        </div>
+
+        <!-- Задача 5 -->
+        <div class="task-card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-title">Контроль за испытаниями и освидетельствованиями</div>
+            </div>
+            <div class="card-details">
+                <div class="details-inner">
+                    Контроль за своевременным проведением необходимых испытаний и технических освидетельствований технических устройств, применяемых на опасных производственных объектах, ремонта и поверки контрольных средств измерений.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleCard(element) {
+        element.classList.toggle('active');
+    }
+</script>
+</body>
+</html>
