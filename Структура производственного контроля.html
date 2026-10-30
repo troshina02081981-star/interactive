@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Структура производственного контроля</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* Внешняя рамка */
+    .outer-frame {
+        width: 100%;
+        max-width: 700px;
+        border: 2px solid #2c5aa0;
+        border-radius: 12px;
+        padding: 20px;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(26, 58, 107, 0.08);
+    }
+
+    h2 {
+        text-align: center;
+        color: #1a3a6b;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    /* Таблица */
+    .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed; /* Фиксированная раскладка для ровных колонок */
+    }
+
+    /* Общие стили для всех ячеек */
+    .matrix-table td {
+        border: 1px solid #d0d0d0;
+        padding: 10px 5px; /* Уменьшили отступы, чтобы ячейки не раздувались */
+        text-align: center;
+        vertical-align: middle;
+        font-size: 10.5px;
+        color: #333;
+        line-height: 1.3;
+    }
+
+    /* Левая колонка (Заголовки строк) */
+    .matrix-table td:first-child {
+        width: 20%; /* Чуть уже */
+        font-weight: 700;
+        text-align: left;
+        background: #f8fbff;
+        padding-left: 10px;
+        font-size: 10.5px;
+    }
+
+    /* Объединенная ячейка (Руководитель) */
+    .matrix-table tr:first-child td:nth-child(2) {
+        background: #ffffff;
+        padding: 10px;
+    }
+
+    /* Красный текст */
+    .highlight-red {
+        color: #d32f2f;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 5px;
+        font-size: 10.5px;
+    }
+
+    /* Иконки */
+    .icon {
+        font-size: 24px; /* Уменьшили иконки */
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    /* Группа иконок */
+    .icon-group {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 3px;
+        margin-bottom: 3px;
+        height: 30px;
+    }
+
+    .icon-group .icon {
+        font-size: 20px;
+        margin: 0;
+    }
+
+    /* Подписи */
+    .label {
+        font-size: 10px;
+        color: #333;
+        margin-top: 3px;
+        display: block;
+    }
+</style>
+</head>
+<body>
+
+<div class="outer-frame">
+    <h2>Структура производственного контроля</h2>
+
+    <table class="matrix-table">
+        <!-- Строка 1 -->
+        <tr>
+            <td>Ответственный за<br>организацию ПК</td>
+            <td colspan="3">
+                <span class="icon">👨‍💼</span>
+                <span class="label">Руководитель</span>
+            </td>
+        </tr>
+
+        <!-- Строка 2 -->
+        <tr>
+            <td>Ответственный за<br>осуществление ПК</td>
+            <td>
+                <span class="highlight-red">ОПО менее 150 чел.</span>
+                <span class="icon">👨‍💼</span>
+                <span class="label">Заместитель<br>руководителя</span>
+            </td>
+            <td>
+                <span class="highlight-red">ОПО от 150 до 500 чел.</span>
+                <span class="icon">👷‍♂️</span>
+                <span class="label">Специально<br>назначенный работник</span>
+            </td>
+            <td>
+                <span class="highlight-red">ОПО более 500 чел.</span>
+                <span class="icon">👨‍💼</span>
+                <span class="label">Руководитель<br>службы ПК</span>
+            </td>
+        </tr>
+
+        <!-- Строка 3 -->
+        <tr>
+            <td>Осуществляющий ПК</td>
+            <td>
+                <div class="icon-group">
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                </div>
+                <span class="label">Назначенные работники</span>
+            </td>
+            <td>
+                <div class="icon-group">
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                </div>
+                <span class="label">Назначенные работники</span>
+            </td>
+            <td>
+                <div class="icon-group">
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                    <span class="icon">👷</span>
+                </div>
+                <span class="label">Назначенные работники<br>и служба ПК</span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
