@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация ОПО</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #2563EB;
+            --primary-light: #EFF6FF;
+            --bg-body: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #475569;
+            --border: #E2E8F0;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        .accordion-container {
+            width: 100%;
+            max-width: 560px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--text-main);
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #F8FAFC;
+        }
+
+        .accordion-header.active {
+            color: var(--primary);
+            background: #F0F9FF;
+        }
+
+        .icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            font-weight: normal;
+            flex-shrink: 0;
+        }
+
+        .accordion-header.active .icon {
+            transform: rotate(45deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #FFFFFF;
+        }
+
+        .accordion-body-inner {
+            padding: 12px 20px 16px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+            border-top: 1px solid #F1F5F9;
+        }
+
+        .accordion-body-inner p {
+            margin-bottom: 8px;
+        }
+
+        .accordion-body-inner ul {
+            padding-left: 18px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        .accordion-body-inner li {
+            margin-bottom: 4px;
+            font-size: 12.5px;
+        }
+
+        .accordion-body-inner strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <div class="header">
+        <h1>Документация для эксплуатации ОПО</h1>
+    </div>
+
+    <!-- 1. Разрешительные документы -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Разрешительные документы</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                <p>Это документы, которые дают владельцу право законно эксплуатировать ОПО.</p>
+                <p>К ним относят:</p>
+                <ul>
+                    <li>выписку из реестра ОПО;</li>
+                    <li>сведения, которые характеризуют ОПО;</li>
+                    <li>лицензии на право вести конкретные виды работ;</li>
+                    <li>полис обязательного страхования гражданской ответственности (ОСОПО);</li>
+                    <li>прочие разрешения.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Проектная и исполнительная документация -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Проектная и исполнительная документация</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                <p><strong>Проектная документация</strong> — это комплект текстовых документов и рабочих чертежей, которые нужны для проведения работ. Ее разрабатывает подрядная организация.</p>
+                <p><strong>Исполнительная документация</strong> — ее оформляет подрядчик на строительно-монтажные работы. В ней он фиксирует, как фактически реализовали проект.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Организационные документы -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Организационные документы</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                <p>В этих документах эксплуатирующая организация определяет, как проводить обязательные мероприятия.</p>
+                <ul>
+                    <li>приказы о назначении ответственных;</li>
+                    <li>внутренние положения и порядки.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Эксплуатационные документы -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Эксплуатационные документы</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                <p>Эта документация определяет, как эксплуатировать здания, сооружения, техустройства и технологические процессы. К ней относят:</p>
+                <ul>
+                    <li>производственные инструкции;</li>
+                    <li>технические регламенты и карты.</li>
+                </ul>
+                <p>Также сюда относят документы, в которых фиксируют состояние оборудования в период эксплуатации или ремонта (паспорта, журналы, ведомости).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Отраслевые документы -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Отраслевые документы</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                <p>Для различных отраслей действуют специальные требования промбезопасности, которые прописаны в отраслевых федеральных нормах и правилах.</p>
+                <p>Для каждого типа ОПО установлены дополнительные документы. Например:</p>
+                <ul>
+                    <li>руководящие документы (РД);</li>
+                    <li>инструкции по устройству или контролю (СО).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleAccordion(header) {
+        const body = header.nextElementSibling;
+        const isActive = header.classList.contains('active');
+
+        const allHeaders = document.querySelectorAll('.accordion-header');
+        const allBodies = document.querySelectorAll('.accordion-body');
+
+        allHeaders.forEach(h => h.classList.remove('active'));
+        allBodies.forEach(b => b.style.maxHeight = null);
+
+        if (!isActive) {
+            header.classList.add('active');
+            body.style.maxHeight = body.scrollHeight + "px";
+        }
+    }
+</script>
+
+</body>
+</html>
