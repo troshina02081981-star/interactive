@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск копии проекта</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #2563EB;
+            --primary-light: #EFF6FF;
+            --bg-body: #FFFFFF; /* Белый фон */
+            --text-main: #1E293B;
+            --text-muted: #475569;
+            --border: #E2E8F0;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        .accordion-container {
+            width: 100%;
+            max-width: 560px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08); /* Легкая синяя тень */
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-light); /* Светло-синий фон шапки */
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary); /* Синий заголовок */
+        }
+
+        .header p {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-top: 6px;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #F8FAFC;
+        }
+
+        .accordion-header.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            font-weight: normal;
+            flex-shrink: 0;
+        }
+
+        .accordion-header.active .icon {
+            transform: rotate(45deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #FFFFFF;
+        }
+
+        .accordion-body-inner {
+            padding: 14px 20px 18px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <div class="header">
+        <h1>Как найти копию проекта?</h1>
+        <p>Если вы столкнулись с проблемой, попробуйте найти документацию одним из способов:</p>
+    </div>
+
+    <!-- 1 -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>1. Запросите архив организации</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                Если архивное дело не ведут и документацию не утилизируют, поищите документы на складах и стеллажах, где организовано хранение. В крупных организациях во время реорганизации документацию часто передают в государственные архивы. Если ничего не нашли в собственном архиве — напишите запрос в госархив по месту нахождения организации.
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>2. Обратитесь в проектную организацию</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                Проектную документацию всегда выполняют в нескольких экземплярах. Один из них хранится в проектной организации или у ее правопреемника. Поэтому, если документация не сохранилась, обратитесь к проектировщику. С большой долей вероятности документы до сих пор лежат в ее архиве.
+            </div>
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>3. Обратитесь в строительную организацию</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                В Градостроительном кодексе за лицом, которое осуществляет строительство, закреплена обязанность передать заказчику экземпляр проектной и исполнительной документации после окончания строительства объекта. При этом один экземпляр остается у строительной организации. Поэтому один из вариантов получить проектно-сдаточную документацию на ОПО — обратиться в строительную организацию с запросом копии экземпляра.
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>4. Обратитесь к первоначальному собственнику</span>
+            <div class="icon">+</div>
+        </div>
+        <div class="accordion-body">
+            <div class="accordion-body-inner">
+                Это вариант для тех ОПО, на которых произошла смена владельца. Возможно, нужные документы пылятся в его архиве.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleAccordion(header) {
+        const body = header.nextElementSibling;
+        const isActive = header.classList.contains('active');
+
+        const allHeaders = document.querySelectorAll('.accordion-header');
+        const allBodies = document.querySelectorAll('.accordion-body');
+
+        allHeaders.forEach(h => h.classList.remove('active'));
+        allBodies.forEach(b => b.style.maxHeight = null);
+
+        if (!isActive) {
+            header.classList.add('active');
+            body.style.maxHeight = body.scrollHeight + "px";
+        }
+    }
+</script>
+
+</body>
+</html>
