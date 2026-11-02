@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Производственный контроль (Аккордеон)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #2563EB;
+            --primary-light: #F8FAFC;
+            --bg-body: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #475569;
+            --border: #E2E8F0;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .accordion-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .accordion-content {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* Кастомный скроллбар */
+        .accordion-content::-webkit-scrollbar { width: 4px; }
+        .accordion-content::-webkit-scrollbar-track { background: transparent; }
+        .accordion-content::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--text-main);
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #F8FAFC;
+        }
+
+        .accordion-header.active {
+            color: var(--primary);
+            background: #F0F9FF;
+        }
+
+        /* Иконка плюс/минус */
+        .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            font-weight: normal;
+            flex-shrink: 0;
+        }
+
+        .accordion-header.active .icon {
+            transform: rotate(45deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #FFFFFF;
+        }
+
+        .accordion-body-inner {
+            padding: 16px 20px;
+            border-top: 1px solid #F1F5F9;
+        }
+
+        /* Стили списков */
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .list-item::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .sub-list {
+            margin-top: 8px;
+            margin-left: 12px;
+            padding-left: 12px;
+            border-left: 2px solid #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sub-item {
+            font-size: 12px;
+            color: #64748B;
+            display: flex;
+            gap: 6px;
+        }
+        
+        .sub-item::before {
+            content: '–';
+            color: #94A3B8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <div class="header">
+        <h1>Производственный контроль</h1>
+    </div>
+
+    <div class="accordion-content">
+        
+        <!-- 1. Ответственный за осуществление ПК -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>Ответственный за осуществление ПК</span>
+                <div class="icon">+</div>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-body-inner">
+                    <div class="list">
+                        <div class="list-item">Подготавливать положение о ПК и вносить в него изменения.</div>
+                        <div class="list-item">Разрабатывать ежегодный план мероприятий по обеспечению ПБ.</div>
+                        <div class="list-item">Подготавливать и предоставлять сведения об организации ПК.</div>
+                        <div class="list-item">Контролировать выполнение работниками, осуществляющими ПК, возложенных на них обязанностей.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Осуществляющий ПК -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>Осуществляющий ПК</span>
+                <div class="icon">+</div>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-body-inner">
+                    <div class="list">
+                        <div class="list-item">Проводить контроль за соблюдением требований ПБ работниками ОПО и подрядных организаций.</div>
+                        <div class="list-item">Разрабатывать план работы по осуществлению ПК и проводить проверки состояния ПБ.</div>
+                        <div class="list-item">Анализировать причины возникновения аварий и инцидентов на ОПО.</div>
+                        <div class="list-item">Хранить документацию по учету аварий и инцидентов.</div>
+                        <div class="list-item">Информировать работников о требованиях ПБ и их изменениях.</div>
+                        <div class="list-item">Обеспечивать работников на ОПО нормативными актами.</div>
+                        <div class="list-item">Участвовать в расследовании причин аварий, инцидентов и НС.</div>
+                        <div class="list-item">Участвовать во внедрении новых технологий и оборудования.</div>
+                        <div class="list-item">Вносить руководителю предложения при выявлении нарушений требований ПБ.</div>
+                        <div class="list-item" style="flex-direction: column; gap: 4px; align-items: stretch;">
+                            <span style="display:flex; gap:8px; font-weight:500; color:var(--text-main);">Контролировать:</span>
+                            <div class="sub-list">
+                                <div class="sub-item">выполнять лицензионные требования и предписания</div>
+                                <div class="sub-item">своевременно проводить испытания и освидетельствования ТУ</div>
+                                <div class="sub-item">наличие документов об оценке соответствия ТУ</div>
+                                <div class="sub-item">разрабатывать ПМЛА</div>
+                                <div class="sub-item">проводить ЭПБ</div>
+                                <div class="sub-item">подготавливать и аттестовывать работников</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Права -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>Права специалистов ПК</span>
+                <div class="icon">+</div>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-body-inner">
+                    <div class="list">
+                        <div class="list-item">Свободно посещать ОПО в любое время.</div>
+                        <div class="list-item">Знакомиться с документами для оценки состояния ПБ в организации.</div>
+                        <div class="list-item">Участвовать в разработке деклараций ПБ.</div>
+                        <div class="list-item">Участвовать в комиссии по расследованию причин аварий, инцидентов и НС.</div>
+                        <div class="list-item">Вносить руководителю предложения о поощрении работников.</div>
+                        <div class="list-item">Вносить предложения об изменении или расторжении договоров с нарушителями ПБ.</div>
+                        <div class="list-item">Приостанавливать работу ТУ при выявлении нарушений требований ПБ.</div>
+                        <div class="list-item">Участвовать в работе по подготовке проведения ЭПБ.</div>
+                        <div class="list-item">Контролировать готовность к действиям по локализации аварий (ПАСФ и НАСФ).</div>
+                        <div class="list-item">Контролировать состояние систем наблюдения, оповещения и связи.</div>
+                        <div class="list-item">Контролировать актуальность информации о состоянии ПБ.</div>
+                        <div class="list-item">Контролировать безопасную эксплуатацию зданий и сооружений.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleAccordion(header) {
+        const body = header.nextElementSibling;
+        const isActive = header.classList.contains('active');
+
+        // Закрываем все остальные (режим аккордеона)
+        const allHeaders = document.querySelectorAll('.accordion-header');
+        const allBodies = document.querySelectorAll('.accordion-body');
+
+        allHeaders.forEach(h => h.classList.remove('active'));
+        allBodies.forEach(b => b.style.maxHeight = null);
+
+        // Если текущий был не открыт — открываем его
+        if (!isActive) {
+            header.classList.add('active');
+            body.style.maxHeight = body.scrollHeight + "px";
+        }
+    }
+</script>
+
+</body>
+</html>
