@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Соедини стрелками: промпты</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+    padding: 16px;
+    color: #1a2a44;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 18px;
+    margin: 0 0 12px;
+    color: #1a3e6e;
+  }
+
+  .board { position: relative; max-width: 560px; margin: 0 auto; }
+
+  canvas {
+    position: absolute; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    position: relative;
+    z-index: 1;
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+  th, td {
+    border: 1px solid #b8cbe3;
+    padding: 6px 7px;
+    vertical-align: top;
+    text-align: left;
+  }
+  th {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: #e8f0fa;
+    color: #1a3e6e;
+    font-size: 10.5px;
+    letter-spacing: .3px;
+  }
+  td:first-child { width: 38%; }
+  td:last-child  { width: 62%; }
+
+  tbody tr { transition: background .2s; }
+  tbody tr.solved td { background: #f4f9ff; }
+
+  .cell {
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 1px 3px;
+    margin: -1px -3px;
+    display: inline-block;
+    width: 100%;
+    transition: background .15s;
+  }
+  .cell:hover { background: #e3eefc; }
+  .cell.active { background: #d6e6fb; outline: 2px solid #2e6fd6; }
+  .cell.matched { background: #e6f0ff; }
+  .cell.correct { background: #e6f0ff; outline: 2px solid #2e6fd6; }
+  .cell.wrong   { background: #fdecea; outline: 2px solid #c0392b; }
+
+  .controls { text-align: center; margin: 14px auto 0; max-width: 560px; }
+  button {
+    padding: 8px 18px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    background: #2e6fd6;
+    color: #fff;
+    cursor: pointer;
+    margin: 0 4px;
+    transition: background .15s;
+  }
+  button:hover { background: #1e57b3; }
+  button.reset { background: #8aa4c8; }
+  button.reset:hover { background: #6b8ab3; }
+
+  .explanation { max-width: 560px; margin: 14px auto 0; font-size: 12px; }
+  .result-line { text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
+  .result-line.ok  { color: #2e6fd6; }
+  .result-line.bad { color: #c0392b; }
+
+  .err-card {
+    background: #ffffff;
+    border-left: 4px solid #2e6fd6;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(30, 87, 179, .12);
+  }
+  .err-card .bad  { color: #c0392b; font-weight: bold; }
+  .err-card .good { color: #2e6fd6; font-weight: bold; }
+  .err-card .why  { color: #4a5f80; font-style: italic; margin-top: 4px; display: block; }
+  .err-card p { margin: 2px 0; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  tbody tr.moved { animation: slideIn .35s ease-out; }
+</style>
+</head>
+<body>
+
+<h2>Соедини стрелками промпты</h2>
+
+<div class="board" id="board">
+  <canvas id="canvas"></canvas>
+  <table>
+    <thead>
+      <tr>
+        <th>НЕПРАВИЛЬНЫЙ ПРОМПТ</th>
+        <th>ИСПРАВЛЕННЫЙ ПРОМПТ</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="controls">
+  <button onclick="checkAnswers()">Проверить</button>
+  <button class="reset" onclick="resetGame()">Сбросить</button>
+</div>
+
+<div class="explanation" id="explanation" style="display:none;"></div>
+
+<script>
+const pairs = [
+  { id:1, wrong:"Сделай анализ рисков на объекте",
+    right:"Проведи анализ рисков аварий для нефтебазы, учитывая только технологические риски. Результат представь в виде таблицы: риск — причина — последствия — меры снижения.",
+    error:"Не указан объект (нефтебаза), тип рисков (только технологические) и формат вывода (таблица)." },
+  { id:2, wrong:"Напиши инструкцию по безопасности",
+    right:"Напиши инструкцию по промышленной безопасности для операторов котельной на ОПО. Укажи только действия перед началом работы и во время работы. Формат — список из 10 пунктов.",
+    error:"Не указаны вид безопасности (промышленная), аудитория (операторы котельной), этапы (до/во время работы) и формат (10 пунктов)." },
+  { id:3, wrong:"Подготовь отчет по проверке",
+    right:"Составь отчет по результатам проверки промышленной безопасности на ОПО. Включи разделы: выявленные нарушения, оценка рисков, рекомендации. Результат выдай в формате прикрепленного файла.",
+    error:"Не указаны тип проверки, объект (ОПО), обязательные разделы отчета и формат выдачи (файл)." },
+  { id:4, wrong:"Оцени риски и предложи меры",
+    right:"Оцени риски аварий при эксплуатации резервуаров с ГСМ на ОПО. Укажи только критические риски и предложи меры их снижения. Формат — список.",
+    error:"Не указаны объект (резервуары с ГСМ на ОПО), фокус (только критические риски) и формат вывода (список)." },
+  { id:5, wrong:"Сделай анализ аварий",
+    right:"Проведи анализ причин аварий на химическом предприятии. Учитывай только технологические факторы. Результат представь в виде структурированного списка с пояснениями.",
+    error:"Не указаны объект (химическое предприятие), ограничение (только технологические факторы) и формат вывода (структурированный список)." }
+];
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const board = document.getElementById('board');
+const tbody = document.getElementById('tbody');
+
+let connections = [];
+let selectedLeft = null;
+let selectedRight = null;
+let checked = false;
+
+let rowOrder = [];
+
+function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+
+function initRowOrder(){
+  const shuffled = shuffle(pairs);
+  rowOrder = shuffled.map(p => ({ leftId: p.id, rightId: p.id }));
+}
+
+function resizeCanvas(){
+  const rect = board.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawLines();
+}
+
+function buildTable(){
+  tbody.innerHTML = '';
+
+  rowOrder.forEach((row)=>{
+    const pLeft  = pairs.find(p => p.id === row.leftId);
+    const pRight = pairs.find(p => p.id === row.rightId);
+    if (!pLeft || !pRight) return;
+
+    const tr = document.createElement('tr');
+    tr.dataset.leftId = row.leftId;
+    tr.dataset.rightId = row.rightId;
+
+    const tdL = document.createElement('td');
+    const spanL = document.createElement('span');
+    spanL.className = 'cell';
+    spanL.dataset.side = 'left';
+    spanL.dataset.id = pLeft.id;
+    spanL.textContent = pLeft.wrong;
+    spanL.onclick = ()=> onCellClick(spanL);
+    tdL.appendChild(spanL);
+
+    const tdR = document.createElement('td');
+    const spanR = document.createElement('span');
+    spanR.className = 'cell';
+    spanR.dataset.side = 'right';
+    spanR.dataset.id = pRight.id;
+    spanR.textContent = pRight.right;
+    spanR.onclick = ()=> onCellClick(spanR);
+    tdR.appendChild(spanR);
+
+    tr.appendChild(tdL);
+    tr.appendChild(tdR);
+    tbody.appendChild(tr);
+  });
+
+  requestAnimationFrame(()=>{ resizeCanvas(); });
+}
+
+function refreshClasses(){
+  document.querySelectorAll('.cell').forEach(el=>{
+    el.classList.remove('matched','correct','wrong','active');
+  });
+  connections.forEach(c=>{
+    document.querySelector(`.cell[data-side="left"][data-id="${c.leftId}"]`)?.classList.add('matched');
+    document.querySelector(`.cell[data-side="right"][data-id="${c.rightId}"]`)?.classList.add('matched');
+  });
+  if (checked){
+    document.querySelectorAll('.cell').forEach(el=>{
+      const id = parseInt(el.dataset.id);
+      const side = el.dataset.side;
+      const c = connections.find(c =>
+        (side==='left' && c.leftId===id) || (side==='right' && c.rightId===id)
+      );
+      if (!c){ el.classList.add('wrong'); return; }
+      if (c.leftId === c.rightId) el.classList.add('correct');
+      else el.classList.add('wrong');
+    });
+  }
+}
+
+function onCellClick(el){
+  if (checked) return;
+  const side = el.dataset.side;
+  const id = parseInt(el.dataset.id);
+
+  const existing = connections.find(c =>
+    (side==='left'  && c.leftId  === id) ||
+    (side==='right' && c.rightId === id)
+  );
+  if (existing){
+    connections = connections.filter(c => c !== existing);
+    refreshClasses();
+    drawLines();
+    return;
+  }
+
+  document.querySelectorAll(`.cell[data-side="${side}"]`).forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+
+  if (side==='left') selectedLeft = id; else selectedRight = id;
+
+  if (selectedLeft !== null && selectedRight !== null){
+    connections = connections.filter(c => c.leftId !== selectedLeft && c.rightId !== selectedRight);
+    connections.push({ leftId: selectedLeft, rightId: selectedRight });
+
+    document.querySelectorAll('.cell.active').forEach(x=>x.classList.remove('active'));
+    selectedLeft = selectedRight = null;
+
+    refreshClasses();
+    drawLines();
+  }
+}
+
+function getAnchor(el, side){
+  const r = el.getBoundingClientRect();
+  const b = board.getBoundingClientRect();
+  return {
+    x: (side==='left' ? r.right - b.left : r.left - b.left),
+    y: r.top + r.height/2 - b.top
+  };
+}
+
+function drawArrow(from, to, color){
+  const headLen = 9;
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.8;
+
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(to.x, to.y);
+  ctx.lineTo(to.x - headLen*Math.cos(angle - Math.PI/7), to.y - headLen*Math.sin(angle - Math.PI/7));
+  ctx.lineTo(to.x - headLen*Math.cos(angle + Math.PI/7), to.y - headLen*Math.sin(angle + Math.PI/7));
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawLines(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  connections.forEach(c=>{
+    const lEl = document.querySelector(`.cell[data-side="left"][data-id="${c.leftId}"]`);
+    const rEl = document.querySelector(`.cell[data-side="right"][data-id="${c.rightId}"]`);
+    if (!lEl || !rEl) return;
+    let color = '#2e6fd6';
+    if (checked) color = (c.leftId === c.rightId) ? '#2e6fd6' : '#c0392b';
+    drawArrow(getAnchor(lEl,'left'), getAnchor(rEl,'right'), color);
+  });
+}
+
+function checkAnswers(){
+  checked = true;
+  let correct = 0;
+  const cards = [];
+
+  pairs.forEach(p=>{
+    const c = connections.find(c => c.leftId === p.id);
+    if (c && c.rightId === p.id) correct++;
+    else cards.push(`
+      <div class="err-card">
+        <p><span class="bad">✗ Неправильно:</span> «${p.wrong}»</p>
+        <p><span class="good">✓ Правильно:</span> «${p.right}»</p>
+        <span class="why">Ошибка: ${p.error}</span>
+      </div>
+    `);
+  });
+
+  const solved = [];
+  const unsolved = [];
+
+  rowOrder.forEach(row=>{
+    const c = connections.find(c => c.leftId === row.leftId);
+    if (c && c.rightId === row.rightId && row.leftId === row.rightId){
+      solved.push(row);
+    } else {
+      unsolved.push(row);
+    }
+  });
+
+  const newOrder = [...solved, ...unsolved];
+  const changed = newOrder.some((r, i) => r !== rowOrder[i]);
+  rowOrder = newOrder;
+
+  if (changed){
+    buildTable();
+    requestAnimationFrame(()=>{
+      tbody.querySelectorAll('tr').forEach((tr, i)=>{
+        if (i < solved.length) tr.classList.add('moved');
+      });
+      resizeCanvas();
+    });
+  } else {
+    refreshClasses();
+    drawLines();
+  }
+
+  const expl = document.getElementById('explanation');
+  expl.style.display = 'block';
+
+  const allOk = correct === pairs.length;
+  const resultLine = allOk
+    ? `<div class="result-line ok">✅ Всё верно! (${correct}/${pairs.length})</div>`
+    : `<div class="result-line bad">Результат: ${correct} из ${pairs.length} верно</div>`;
+
+  expl.innerHTML = resultLine + cards.join('');
+
+  requestAnimationFrame(()=>{
+    refreshClasses();
+    drawLines();
+  });
+}
+
+function resetGame(){
+  checked = false;
+  connections = [];
+  selectedLeft = selectedRight = null;
+  initRowOrder();
+  buildTable();
+  document.getElementById('explanation').style.display = 'none';
+}
+
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('load', resizeCanvas);
+
+initRowOrder();
+buildTable();
+</script>
+</body>
+</html>
