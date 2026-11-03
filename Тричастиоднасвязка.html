@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Связка: автоматизация — цифровизация — нейросети</title>
+<style>
+  :root{
+    --primary:#2c3e50;
+    --accent:#3498db;
+    --accent-2:#4caf7d;
+    --accent-3:#9b59b6;
+    --border:#e2e8f0;
+    --muted:#64748b;
+    --text:#333;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:#ffffff;
+    color:var(--text);
+    margin:0; padding:20px 12px;
+    display:flex; justify-content:center;
+  }
+  .wrapper{
+    background:#ffffff;
+    border:1px solid var(--border);
+    border-radius:14px; padding:22px 20px 26px;
+    max-width:560px; width:100%;
+    box-shadow:0 4px 22px rgba(0,0,0,.06);
+  }
+  h2{
+    text-align:center; color:var(--primary);
+    margin:0 0 6px; font-size:19px;
+  }
+  .subtitle{
+    text-align:center; color:var(--muted);
+    font-size:12.5px; line-height:1.4;
+    margin:0 0 18px;
+  }
+
+  .triangle{
+    position:relative;
+    width:100%;
+    aspect-ratio:1/0.8;
+    margin:0 auto;
+  }
+  svg.lines{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    overflow:visible;
+  }
+  svg.lines line{
+    stroke:#cbd5e1;
+    stroke-width:2.5;
+    transition:stroke .3s, stroke-width .3s;
+  }
+  svg.lines line.active{stroke:var(--accent); stroke-width:3.5;}
+  svg.lines line.active.green{stroke:var(--accent-2);}
+  svg.lines line.active.purple{stroke:var(--accent-3);}
+
+  .node{
+    position:absolute;
+    width:42%;
+    max-width:200px;
+    transform:translate(-50%,-50%);
+    background:#ffffff;
+    border:2px solid var(--border);
+    border-radius:12px;
+    padding:12px 8px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .25s, box-shadow .25s, transform .25s;
+    user-select:none;
+    z-index:2;
+  }
+  .node:hover{
+    border-color:var(--accent);
+    box-shadow:0 6px 20px rgba(52,152,219,.15);
+  }
+  .node.active{
+    border-color:var(--accent);
+    box-shadow:0 8px 26px rgba(52,152,219,.22);
+    transform:translate(-50%,-50%) scale(1.04);
+  }
+  .node .title{
+    font-size:14px; font-weight:700;
+    color:var(--primary); line-height:1.2;
+  }
+
+  .node[data-key="auto"]{ top:14%; left:50%; border-top:4px solid #2c3e50; }
+  .node[data-key="digit"]{ top:82%; left:22%; border-top:4px solid var(--accent); }
+  .node[data-key="nn"]{ top:82%; left:78%; border-top:4px solid var(--accent-3); }
+
+  /* Панель пояснений — изначально скрыта */
+  .info{
+    display:none;
+    background:#ffffff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 15px;
+    font-size:12.8px;
+    line-height:1.5;
+    margin-top:18px;
+  }
+  .info.visible{ display:block; }
+
+  .info h3{
+    margin:0 0 9px; font-size:14.5px; color:var(--primary);
+  }
+  .rel{
+    margin-bottom:8px;
+    padding:7px 9px; border-radius:8px;
+    font-size:12.5px; line-height:1.45;
+    background:#ffffff;
+  }
+  .rel:last-child{margin-bottom:0;}
+  .rel.gives{border-left:4px solid var(--accent-2); background:#ffffff;}
+  .rel.gets{border-left:4px solid var(--accent); background:#ffffff;}
+  .rel.fails{border-left:4px solid #c0392b; background:#ffffff;}
+  .rel .lbl{
+    font-weight:700; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.3px; margin-bottom:2px; display:block;
+  }
+  .rel.gives .lbl{color:#337b57;}
+  .rel.gets .lbl{color:#2472b0;}
+  .rel.fails .lbl{color:#a93226;}
+
+  @media (max-width:520px){
+    .triangle{aspect-ratio:1/1.05;}
+    .node{width:46%;}
+    .node[data-key="digit"]{left:27%;}
+    .node[data-key="nn"]{left:73%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <h2>Три части — одна связка</h2>
+  <p class="subtitle">
+    Нажмите на блок, чтобы увидеть его связи с двумя другими.
+  </p>
+
+  <div class="triangle" id="triangle">
+    <svg class="lines" id="lines" viewBox="0 0 560 448" preserveAspectRatio="none">
+      <line data-pair="auto-digit" x1="280" y1="63" x2="123" y2="367" />
+      <line data-pair="auto-nn"    x1="280" y1="63" x2="437" y2="367" />
+      <line data-pair="digit-nn"   x1="123" y1="367" x2="437" y2="367" />
+    </svg>
+
+    <div class="node" data-key="auto">
+      <div class="title">Автоматизация</div>
+    </div>
+    <div class="node" data-key="digit">
+      <div class="title">Цифровизация</div>
+    </div>
+    <div class="node" data-key="nn">
+      <div class="title">Нейросети</div>
+    </div>
+  </div>
+
+  <div class="info" id="info"></div>
+
+</div>
+
+<script>
+  const nodes = document.querySelectorAll('.node');
+  const lines = document.querySelectorAll('svg.lines line');
+  const info = document.getElementById('info');
+
+  const data = {
+    auto: {
+      title: 'Автоматизация',
+      gets: 'Опирается на данные из цифровизации и на сигналы от нейросетей. Без них правила работают «слепо».',
+      gives: 'Даёт цифровизации структуру и правила, по которым фиксируются данные. Даёт нейросетям место, куда отдавать вывод: остановить, уведомить, записать.',
+      fail: 'Если убрать автоматизацию — данные собираются, но ни во что не превращаются. Нейросетям некуда отдавать результат.'
+    },
+    digit: {
+      title: 'Цифровизация',
+      gets: 'Опирается на правила и первичные данные автоматизации. Без них нечего объединять: данные разрознены или ведутся вручную.',
+      gives: 'Даёт нейросетям чистые и связанные данные — топливо для обучения. Даёт автоматизации полную картину, а не отдельные куски.',
+      fail: 'Если убрать цифровизацию — правила работают вразнобой, картина неполная. Нейросетям не на чем учиться.'
+    },
+    nn: {
+      title: 'Нейросети',
+      gets: 'Опираются на данные цифровизации и на правила автоматизации, куда отдавать результат.',
+      gives: 'Дают автоматизации реакции на то, что не описано простым правилом. Дают цифровизации новые признаки и закономерности в данных.',
+      fail: 'Если убрать нейросети — система работает по жёстким правилам и не видит того, что не описано условием «если — то».'
+    }
+  };
+
+  function clearActive(){
+    nodes.forEach(n => n.classList.remove('active'));
+    lines.forEach(l => l.classList.remove('active','green','purple'));
+    info.classList.remove('visible');
+    info.innerHTML = '';
+  }
+
+  function activate(key){
+    clearActive();
+    const node = document.querySelector(`.node[data-key="${key}"]`);
+    if (node) node.classList.add('active');
+
+    lines.forEach(l => {
+      const [a,b] = l.dataset.pair.split('-');
+      if (a === key || b === key){
+        l.classList.add('active');
+        if ((a==='digit'&&b==='nn')||(a==='nn'&&b==='digit')) l.classList.add('purple');
+        else if ((a==='auto'&&b==='digit')||(a==='digit'&&b==='auto')) l.classList.add('green');
+      }
+    });
+
+    const d = data[key];
+    info.innerHTML = `
+      <h3>${d.title}</h3>
+      <div class="rel gets">
+        <div><span class="lbl">Что получает от других</span>${d.gets}</div>
+      </div>
+      <div class="rel gives">
+        <div><span class="lbl">Что даёт другим</span>${d.gives}</div>
+      </div>
+      <div class="rel fails">
+        <div><span class="lbl">Если убрать</span>${d.fail}</div>
+      </div>
+    `;
+    info.classList.add('visible');
+  }
+
+  nodes.forEach(n => {
+    n.addEventListener('click', () => {
+      const key = n.dataset.key;
+      if (n.classList.contains('active')){
+        clearActive();
+        return;
+      }
+      activate(key);
+    });
+  });
+</script>
+
+</body>
+</html>
