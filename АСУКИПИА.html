@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КИПиА и АСУ ТП</title>
+<style>
+  :root{
+    --blue: #1e5bb8;
+    --blue-dark: #164a94;
+    --blue-light: #eef4fc;
+    --blue-line: #c7d9f2;
+    --text: #1a2b45;
+    --muted: #5b6e88;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--white);
+    color: var(--text);
+    padding: 40px 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    width: 560px;
+    max-width: 100%;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--blue-light);
+  }
+
+  /* Сетка: 2 колонки */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  /* Флип-карточка */
+  .flip-card {
+    background-color: transparent;
+    height: 260px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+  .flip-card.flipped .flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-front, .flip-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid var(--blue-line);
+    box-shadow: 0 4px 14px rgba(30, 91, 184, 0.08);
+  }
+
+  /* Лицевая сторона */
+  .flip-front {
+    background: var(--white);
+    justify-content: center;
+    align-items: center;
+  }
+  .flip-front .icon-wrapper {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .flip-front .icon-wrapper svg {
+    width: 40px;
+    height: 40px;
+    stroke: var(--blue);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .flip-front h3 {
+    font-size: 1rem;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .flip-front p {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+
+  /* Обратная сторона */
+  .flip-back {
+    background: var(--blue);
+    color: var(--white);
+    transform: rotateY(180deg);
+    text-align: left;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(30, 91, 184, 0.25);
+  }
+  .flip-back h4 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--white);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 6px;
+  }
+  .flip-back p {
+    font-size: 0.7rem;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .flip-back p:last-child {
+    margin-bottom: 0;
+  }
+  .flip-back b {
+    color: #ffd54f;
+  }
+
+  /* Нижняя линия */
+  .timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    height: 32px;
+    margin-top: 10px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 30px;
+    right: 30px;
+    height: 2px;
+    background: var(--blue-line);
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  .timeline-dot {
+    position: relative;
+    z-index: 2;
+    width: 26px;
+    height: 26px;
+    background: var(--white);
+    border: 2px solid var(--blue);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .timeline-dot svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--blue);
+    fill: none;
+    stroke-width: 2;
+  }
+  .timeline-dot.active {
+    background: var(--blue);
+  }
+  .timeline-dot.active svg {
+    stroke: var(--white);
+  }
+
+  .hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="title">КИПиА и АСУ ТП: кто за что отвечает</div>
+
+  <div class="grid">
+    
+    <!-- 1. КИПиА -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="icon-wrapper">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+              <path d="M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>
+            </svg>
+          </div>
+          <h3>КИПиА</h3>
+          <p>«Глаза» производства.<br>Нажмите, чтобы узнать больше</p>
+        </div>
+        <div class="flip-back">
+          <h4>Что это такое</h4>
+          <p>Контрольно-измерительные приборы и автоматика: датчики, измерители, исполнительные механизмы.</p>
+          <p><b>Задача:</b> измерять параметры (температуру, давление, вибрацию) и передавать данные.</p>
+          <p>Без КИПиА система не знает, что происходит на объекте.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. АСУ ТП -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="icon-wrapper">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="M8 10h8M8 14h5"/>
+              <circle cx="16" cy="14" r="1.5"/>
+            </svg>
+          </div>
+          <h3>АСУ ТП</h3>
+          <p>«Мозг» производства.<br>Нажмите, чтобы узнать больше</p>
+        </div>
+        <div class="flip-back">
+          <h4>Что это такое</h4>
+          <p>Автоматизированная система управления технологическим процессом.</p>
+          <p><b>Задача:</b> анализировать данные от КИПиА и управлять процессом в реальном времени.</p>
+          <p><b>Важно:</b> простой приносит миллионные убытки. Если АСУ ТП управляет ОПО — действуют требования Ростехнадзора, для критической инфраструктуры — ФСТЭК.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Нижняя линия -->
+  <div class="timeline">
+    <div class="timeline-dot">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </div>
+    <div class="timeline-dot">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+    </div>
+    <div class="timeline-dot">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="timeline-dot active">
+      <svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-9"/></svg>
+    </div>
+  </div>
+
+  <div class="hint">Нажмите на карточку, чтобы перевернуть</div>
+</div>
+
+</body>
+</html>
