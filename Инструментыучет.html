@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Какие инструменты закрывают задачи учета</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.55;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #d6e4f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(30, 80, 140, 0.08);
+            padding: 18px 20px 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #1b4f8a;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e3eef8;
+            line-height: 1.4;
+        }
+        .intro {
+            background: #eef6fd;
+            border-left: 4px solid #4a8bc2;
+            padding: 10px 14px;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .accordion-item {
+            border: 1px solid #dce9f5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: #f7fbff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .accordion-item.open {
+            border-color: #9cc2e5;
+            box-shadow: 0 2px 8px rgba(30, 80, 140, 0.08);
+            background: #ffffff;
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            background: #eaf3fb;
+            color: #1b4f8a;
+            font-weight: 600;
+            font-size: 13.5px;
+            user-select: none;
+            transition: background-color 0.2s;
+            line-height: 1.4;
+        }
+        .accordion-header:hover {
+            background: #dceaf7;
+        }
+        .accordion-item.open .accordion-header {
+            background: #dceaf7;
+            border-bottom: 1px solid #c5dcef;
+        }
+        .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4a8bc2;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .arrow {
+            margin-left: auto;
+            color: #4a8bc2;
+            font-size: 14px;
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .accordion-item.open .arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+        .accordion-item.open .accordion-body {
+            max-height: 700px;
+        }
+        .accordion-content {
+            padding: 12px 16px 16px;
+            font-size: 13px;
+            color: #23394d;
+        }
+        .accordion-content p {
+            margin: 0 0 8px;
+        }
+        .accordion-content p:last-child {
+            margin-bottom: 0;
+        }
+        .highlight {
+            color: #1b4f8a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Какие инструменты закрывают задачи учета</h1>
+
+    <div class="intro">
+        Учет — следующий слой автоматизации. Выясним, какие инструменты закрывают конкретные задачи учета в промышленной безопасности.
+    </div>
+
+    <div class="accordion">
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">1</span>
+                Реестр ОПО и технических устройств
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Учет объектов, характеристик, категорий, классов опасности и статусов эксплуатации.</p>
+                    <p><span class="highlight">Два варианта:</span> модуль «Реестр ОПО и ТУ» в 1С, если она уже есть, или централизованный онлайн-реестр на базе таблиц с шаблонами полей и контролем прав доступа, если бюджета на модуль нет.</p>
+                    <p>Второй вариант недооценивают зря: при дисциплине заполнения он закрывает базовую задачу.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">2</span>
+                Сроки ЭПБ, диагностик, поверок, ТО, ППР, освидетельствований
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Участок, где учет окупается буквально.</p>
+                    <p><span class="highlight">Варианты:</span> календарь сроков в специализированной системе ПБ с напоминаниями за 90/60/30 дней на почту или в мессенджер; интеграция с корпоративным календарем и задачами; Telegram-бот, веб-дашборд или таблица, которые ежедневно показывают «красную зону».</p>
+                    <p>Главное — чтобы напоминание приходило заранее.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">3</span>
+                Планирование и контроль мероприятий по ПБ
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Модуль «Программы мероприятий» в 1С или веб-системе ПБ с отчетами по статусам: что сделано, что в работе, что просрочено — без обзвона.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">4</span>
+                Обучение и подготовка к аттестации
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Автоматическая выдача задач на обучение при приеме или переводе.</p>
+                    <p>Онлайн-платформа с видео, тестами и автогенерацией удостоверений и протоколов.</p>
+                    <p>Модуль «Аттестация» с реестром групп, протоколов, сроков и напоминаний.</p>
+                    <p>Интеграция с обучающим центром или порталом Ростехнадзора.</p>
+                    <p>Отчеты по готовности к аттестации — кого, когда и по каким областям отправлять.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">5</span>
+                Графики ППР, замены, обслуживания
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Мобильные чек-листы со статусами «Выполнено / Не выполнено» и фотофиксацией.</p>
+                    <p>Автогенерация заявок на ремонт из событий АСУ.</p>
+                    <p>Фотофиксация превращает «сделано» из слова в доказательство.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">6</span>
+                Производственный контроль и внутренние аудиты
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Графики, чек-листы, акты, нарушения, мероприятия.</p>
+                    <p><span class="highlight">Мобильный аудит-клиент:</span> специалист отмечает пункты на планшете или телефоне и прикрепляет фото.</p>
+                    <p>Проверка больше не теряется на бумаге.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">7</span>
+                Учет аварий, инцидентов, отказов, нарушений, расследований
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Единый реестр с карточками событий, этапами расследования и мероприятиями.</p>
+                    <p>Формы уведомлений и отчетов с автозаполнением.</p>
+                    <p>Аналитика причин по методу «5 почему» и рейтинг повторяющихся сценариев — он показывает, где проблема повторяется, а не просто фиксирует очередной случай.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">8</span>
+                Контроль обучения подрядчиков и допусков
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Портал для подрядчиков с самозагрузкой документов и контролем сроков.</p>
+                    <p>Автоматическая проверка пакета допуска перед пропуском или нарядом.</p>
+                    <p>QR-код на пропуске со статусом обучения.</p>
+                    <p>Закрывает дыру, где бумажный учет чаще всего теряет людей.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">9</span>
+                Аналитика, отчетность и дашборды
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Статистика, тренды нарушений и рисков.</p>
+                    <p>Готовые дашборды для руководства по объектам, видам рисков и затратам.</p>
+                    <p>Автоматическая рассылка отчетов на почту.</p>
+                    <p>Превращает накопленные данные в решения, а не в архив.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.accordion-header').forEach(function (header) {
+        header.addEventListener('click', function () {
+            var item = header.parentElement;
+            var isOpen = item.classList.contains('open');
+            document.querySelectorAll('.accordion-item').forEach(function (el) {
+                el.classList.remove('open');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
