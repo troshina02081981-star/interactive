@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный гид: Регистрация ЭПБ на Госуслугах</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;      /* Насыщенный синий */
+            --primary-light: #e7f1ff;      /* Светло-голубой для подложек */
+            --primary-hover: #003d82;      /* Тёмно-синий при наведении */
+            --accent-color: #3399ff;       /* Акцентный голубой */
+            --success-color: #28a745;
+            --bg-color: #ffffff;           /* Белый фон */
+            --text-color: #1a2b4a;         /* Тёмно-синий текст */
+            --border-color: #cfe2ff;       /* Голубоватая рамка */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 560px;
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 17px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+
+        h3 { font-size: 15px; color: var(--primary-color); }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-light);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step-indicator {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+            position: relative;
+            z-index: 2;
+            transition: background 0.3s, color 0.3s;
+            border: 2px solid #ffffff;
+        }
+
+        .step-indicator.active {
+            background: var(--primary-color);
+            color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.2);
+        }
+
+        .step-indicator.completed {
+            background: var(--accent-color);
+            color: #ffffff;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+            font-size: 14px;
+        }
+
+        .step-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box {
+            background: var(--primary-light);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .warning-box {
+            background: #fff8e6;
+            color: #8a6d00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        ul { padding-left: 18px; margin: 8px 0; }
+        li { margin-bottom: 6px; }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #ffffff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background: var(--primary-hover); }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .highlight {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .link-text {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+            word-break: break-all;
+        }
+
+        /* ===== Блок для картинок ===== */
+        .img-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+        .img-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .img-caption {
+            font-size: 12px;
+            color: var(--primary-color);
+            margin-top: 6px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Модальное окно для увеличения картинки */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 30, 70, 0.9);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .modal.show { display: flex; }
+
+        .modal img {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+            border: 3px solid #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Регистрация ЭПБ на Госуслугах</h1>
+
+    <div class="progress-bar">
+        <div class="step-indicator active" data-step="1">1</div>
+        <div class="step-indicator" data-step="2">2</div>
+        <div class="step-indicator" data-step="3">3</div>
+        <div class="step-indicator" data-step="4">4</div>
+        <div class="step-indicator" data-step="5">5</div>
+        <div class="step-indicator" data-step="6">6</div>
+    </div>
+
+    <!-- Шаг 1 -->
+    <div class="step-content active" id="step-1">
+        <h2>Шаг 1. Начало работы</h2>
+        <div class="info-box">
+            <strong>Что нужно сделать:</strong> Перейдите на портал Госуслуг и найдите нужную услугу.
+        </div>
+        <p>Перейдите по ссылке: <a href="https://www.gosuslugi.ru/625124/1/form" target="_blank" class="link-text">https://www.gosuslugi.ru/625124/1/form</a></p>
+        <p>Или задайте в поиске Госуслуг запрос: <span class="highlight">«регистрация экспертизы промышленной безопасности»</span></p>
+
+        <div class="img-container">
+            <img src="images/page1.png" alt="Поиск на Госуслугах" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: поиск услуги на Госуслугах</div>
+        </div>
+
+        <p>В результатах поиска выберите услугу <strong>«Ведение реестра заключений экспертизы промышленной безопасности»</strong>.</p>
+        <div class="info-box">
+            <strong>Что можно сделать с помощью услуги:</strong>
+            <ul>
+                <li>Внести заключение в реестр</li>
+                <li>Получить выписку из реестра</li>
+                <li>Исключить заключение из реестра</li>
+                <li>Исправить опечатки или ошибки</li>
+            </ul>
+        </div>
+        <button class="btn" onclick="nextStep(2)">Начать</button>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div class="step-content" id="step-2">
+        <h2>Шаг 2. Выбор действия и требования</h2>
+        <div class="info-box">
+            <strong>Выберите действие:</strong> Нажмите «Внести заключение экспертизы промышленной безопасности в реестр».
+        </div>
+        <p><strong>Что потребуется:</strong></p>
+        <ul>
+            <li>Данные организации</li>
+            <li>Ваши данные</li>
+            <li>Данные экспертной организации</li>
+            <li>Сведения об экспертах</li>
+            <li>Данные заключения ЭПБ</li>
+            <li>Сведения о выводах</li>
+            <li>Скан заключения</li>
+        </ul>
+        <p><strong>Срок:</strong> 1 рабочий день.</p>
+        <p><strong>Подпись:</strong> Нужна электронная подпись.</p>
+        <p><strong>Результат:</strong> Выписка в личном кабинете.</p>
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep(1)">Назад</button>
+            <button class="btn" onclick="nextStep(3)">Перейти к заявлению</button>
+        </div>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div class="step-content" id="step-3">
+        <h2>Шаг 3. Проверка данных организации</h2>
+        <div class="info-box">
+            Данные подтягиваются из профиля Госуслуг автоматически.
+        </div>
+
+        <h3>1. Данные организации</h3>
+        <p>Проверьте наименование, ИНН, ФИО руководителя.</p>
+
+        <h3>2. Телефон и почта</h3>
+        <p>Проверьте и при необходимости отредактируйте.</p>
+
+        <h3>3. Юридический адрес</h3>
+        <p>Подтягивается автоматически.</p>
+
+        <h3>4. Ваши данные</h3>
+        <p>Паспорт, СНИЛС, дата рождения.</p>
+
+        <h3>5. Ответственный сотрудник</h3>
+        <p>Укажите телефон и email для связи.</p>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep(2)">Назад</button>
+            <button class="btn" onclick="nextStep(4)">Далее</button>
+        </div>
+    </div>
+
+    <!-- Шаг 4 -->
+    <div class="step-content" id="step-4">
+        <h2>Шаг 4. Экспертная организация и эксперты</h2>
+
+        <h3>1. ИНН экспертной организации</h3>
+        <p>Ищите в разделе «Сведения об экспертной организации».</p>
+
+        <h3>2. Сведения об экспертах</h3>
+
+        <div class="img-container">
+            <img src="images/page11.png" alt="Тип номера эксперта" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: выбор типа номера эксперта</div>
+        </div>
+
+        <div class="warning-box">
+            Данные берите из раздела «Сведения об экспертах, принимавших участие в проведение экспертизы».
+        </div>
+        <p>Один из трёх способов:</p>
+        <ul>
+            <li>Номер квалификационного удостоверения (чаще всего)</li>
+            <li>Номер записи в ЕРУЛ</li>
+            <li>Номер удостоверения независимой оценки</li>
+        </ul>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep(3)">Назад</button>
+            <button class="btn" onclick="nextStep(5)">Далее</button>
+        </div>
+    </div>
+
+    <!-- Шаг 5 -->
+    <div class="step-content" id="step-5">
+        <h2>Шаг 5. Данные заключения</h2>
+        <div class="warning-box">
+            Все данные берутся из текста экспертизы. Текст можно сократить до существенной части.
+        </div>
+
+        <h3>1. Наименование</h3>
+        <p>Дословно с титульного листа.</p>
+
+        <h3>2. Объект экспертизы</h3>
+        <p>Из выпадающего списка.</p>
+
+        <div class="img-container">
+            <img src="images/page12.png" alt="Форма данных заключения" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: поля для данных заключения</div>
+        </div>
+
+        <h3>3. Наименование объекта</h3>
+        <p>Из раздела «Наименование объекта экспертизы».</p>
+
+        <h3>4. Назначение объекта</h3>
+        <p>Из раздела «Назначение объекта экспертизы».</p>
+
+        <div class="img-container">
+            <img src="images/page15.png" alt="Заполненная форма" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: пример заполнения</div>
+        </div>
+
+        <h3>5. Регистрационный номер ОПО</h3>
+        <p>Обычно на титульном листе.</p>
+
+        <h3>6. Выводы</h3>
+        <p>Выберите «соответствует» или «не соответствует».</p>
+
+        <div class="img-container">
+            <img src="images/page16.png" alt="Выводы" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: выбор вывода</div>
+        </div>
+
+        <div class="img-container">
+            <img src="images/page17.png" alt="Пример выводов" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: пример заполнения выводов</div>
+        </div>
+
+        <p>Укажите регистрационный номер заключения и дату подписания.</p>
+        <p><em>Срок безопасной эксплуатации</em> — необязательно.</p>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep(4)">Назад</button>
+            <button class="btn" onclick="nextStep(6)">Далее</button>
+        </div>
+    </div>
+
+    <!-- Шаг 6 -->
+    <div class="step-content" id="step-6">
+        <h2>Шаг 6. Документы и отправка</h2>
+
+        <h3>1. Заключение (PDF)</h3>
+        <p>Скан с подписями эксперта и директора, заверенный печатью.</p>
+
+        <div class="img-container">
+            <img src="images/page18.png" alt="Загрузка PDF" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: загрузка заключения</div>
+        </div>
+
+        <h3>2. Электронная подпись (SIG)</h3>
+        <p>Два файла .sig (от эксперта и директора).</p>
+
+        <div class="img-container">
+            <img src="images/page20.png" alt="Загруженные файлы" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: загруженные PDF и SIG</div>
+        </div>
+
+        <h3>3. Отделение Ростехнадзора</h3>
+        <p>Выберите по поднадзорности вашей организации.</p>
+
+        <div class="img-container">
+            <img src="images/page21.png" alt="Выбор отделения" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: выбор отделения Ростехнадзора</div>
+        </div>
+
+        <h3>4. Подписание и отправка</h3>
+        <p>Проверьте файлы и подпишите заявление.</p>
+
+        <div class="img-container">
+            <img src="images/page22.png" alt="Документы на подписание" onclick="openModal(this.src)">
+            <div class="img-caption">Скриншот: документы на подписание</div>
+        </div>
+
+        <div class="info-box">
+            <strong>Результат:</strong> Выписка придёт в личный кабинет в течение 1 рабочего дня.
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep(5)">Назад</button>
+            <button class="btn" onclick="alert('Поздравляем! Вы прошли инструкцию. Теперь вы готовы подать заявление на Госуслугах.')">Завершить</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Модальное окно для увеличения картинки -->
+<div class="modal" id="imgModal" onclick="closeModal()">
+    <img id="modalImg" src="" alt="Увеличенное изображение">
+</div>
+
+<script>
+    let currentStep = 1;
+
+    function updateUI() {
+        document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+
+        document.querySelectorAll('.step-indicator').forEach(el => {
+            const stepNum = parseInt(el.getAttribute('data-step'));
+            el.classList.remove('active', 'completed');
+            if (stepNum === currentStep) {
+                el.classList.add('active');
+            } else if (stepNum < currentStep) {
+                el.classList.add('completed');
+            }
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep(step) {
+        if (step <= 6) {
+            currentStep = step;
+            updateUI();
+        }
+    }
+
+    function prevStep(step) {
+        if (step >= 1) {
+            currentStep = step;
+            updateUI();
+        }
+    }
+
+    function openModal(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imgModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('imgModal').classList.remove('show');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+</script>
+
+</body>
+</html>
