@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как подготовиться к внедрению</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.55;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #d6e4f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(30, 80, 140, 0.08);
+            padding: 18px 20px 24px;
+        }
+
+        /* Заголовок-формула */
+        .formula-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #f4f8fd;
+            border: 1px solid #dce9f5;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            color: #1b4f8a;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .formula-header svg {
+            flex-shrink: 0;
+        }
+
+        /* Сетка карточек */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 480px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step-card {
+            background: #ffffff;
+            border: 1.5px solid #c5dcef;
+            border-radius: 8px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .step-card:hover {
+            border-color: #6b9cc7;
+            box-shadow: 0 2px 6px rgba(30, 80, 140, 0.1);
+        }
+        .step-card.active {
+            border-color: #2a6db0;
+            background: #f2f8fd;
+            box-shadow: 0 2px 8px rgba(30, 80, 140, 0.15);
+        }
+        .step-card .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-card .icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        .step-card .step-title {
+            font-weight: 700;
+            font-size: 12px;
+            color: #1b4f8a;
+            line-height: 1.3;
+        }
+        .step-card .step-subtitle {
+            font-size: 10.5px;
+            color: #5b7ba8;
+            line-height: 1.3;
+        }
+
+        /* Блок с подробностями */
+        .details-box {
+            background: #eef6fd;
+            border: 1px solid #c5dcef;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #23394d;
+            min-height: 80px;
+            display: none;
+        }
+        .details-box.visible {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .details-box strong {
+            color: #1b4f8a;
+        }
+        .details-box ul {
+            margin: 6px 0 0;
+            padding-left: 18px;
+        }
+        .details-box li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="formula-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a8bc2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>
+        </svg>
+        Как подготовиться к внедрению
+    </div>
+
+    <div class="steps-grid" id="stepsGrid">
+        <!-- Карточки будут добавлены через JS -->
+    </div>
+
+    <div class="details-box" id="detailsBox"></div>
+</div>
+
+<script>
+    const steps = [
+        {
+            title: "Диагностика",
+            subtitle: "Где теряется время",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+            details: `<strong>Найдите, где теряется время.</strong> Измерьте это в деньгах. Пример: мастера тратили до 40% времени на поиск документации и полагались на память, а мелкие замечания терялись — в итоге регулярные внеплановые остановки на несколько часов и сверхурочные ремонты.`
+        },
+        {
+            title: "Описание процесса",
+            subtitle: "На бумаге",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+            details: `<strong>Опишите процесс на бумаге.</strong> Если его нет, система его не создаст.`
+        },
+        {
+            title: "Цель и показатели",
+            subtitle: "Что улучшаем",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+            details: `<strong>Сформулируйте цель и показатели.</strong> Иначе после внедрения трудно ответить, что стало лучше. Зафиксируйте исходное состояние и оценивайте эффект через полгода-год.`
+        },
+        {
+            title: "Осторожно с показателями",
+            subtitle: "Глубина проверок",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+            details: `<strong>Снизить число замечаний не всегда означает улучшить</strong> — проверки могли стать менее глубокими. Бывает и наоборот: после внедрения чек-листов замечаний становится больше, потому что проверки стали полнее. Полезно смотреть на время подготовки отчетности, долю просроченных мероприятий, повторные нарушения и своевременность внесения результатов.`
+        },
+        {
+            title: "Готовность людей",
+            subtitle: "Возражения и обучение",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+            details: `<strong>Проверьте готовность людей.</strong> Типичные возражения: «зачем мне это, где взять время, кто будет вводить данные». Старшему поколению сложно осваивать алгоритмы и взаимосвязи документов. Помогает разбить на этапы с маленькими целями, организовывать еженедельные планерки, корректировать инструкции и вводить понятные алгоритмы работы с техподдержкой.`
+        },
+        {
+            title: "Бюджет и инфраструктура",
+            subtitle: "Заранее",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+            details: `<strong>Заложите бюджет и инфраструктуру.</strong> Не всегда нужен дорогой софт, но требования к помещениям и инфраструктуре лучше продумать заранее.`
+        },
+        {
+            title: "Интеграция",
+            subtitle: "Единая картина",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+            details: `<strong>Продумайте интеграцию.</strong> Иначе оборудование в одной системе, проверки в другой, а мероприятия в третьей — и картину снова собирают вручную.`
+        },
+        {
+            title: "Ответственный за данные",
+            subtitle: "Качество и актуальность",
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+            details: `<strong>Назначьте ответственного за качество и актуальность данных.</strong> Без этого система быстро теряет ценность.`
+        }
+    ];
+
+    const grid = document.getElementById('stepsGrid');
+    const detailsBox = document.getElementById('detailsBox');
+
+    steps.forEach((step, index) => {
+        const card = document.createElement('div');
+        card.className = 'step-card';
+        card.innerHTML = `
+            <div class="icon">${step.icon}</div>
+            <div class="step-title">${index + 1}. ${step.title}</div>
+            <div class="step-subtitle">${step.subtitle}</div>
+        `;
+        card.addEventListener('click', () => {
+            const isActive = card.classList.contains('active');
+            document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+            if (isActive) {
+                detailsBox.classList.remove('visible');
+                detailsBox.innerHTML = '';
+            } else {
+                card.classList.add('active');
+                detailsBox.innerHTML = step.details;
+                detailsBox.classList.add('visible');
+            }
+        });
+        grid.appendChild(card);
+    });
+</script>
+
+</body>
+</html>
