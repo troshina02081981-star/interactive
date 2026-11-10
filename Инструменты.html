@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструменты документооборота</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.55;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #d6e4f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(30, 80, 140, 0.08);
+            padding: 18px 20px 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #1b4f8a;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e3eef8;
+            line-height: 1.4;
+        }
+        .intro {
+            background: #eef6fd;
+            border-left: 4px solid #4a8bc2;
+            padding: 10px 14px;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .accordion-item {
+            border: 1px solid #dce9f5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: #f7fbff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .accordion-item.open {
+            border-color: #9cc2e5;
+            box-shadow: 0 2px 8px rgba(30, 80, 140, 0.08);
+            background: #ffffff;
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            background: #eaf3fb;
+            color: #1b4f8a;
+            font-weight: 600;
+            font-size: 13.5px;
+            user-select: none;
+            transition: background-color 0.2s;
+            line-height: 1.4;
+        }
+        .accordion-header:hover {
+            background: #dceaf7;
+        }
+        .accordion-item.open .accordion-header {
+            background: #dceaf7;
+            border-bottom: 1px solid #c5dcef;
+        }
+        .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4a8bc2;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .arrow {
+            margin-left: auto;
+            color: #4a8bc2;
+            font-size: 14px;
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .accordion-item.open .arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .accordion-item.open .accordion-body {
+            max-height: 500px;
+        }
+        .accordion-content {
+            padding: 12px 16px 16px;
+            font-size: 13px;
+            color: #23394d;
+        }
+        .accordion-content p {
+            margin: 0 0 8px;
+        }
+        .accordion-content p:last-child {
+            margin-bottom: 0;
+        }
+        .highlight {
+            color: #1b4f8a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Какие инструменты закрывают задачи документооборота</h1>
+
+    <div class="intro">
+        Документооборот — это не одна система, а набор инструментов под разные задачи.
+    </div>
+
+    <div class="accordion">
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">1</span>
+                Управление документацией по ПБ
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">СЭД</span> с маршрутами согласования, электронной подписью и поиском по реквизитам.</p>
+                    <p><span class="highlight">Генерация документов по шаблонам</span> — формы Ростехнадзора и МЧС заполняются из баз данных об ОПО, технических устройствах и сотрудниках.</p>
+                    <p><span class="highlight">Хранилище актуальных версий</span> с контролем прав.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">2</span>
+                Документооборот с надзорными органами
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">Шаблонный конструктор отчетов и уведомлений</span> с автозаполнением.</p>
+                    <p><span class="highlight">Единый реестр предписаний, писем и ответов</span> с контролем сроков.</p>
+                    <p>Снимает вопрос «а мы ответили на это предписание или нет».</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">3</span>
+                База знаний и чат-бот
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Поиск по тегам, шаблоны, ответы на типовые вопросы работников.</p>
+                    <p>Не заменяет специалиста, но снимает часть повторяющихся обращений.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">4</span>
+                Коммуникации
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">«Цифровой уголок по ПБ»</span> на портале.</p>
+                    <p><span class="highlight">Авторассылки</span> о новых документах и изменениях требований.</p>
+                    <p><span class="highlight">Экранные панели в цехах</span> с индикаторами безопасности.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">5</span>
+                Управление задачами службы ПБ
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">Сервис заявок</span> на базе HelpDesk или low-code, куда цеха подают запросы.</p>
+                    <p>Интеграция с таск-трекером.</p>
+                    <p>Чат-бот для типовых запросов.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">6</span>
+                Паспорта безопасности и карты рисков
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">Генерация паспортов</span> из данных реестра ОПО.</p>
+                    <p><span class="highlight">Веб-страницы «Паспорт объекта»</span> с актуальными данными в одном месте.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">7</span>
+                Контроль допусков и обучения подрядчиков
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p><span class="highlight">Портал для подрядчиков</span> с самозагрузкой документов и контролем сроков.</p>
+                    <p><span class="highlight">Автоматическая проверка пакета допуска</span> перед пропуском или нарядом.</p>
+                    <p><span class="highlight">QR-код на пропуске</span> со статусом обучения.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.accordion-header').forEach(function (header) {
+        header.addEventListener('click', function () {
+            var item = header.parentElement;
+            var isOpen = item.classList.contains('open');
+            document.querySelectorAll('.accordion-item').forEach(function (el) {
+                el.classList.remove('open');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
