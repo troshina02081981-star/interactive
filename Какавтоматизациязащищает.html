@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как автоматизация защищает вас</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.55;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #d6e4f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(30, 80, 140, 0.08);
+            padding: 18px 20px 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #1b4f8a;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e3eef8;
+            line-height: 1.4;
+        }
+        .accordion-item {
+            border: 1px solid #dce9f5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: #f7fbff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .accordion-item.open {
+            border-color: #9cc2e5;
+            box-shadow: 0 2px 8px rgba(30, 80, 140, 0.08);
+            background: #ffffff;
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            background: #eaf3fb;
+            color: #1b4f8a;
+            font-weight: 600;
+            font-size: 13.5px;
+            user-select: none;
+            transition: background-color 0.2s;
+            line-height: 1.4;
+        }
+        .accordion-header:hover {
+            background: #dceaf7;
+        }
+        .accordion-item.open .accordion-header {
+            background: #dceaf7;
+            border-bottom: 1px solid #c5dcef;
+        }
+        .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4a8bc2;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .arrow {
+            margin-left: auto;
+            color: #4a8bc2;
+            font-size: 14px;
+            transition: transform 0.25s;
+            flex-shrink: 0;
+        }
+        .accordion-item.open .arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+        .accordion-item.open .accordion-body {
+            max-height: 500px;
+        }
+        .accordion-content {
+            padding: 12px 16px 16px;
+            font-size: 13px;
+            color: #23394d;
+        }
+        .accordion-content p {
+            margin: 0 0 8px;
+        }
+        .accordion-content p:last-child {
+            margin-bottom: 0;
+        }
+        .highlight {
+            color: #1b4f8a;
+            font-weight: 600;
+        }
+        .quote {
+            font-style: italic;
+            color: #3d5a78;
+            border-left: 3px solid #a8c9e5;
+            padding-left: 10px;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Как автоматизация защищает вас</h1>
+
+    <div class="accordion">
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">1</span>
+                Фиксация цифрового следа
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Когда вы обнаружили нарушение — например, трещину на фундаменте или отсутствие заземления — и занесли его в систему, программа автоматически отправляет электронное предписание начальнику этого цеха.</p>
+                    <p>В ту же секунду в системе появляется <span class="highlight">«цифровой след»</span>, который невозможно стереть или исправить задним числом.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">2</span>
+                Перенос ответственности
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>В системе четко видно: инженер ПБ свою работу выполнил — нарушение выявил, в базу занес, ответственного назначил, срок установил. С этого момента «мяч» переходит на сторону исполнителя.</p>
+                    <p>Если начальник цеха проигнорировал задачу и произошел инцидент, автоматизированная система становится вашим главным алиби перед следствием или инспектором.</p>
+                    <p>Вы выгружаете лог-файл системы, где написано:</p>
+                    <div class="quote">«Предписание сформировано 15-го числа, отправлено начальнику цеха Петрову В.В., им прочитано. Меры не приняты».</div>
+                    <p>Вы защищены.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span class="num">3</span>
+                Исключение человеческого фактора
+                <span class="arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <p>Инспектор Ростехнадзора не сможет обвинить вас в предвзятости или сокрытии нарушений.</p>
+                    <p>Система выдает аналитику <span class="highlight">беспристрастно</span>.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.accordion-header').forEach(function (header) {
+        header.addEventListener('click', function () {
+            var item = header.parentElement;
+            var isOpen = item.classList.contains('open');
+            document.querySelectorAll('.accordion-item').forEach(function (el) {
+                el.classList.remove('open');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
