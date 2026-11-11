@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Индекс критичности оборудования</title>
+    <style>
+        :root {
+            --primary: #004080;
+            --primary-hover: #003366;
+            --bg-light: #f4f8fd;
+            --border-color: #dce4ed;
+            --text: #333;
+            --text-muted: #666;
+            --danger: #d32f2f;
+            --warning: #f57c00;
+            --success: #2e7d32;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 64, 128, 0.06);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: var(--bg-light);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        /* Форма добавления */
+        .add-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .input-group input, .input-group select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+            background: #fff;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            height: 36px;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .btn-add:hover { background: var(--primary-hover); }
+
+        /* Таблица */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-light);
+            color: var(--primary);
+            padding: 10px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        /* Индикаторы и статусы */
+        .score-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 11px;
+            color: #fff;
+        }
+
+        .score-1, .score-2 { background: #a0aec0; } /* Серый */
+        .score-3 { background: #ecc94b; color: #333; } /* Желтый */
+        .score-4 { background: #ed8936; } /* Оранжевый */
+        .score-5 { background: #f56565; } /* Красный */
+
+        .total-index {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Самый опасный элемент */
+        tr.max-risk {
+            background-color: #fff5f5;
+            border-left: 4px solid var(--danger);
+        }
+
+        tr.max-risk td {
+            color: var(--danger);
+        }
+        
+        tr.max-risk .total-index {
+            color: var(--danger);
+        }
+
+        .risk-status {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .status-high { background: #fed7d7; color: var(--danger); }
+        .status-mid { background: #feebc8; color: var(--warning); }
+        .status-low { background: #c6f6d5; color: var(--success); }
+
+        .legend {
+            margin-top: 15px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h2>Индекс критичности оборудования</h2>
+    </div>
+
+    <div class="content">
+        <!-- Форма -->
+        <div class="add-form">
+            <div class="input-group" style="flex: 2;">
+                <label>Название оборудования</label>
+                <input type="text" id="eqName" placeholder="Например, Насос Н-1" maxlength="20">
+            </div>
+            <div class="input-group">
+                <label>Опасность (1-5)</label>
+                <select id="eqDanger">
+                    <option value="1">1 - Вспомогательный</option>
+                    <option value="2">2 - Малый</option>
+                    <option value="3">3 - Средний</option>
+                    <option value="4">4 - Высокий</option>
+                    <option value="5">5 - Взрыв/выброс</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Состояние (1-5)</label>
+                <select id="eqState">
+                    <option value="1">1 - Новый</option>
+                    <option value="2">2 - Хорошее</option>
+                    <option value="3">3 - Среднее</option>
+                    <option value="4">4 - Износ</option>
+                    <option value="5">5 - Продлен по ЭПБ</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Дисциплина (1-5)</label>
+                <select id="eqDisc">
+                    <option value="1">1 - Нет замечаний</option>
+                    <option value="2">2 - Мелкие</option>
+                    <option value="3">3 - Есть предписания</option>
+                    <option value="4">4 - Тянут ремонт</option>
+                    <option value="5">5 - Постоянно</option>
+                </select>
+            </div>
+            <button class="btn-add" onclick="addEquipment()">Добавить</button>
+        </div>
+
+        <!-- Таблица -->
+        <div class="table-wrapper">
+            <table id="eqTable">
+                <thead>
+                    <tr>
+                        <th>Оборудование</th>
+                        <th title="Опасность">Опас.</th>
+                        <th title="Техническое состояние">Сост.</th>
+                        <th title="Дисциплина">Дисц.</th>
+                        <th>Индекс</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Строки добавляются через JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><span class="score-badge score-1">1</span> Низкий</div>
+            <div class="legend-item"><span class="score-badge score-3">3</span> Средний</div>
+            <div class="legend-item"><span class="score-badge score-5">5</span> Критический</div>
+            <div class="legend-item" style="margin-left: auto; color: var(--danger); font-weight: 600;">Красная строка = Максимальный риск</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Начальные данные для примера
+    let equipmentList = [
+        { id: 1, name: "Компрессор К-1", danger: 5, state: 4, disc: 3 },
+        { id: 2, name: "Насос Н-2", danger: 1, state: 1, disc: 1 },
+        { id: 3, name: "Резервуар Р-5", danger: 5, state: 5, disc: 4 }
+    ];
+
+    function calculateIndex(eq) {
+        return eq.danger * eq.state * eq.disc;
+    }
+
+    function getStatus(index) {
+        if (index >= 50) return { text: 'Высокий', class: 'status-high' };
+        if (index >= 20) return { text: 'Средний', class: 'status-mid' };
+        return { text: 'Низкий', class: 'status-low' };
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        if (equipmentList.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#999; padding: 20px;">Список пуст. Добавьте оборудование.</td></tr>';
+            return;
+        }
+
+        // Сортировка по убыванию индекса
+        const sortedList = [...equipmentList].sort((a, b) => calculateIndex(b) - calculateIndex(a));
+        
+        // Находим максимальный индекс для выделения
+        const maxIndex = sortedList.length > 0 ? calculateIndex(sortedList[0]) : 0;
+
+        sortedList.forEach(eq => {
+            const index = calculateIndex(eq);
+            const status = getStatus(index);
+            const isMax = index === maxIndex && index > 0;
+
+            const tr = document.createElement('tr');
+            if (isMax) tr.classList.add('max-risk');
+
+            tr.innerHTML = `
+                <td><strong>${eq.name}</strong></td>
+                <td><span class="score-badge score-${eq.danger}">${eq.danger}</span></td>
+                <td><span class="score-badge score-${eq.state}">${eq.state}</span></td>
+                <td><span class="score-badge score-${eq.disc}">${eq.disc}</span></td>
+                <td><span class="total-index">${index}</span></td>
+                <td><span class="risk-status ${status.class}">${status.text}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function addEquipment() {
+        const nameInput = document.getElementById('eqName');
+        const name = nameInput.value.trim();
+
+        if (!name) {
+            alert("Пожалуйста, введите название оборудования!");
+            nameInput.focus();
+            return;
+        }
+
+        const danger = parseInt(document.getElementById('eqDanger').value);
+        const state = parseInt(document.getElementById('eqState').value);
+        const disc = parseInt(document.getElementById('eqDisc').value);
+
+        const newEq = {
+            id: Date.now(),
+            name: name,
+            danger: danger,
+            state: state,
+            disc: disc
+        };
+
+        equipmentList.push(newEq);
+        nameInput.value = ''; // Очищаем поле
+        renderTable();
+    }
+
+    // Инициализация при загрузке
+    renderTable();
+</script>
+
+</body>
+</html>
