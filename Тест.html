@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мини-тест: День специалиста по ПБ</title>
+    <style>
+        :root {
+            --primary: #004080;
+            --primary-hover: #003366;
+            --bg-light: #f4f8fd;
+            --border-color: #dce4ed;
+            --text: #333;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px; /* Компактный размер */
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0, 64, 128, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Шапка */
+        .header {
+            background-color: var(--bg-light);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .progress {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            background: #fff;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Контент */
+        .quiz-content {
+            padding: 20px;
+        }
+
+        .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 0;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            background: var(--bg-light);
+            border-color: var(--primary);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        /* Состояния ответов */
+        .option-btn.correct {
+            background: #e8f5e9;
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .option-btn.wrong {
+            background: #ffebee;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Блок с пояснением */
+        .explanation {
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--bg-light);
+            border-left: 3px solid var(--primary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: #555;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Кнопка "Далее" */
+        .next-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            transition: 0.2s;
+        }
+
+        .next-btn.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .next-btn:hover { background: var(--primary-hover); }
+
+        /* Финальный экран */
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .result-screen h3 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .result-screen p {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .btn-restart {
+            background: var(--bg-light);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <h2>Что лучше: Excel или Система?</h2>
+        <div class="progress" id="progress">1 / 4</div>
+    </div>
+
+    <div class="quiz-content">
+        <!-- Экран вопроса -->
+        <div id="questionScreen">
+            <p class="question-text" id="qText"></p>
+            <div class="options-list" id="optionsList"></div>
+            
+            <div class="explanation" id="explanation"></div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Следующий вопрос →</button>
+        </div>
+
+        <!-- Экран результатов -->
+        <div class="result-screen" id="resultScreen">
+            <h3>Отлично! 🎉</h3>
+            <p>Вы разобрались, как система облегчает жизнь специалисту по ПБ.</p>
+            <button class="btn-restart" onclick="restartQuiz()">Пройти заново</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "Как проверить, все ли подразделения выполнили мероприятия по ПБ?",
+            options: [
+                "Обзвонить каждый цех лично и записать в блокнот",
+                "Посмотреть в системе — там автоматически собраны все статусы",
+                "Написать им письмо и ждать ответа неделю"
+            ],
+            correct: 1,
+            explanation: "Система собирает все данные. Больше не нужно тратить время на обзвон подразделений — статусы выполнения видны на экране."
+        },
+        {
+            question: "Откуда взять сведения об ОПО для ежегодного отчета?",
+            options: [
+                "Собирать вручную из папок с документами",
+                "Запросить по системе за пару кликов — база уже заполнена",
+                "Спросить у коллег, у кого остались старые таблички"
+            ],
+            correct: 1,
+            explanation: "Сведения об ОПО формируются по запросу из единой базы. Не нужно раз в год перебирать бумаги или Excel-таблицы."
+        },
+        {
+            question: "Как узнать, аттестован ли конкретный работник?",
+            options: [
+                "Позвонить мастеру и спросить по памяти",
+                "Открыть сейф и искать его удостоверение в стопке",
+                "Проверить в системе: связка реестров аттестации и допусков выдаст ответ"
+            ],
+            correct: 2,
+            explanation: "Память мастера и стопка удостоверений в сейфе подводят. Связка реестров в системе мгновенно показывает пересечение и подтверждает допуск."
+        },
+        {
+            question: "Что будет, если вручную посчитать опасное вещество?",
+            options: [
+                "Высока вероятность банальной ошибки в расчетах",
+                "Система защитит от ошибки и посчитает автоматически",
+                "Не имеет значения, никто не проверяет"
+            ],
+            correct: 1,
+            explanation: "Система защищает от банальных ошибок (например, при подсчете опасного вещества). Ручной расчет всегда несет риск человеческой ошибки."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    const qText = document.getElementById('qText');
+    const optionsList = document.getElementById('optionsList');
+    const explanation = document.getElementById('explanation');
+    const nextBtn = document.getElementById('nextBtn');
+    const progress = document.getElementById('progress');
+    const questionScreen = document.getElementById('questionScreen');
+    const resultScreen = document.getElementById('resultScreen');
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        qText.innerText = q.question;
+        optionsList.innerHTML = '';
+        
+        // Обновляем прогресс
+        progress.innerText = `${currentQuestionIndex + 1} / ${questions.length}`;
+        
+        // Скрываем пояснение и кнопку далее
+        explanation.classList.remove('show');
+        nextBtn.classList.remove('show');
+
+        // Создаем кнопки
+        q.options.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = option;
+            btn.onclick = () => selectOption(index, btn);
+            optionsList.appendChild(btn);
+        });
+    }
+
+    function selectOption(selectedIndex, btn) {
+        const q = questions[currentQuestionIndex];
+        const allBtns = optionsList.querySelectorAll('.option-btn');
+
+        // Отключаем все кнопки
+        allBtns.forEach((b, i) => {
+            b.disabled = true;
+            if (i === q.correct) {
+                b.classList.add('correct');
+            }
+        });
+
+        // Если ответ неверный - подсвечиваем красным
+        if (selectedIndex !== q.correct) {
+            btn.classList.add('wrong');
+        }
+
+        // Показываем пояснение
+        explanation.innerText = q.explanation;
+        explanation.classList.add('show');
+
+        // Показываем кнопку "Следующий вопрос" или результат
+        nextBtn.classList.add('show');
+        if (currentQuestionIndex === questions.length - 1) {
+            nextBtn.innerText = 'Показать результат';
+        } else {
+            nextBtn.innerText = 'Следующий вопрос →';
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        questionScreen.style.display = 'none';
+        resultScreen.style.display = 'block';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        questionScreen.style.display = 'block';
+        resultScreen.style.display = 'none';
+        loadQuestion();
+    }
+
+    // Инициализация
+    loadQuestion();
+</script>
+
+</body>
+</html>
