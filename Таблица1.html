@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибки внедрения: Таблица</title>
+    <style>
+        :root {
+            --primary: #004080;
+            --bg-light: #f4f8fd;
+            --border-color: #dce4ed;
+            --text: #333;
+            --text-muted: #666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .table-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 750px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0, 64, 128, 0.04);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background-color: var(--bg-light);
+            padding: 12px 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .table-header h2 {
+            margin: 0;
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ТАБЛИЦА */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--bg-light);
+            color: var(--primary);
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text);
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        /* Зебра */
+        tbody tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        tbody tr:hover {
+            background-color: #f0f5fa;
+        }
+
+        /* Колонки */
+        td:first-child {
+            font-weight: 600;
+            color: var(--primary);
+            width: 30%;
+        }
+
+        td:nth-child(2) {
+            width: 35%;
+            color: #555;
+        }
+
+        td:nth-child(3) {
+            width: 35%;
+            color: #333;
+        }
+
+        /* Адаптив */
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                display: none;
+            }
+            td {
+                padding: 8px 12px;
+            }
+            td:first-child {
+                background: var(--bg-light);
+                border-bottom: none;
+                padding-bottom: 3px;
+            }
+            td:nth-child(2)::before {
+                content: "Проблема: ";
+                font-weight: 700;
+                color: var(--text-muted);
+                font-size: 10px;
+                display: block;
+                margin-bottom: 2px;
+            }
+            td:nth-child(3)::before {
+                content: "Решение: ";
+                font-weight: 700;
+                color: var(--text-muted);
+                font-size: 10px;
+                display: block;
+                margin-bottom: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="table-container">
+    <div class="table-header">
+        <h2>Какие ошибки внедрения встречаются чаще всего</h2>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ошибка</th>
+                <th>В чем проблема</th>
+                <th>Как избежать</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Продукт без понимания проблемы</td>
+                <td>Система внедрена, сотрудники обучены, а что стало лучше — непонятно.</td>
+                <td>Сформулируйте конкретную цель: не «уйти от Excel», а «сократить время на акт с 2 часов до 10 минут».</td>
+            </tr>
+            <tr>
+                <td>Автоматизация неразберихи</td>
+                <td>Если не определены ответственные и сроки, программа ничего не исправит.</td>
+                <td>Опишите процесс в положении о производственном контроле. Система оцифровывает регламент, а не создает хаос.</td>
+            </tr>
+            <tr>
+                <td>Отсутствие участия персонала</td>
+                <td>Система удобна разработчику, а мастер возвращается к тетрадке.</td>
+                <td>Вовлекайте мастеров. Интерфейс должен быть понятен исполнителям «на земле».</td>
+            </tr>
+            <tr>
+                <td>Двойная отчетность</td>
+                <td>Электронная форма, бумажный журнал и таблица — это доп. нагрузка, а не автоматизация.</td>
+                <td>Отменяйте бумажные носители. Данные в системе не должны дублироваться в тетради.</td>
+            </tr>
+            <tr>
+                <td>Разрозненные данные</td>
+                <td>Оборудование в одном месте, проверки в другом, мероприятия в третьем.</td>
+                <td>Создайте единое пространство: оборудование, проверки и нарушения должны быть связаны.</td>
+            </tr>
+            <tr>
+                <td>Безответственность за качество</td>
+                <td>Даже хорошая система теряет ценность, если в ней устаревшие сведения.</td>
+                <td>Назначьте ответственных за актуальность и настройте автоматические уведомления.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
