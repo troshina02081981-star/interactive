@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструменты технологического слоя</title>
+    <style>
+        :root {
+            --primary: #004080;
+            --primary-hover: #003366;
+            --bg-light: #f4f8fd;
+            --border-color: #dce4ed;
+            --text: #333;
+            --text-muted: #666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .accordion-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 680px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 64, 128, 0.05);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: var(--bg-light);
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accordion-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Заголовок вкладки */
+        .accordion-trigger {
+            width: 100%;
+            background: #fff;
+            border: none;
+            padding: 15px 25px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s ease;
+            outline: none;
+        }
+
+        .accordion-trigger:hover {
+            background: var(--bg-light);
+        }
+
+        .accordion-trigger.active {
+            background: var(--bg-light);
+        }
+
+        .icon {
+            font-size: 18px;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .accordion-trigger.active .icon {
+            transform: rotate(45deg); /* Превращаем плюс в крестик */
+        }
+
+        /* Выпадающий контент */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.3s ease;
+            padding: 0 25px;
+            background: #fff;
+        }
+
+        .accordion-content p {
+            margin: 0;
+            padding-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* Активное состояние контента */
+        .accordion-trigger.active + .accordion-content {
+            /* Высоту задает JS для плавности */
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <div class="accordion-header">
+        <h2>Какие инструменты дает технологический слой</h2>
+    </div>
+
+    <!-- Элемент 1 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Контроль технологического режима
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>АСУ ТП непрерывно собирает параметры, контроль можно проводить с персонального компьютера — без физического присутствия у объекта.</p>
+        </div>
+    </div>
+
+    <!-- Элемент 2 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Автоматические защиты и блокировки
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>При выходе параметров за пределы система сигнализирует, а на современных объектах блокирует оборудование. Сбой фиксируется в момент возникновения.</p>
+        </div>
+    </div>
+
+    <!-- Элемент 3 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Автогенерация заявок на ремонт из событий АСУ
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Система фиксирует отклонение и сама создает заявку на ремонт — без ручной передачи информации от оператора к ремонтной службе. Это снимает разрыв между «увидели» и «сообщили».</p>
+        </div>
+    </div>
+
+    <!-- Элемент 4 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Управление LOTO
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Блокировки, изоляция энергий, возвращение оборудования в работу — встроено в процесс нарядов-допусков.</p>
+        </div>
+    </div>
+
+    <!-- Элемент 5 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Интеграция с системами учета
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Данные АСУ ТП добавляют к учетной картине фактическое состояние. Вопрос к любой новой системе: «откуда она возьмет данные и куда их отдаст?»</p>
+        </div>
+    </div>
+
+    <!-- Элемент 6 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Аналитика и дашборды
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Готовые дашборды для руководства по объектам, видам рисков и затратам; автоматическая рассылка отчетов. Это превращает накопленные данные в решения, а не в архив.</p>
+        </div>
+    </div>
+
+    <!-- Элемент 7 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Цифровой уголок по ПБ и экранные панели в цехах
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Новости, инструкции, инфографика на портале; панели с актуальными индикаторами безопасности прямо в цехах.</p>
+        </div>
+    </div>
+
+    <!-- Элемент 8 -->
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            База знаний и чат-бот
+            <span class="icon">+</span>
+        </button>
+        <div class="accordion-content">
+            <p>Поиск по тегам, шаблоны, ответы на типовые вопросы работников. Не заменяет специалиста, но снимает часть повторяющихся обращений.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleAccordion(trigger) {
+        const content = trigger.nextElementSibling;
+        const isActive = trigger.classList.contains('active');
+
+        // Закрываем все открытые вкладки (режим "один за раз")
+        document.querySelectorAll('.accordion-trigger').forEach(t => {
+            t.classList.remove('active');
+            t.nextElementSibling.style.maxHeight = null;
+        });
+
+        // Если текущая вкладка была закрыта — открываем её
+        if (!isActive) {
+            trigger.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + 20 + "px"; /* +20px для отступов */
+        }
+    }
+</script>
+
+</body>
+</html>
