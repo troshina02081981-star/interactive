@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чек-лист оценки эффективности</title>
+    <style>
+        :root {
+            --primary: #004080;
+            --primary-hover: #003366;
+            --bg-light: #f4f8fd;
+            --border-color: #dce4ed;
+            --text: #333;
+            --text-muted: #666;
+            --success: #2e7d32;
+            --warning: #f57c00;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .checklist-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 64, 128, 0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: var(--bg-light);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        /* Список показателей */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .checklist-item:hover {
+            background-color: #fafbfc;
+        }
+
+        /* Кастомный чекбокс */
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            margin-right: 15px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .checkbox svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Активное состояние чекбокса */
+        .checklist-item.checked .checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checklist-item.checked .checkbox svg {
+            opacity: 1;
+        }
+
+        .checklist-item.checked .item-text {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .item-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+            transition: all 0.2s;
+        }
+
+        .item-subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Блок с важным предупреждением */
+        .warning-block {
+            margin-top: 20px;
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            border-left: 4px solid var(--warning);
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .warning-block:hover {
+            background-color: #fff5e6;
+        }
+
+        .warning-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--warning);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .warning-title span {
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .warning-text {
+            display: none;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #feebc8;
+        }
+
+        .warning-text p {
+            margin: 0 0 8px 0;
+        }
+        .warning-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .warning-block.open .warning-title span {
+            transform: rotate(180deg);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="checklist-container">
+    <div class="header">
+        <h2>Что оценивать при внедрении</h2>
+    </div>
+
+    <div class="content">
+        
+        <!-- Чек-лист -->
+        <div class="checklist-item" onclick="toggleCheck(this)">
+            <div class="checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="item-content">
+                <span class="item-text">Время подготовки отчетности</span>
+                <span class="item-subtext">Скорость получения информации от подразделений</span>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleCheck(this)">
+            <div class="checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="item-content">
+                <span class="item-text">Доля просроченных мероприятий</span>
+                <span class="item-subtext">Сколько задач закрывается вовремя</span>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleCheck(this)">
+            <div class="checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="item-content">
+                <span class="item-text">Повторные нарушения и дефекты</span>
+                <span class="item-subtext">Системные проблемы, которые возвращаются</span>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleCheck(this)">
+            <div class="checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="item-content">
+                <span class="item-text">Своевременность внесения результатов</span>
+                <span class="item-subtext">Насколько быстро данные попадают в систему</span>
+            </div>
+        </div>
+
+        <!-- Блок с предупреждением -->
+        <div class="warning-block" onclick="toggleWarning(this)">
+            <div class="warning-title">
+                ⚠️ Ловушка цифр: почему важна точка отсчета?
+                <span>▼</span>
+            </div>
+            <div class="warning-text">
+                <p>Обязательно сравнивайте результаты с исходным состоянием. Без точки отсчета цифры ничего не значат.</p>
+                <p>Снижение числа замечаний не всегда говорит об улучшении — возможно, проверки стали менее глубокими. Бывает и наоборот: после внедрения чек-листов замечаний стало больше, потому что проверки стали полнее.</p>
+                <p><b>Решение:</b> Зафиксируйте исходные значения до старта (письменно!), а оценку делайте через полгода или год.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Логика чек-листа
+    function toggleCheck(element) {
+        element.classList.toggle('checked');
+    }
+
+    // Логика раскрытия предупреждения
+    function toggleWarning(element) {
+        element.classList.toggle('open');
+        const text = element.querySelector('.warning-text');
+        if (element.classList.contains('open')) {
+            text.style.display = 'block';
+        } else {
+            text.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
