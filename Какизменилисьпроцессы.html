@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цифровизация: раньше → сейчас</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #fff;
+    margin: 0 auto;
+    padding: 4px 8px;
+    color: #1a2332;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  h1 {
+    text-align: center;
+    font-size: 14px;
+    margin: 0 0 0;
+    color: #1f4e79;
+  }
+  .subtitle {
+    text-align: center;
+    color: #6b7785;
+    margin: 0 0 3px;
+    font-size: 10px;
+  }
+  .controls {
+    text-align: center;
+    margin-bottom: 3px;
+  }
+  .controls button {
+    background: #fff;
+    color: #1f4e79;
+    border: 1px solid #1f4e79;
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    margin: 0 2px;
+  }
+  .controls button:hover { background: #1f4e79; color: #fff; }
+  .grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    min-height: 0;
+    max-height: 300px;
+  }
+  .card {
+    perspective: 1000px;
+    cursor: pointer;
+    min-height: 0;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 4px;
+    padding: 3px 5px 8px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d0dbe8;
+    overflow: hidden;
+  }
+  .face-front { background: #fff; }
+  .face-back {
+    background: #1f4e79;
+    color: #fff;
+    border-color: #1f4e79;
+    transform: rotateY(180deg);
+  }
+  .label {
+    font-size: 8px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+  .face-front .label { color: #1f4e79; }
+  .face-back .label { color: #a8c8e8; }
+  .card h3 {
+    font-size: 11px;
+    margin: 0 0 1px;
+    line-height: 1.05;
+    color: #1a2332;
+  }
+  .face-back h3 { color: #fff; }
+  .card p {
+    font-size: 10px;
+    line-height: 1.12;
+    margin: 0;
+    color: #3a4a5c;
+  }
+  .face-back p { color: #e6eef7; }
+  .flip-hint {
+    position: absolute;
+    bottom: 1px;
+    right: 4px;
+    font-size: 8px;
+    color: #8a99aa;
+  }
+  .face-back .flip-hint { color: #a8c8e8; }
+</style>
+</head>
+<body>
+
+<h1>Внутренняя цифровизация: раньше → сейчас</h1>
+<p class="subtitle">Нажмите на карточку, чтобы увидеть, как изменился процесс</p>
+
+<div class="controls">
+  <button onclick="flipAll()">Показать все</button>
+  <button onclick="resetAll()">Сбросить</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const data = [
+  {
+    title: "Предиктивная аналитика",
+    before: "Планово-предупредительный ремонт: раз в год меняем все подряд.",
+    after: "Датчики и ИИ подсказывают: «Через 3 дня подшипник сломается». Ремонт по фактическому состоянию."
+  },
+  {
+    title: "ЭДО с контрагентами",
+    before: "Акт распечатали, подписали, отправили почтой — ждали неделю.",
+    after: "Подписали КЭП и отправили через «Диадок». Документ доставлен за секунды."
+  },
+  {
+    title: "Цифровые двойники",
+    before: "Строили физический прототип или проверяли на живой площадке — долго и с риском.",
+    after: "Виртуальная модель синхронизируется с объектом, сценарии проигрывают до правок железа."
+  },
+  {
+    title: "Контроль обходов",
+    before: "Обходчик с бумажным листом и отметкой «был».",
+    after: "Маршрут в приложении, фото, геолокация и время — видно, что осмотр реально проведен."
+  },
+  {
+    title: "Единая диспетчерская",
+    before: "Данные у каждого цеха в своем углу, общей картины нет.",
+    after: "Телеметрия, видео и наряды в одном центре — решения по общей картине."
+  },
+  {
+    title: "Аналитика для руководства",
+    before: "Отчеты собирали вручную к совещанию — смотрели вчерашнюю сводку.",
+    after: "Дашборды в реальном времени — показатели безопасности и динамика."
+  }
+];
+
+const grid = document.getElementById('grid');
+
+data.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="face face-front">
+        <div class="label">Раньше</div>
+        <h3>${item.title}</h3>
+        <p>${item.before}</p>
+        <div class="flip-hint">нажмите →</div>
+      </div>
+      <div class="face face-back">
+        <div class="label">Сейчас</div>
+        <h3>${item.title}</h3>
+        <p>${item.after}</p>
+        <div class="flip-hint">← назад</div>
+      </div>
+    </div>
+  `;
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  grid.appendChild(card);
+});
+
+function flipAll() {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('flipped'));
+}
+function resetAll() {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
+}
+</script>
+
+</body>
+</html>
