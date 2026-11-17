@@ -1,0 +1,96 @@
+<div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #ffffff; border: 2px solid #b6d4ea; border-radius: 10px; padding: 18px; color: #2c5a7a;">
+
+  <div style="font-size: 15px; font-weight: bold; text-transform: uppercase; color: #5b9bd5; text-align: center; margin-bottom: 15px;">
+    Шесть шагов для специалиста по промбезопасности
+  </div>
+
+  <div id="steps" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">1</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Изучить рекомендации и учесть при разработке внутренних регламентов</div>
+    </label>
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">2</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Проверить наличие в штате ответственных за подготовку, выполнение, контроль, эксплуатацию и ремонт</div>
+    </label>
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">3</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Актуализировать технологическую документацию</div>
+    </label>
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">4</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Проверить соответствие заводских номеров в документации на оборудование</div>
+    </label>
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">5</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Организовать входной контроль материалов</div>
+    </label>
+
+    <label class="step-card" style="display: flex; gap: 10px; padding: 12px; background: #f8fbfe; border: 1px solid #d4e8f8; border-radius: 8px; cursor: pointer; align-items: flex-start;">
+      <input type="checkbox" onchange="updateSteps()" style="display: none;">
+      <div class="step-num" style="background: #e6f2ff; color: #5b9bd5; font-weight: bold; font-size: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">6</div>
+      <div class="step-text" style="font-size: 13px; line-height: 1.3;">Внедрить допускные соединения для новых объектов и сварщиков с перерывом</div>
+    </label>
+
+  </div>
+
+  <div style="margin-top: 15px; text-align: center;">
+    <div style="height: 6px; background: #e6f2ff; border-radius: 3px; overflow: hidden; margin-bottom: 6px;">
+      <div id="progress-bar" style="height: 100%; width: 0%; background: #5b9bd5; border-radius: 3px; transition: width 0.3s;"></div>
+    </div>
+    <div id="progress-text" style="font-size: 12px; font-weight: bold; color: #5b9bd5;">Выполнено 0 из 6</div>
+  </div>
+
+</div>
+
+<style>
+.step-card input:checked ~ .step-num {
+  background: #5b9bd5;
+  color: #ffffff;
+}
+.step-card input:checked ~ .step-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.step-card:has(input:checked) {
+  background: #e6f2ff;
+  border-color: #5b9bd5;
+}
+</style>
+
+<script>
+function updateSteps() {
+  const checkboxes = document.querySelectorAll('#steps input[type="checkbox"]');
+  const total = checkboxes.length;
+  let checked = 0;
+  
+  checkboxes.forEach(cb => {
+    if (cb.checked) checked++;
+  });
+  
+  const percent = (checked / total) * 100;
+  document.getElementById('progress-bar').style.width = percent + '%';
+  
+  const text = document.getElementById('progress-text');
+  text.textContent = `Выполнено ${checked} из ${total}`;
+  
+  if (checked === total) {
+    text.textContent = 'Все 6 шагов выполнены ✓';
+    text.style.color = '#28a745';
+    document.getElementById('progress-bar').style.background = '#28a745';
+  } else {
+    text.style.color = '#5b9bd5';
+    document.getElementById('progress-bar').style.background = '#5b9bd5';
+  }
+}
+</script>
