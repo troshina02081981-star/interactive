@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Индекс критичности</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:16px;background:#fff;color:#333}
+.app{max-width:680px;margin:0 auto;border:1px solid #dce4ed;border-radius:10px;overflow:hidden}
+.h{background:#f4f8fd;padding:14px 16px;border-bottom:1px solid #dce4ed;font-weight:600;color:#004080}
+.c{padding:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.row input{flex:2 1 180px;padding:7px;border:1px solid #dce4ed;border-radius:4px;font-size:13px}
+.row select{flex:1 1 90px;padding:7px;border:1px solid #dce4ed;border-radius:4px;font-size:13px}
+.row button{background:#004080;color:#fff;border:0;padding:7px 14px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer}
+.row button:hover{background:#003366}
+.err{color:#d32f2f;font-size:12px;min-height:15px;margin-bottom:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f4f8fd;color:#004080;padding:8px;text-align:left;border-bottom:2px solid #dce4ed}
+td{padding:8px;border-bottom:1px solid #dce4ed}
+.b{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-weight:700;font-size:11px;color:#fff}
+.b1,.b2{background:#a0aec0}.b3{background:#ecc94b;color:#333}.b4{background:#ed8936}.b5{background:#f56565}
+.i{font-weight:800;color:#004080}
+.max{background:#fff5f5}.max td,.max .i{color:#d32f2f}
+.s{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px}
+.hi{background:#fed7d7;color:#d32f2f}.mi{background:#feebc8;color:#f57c00}.lo{background:#c6f6d5;color:#2e7d32}
+.d{background:none;border:0;color:#999;cursor:pointer;font-size:15px}
+.d:hover{color:#d32f2f}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="h">Индекс критичности оборудования</div>
+  <div class="c">
+    <div class="row">
+      <input id="n" placeholder="Название, например Насос Н-1" maxlength="60">
+      <select id="d"><option value="1">1 опас.</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 взрыв</option></select>
+      <select id="s"><option value="1">1 нов.</option><option value="2">2</option><option value="3">3</option><option value="4">4 износ</option><option value="5">5 ЭПБ</option></select>
+      <select id="q"><option value="1">1 без зам.</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 постоянно</option></select>
+      <button onclick="add()">Добавить</button>
+    </div>
+    <div class="err" id="e"></div>
+    <table>
+      <thead><tr><th>Оборудование</th><th>О</th><th>С</th><th>Д</th><th>Индекс</th><th>Статус</th><th></th></tr></thead>
+      <tbody id="t"></tbody>
+    </table>
+  </div>
+</div>
+<script>
+var L=[
+ {id:1,name:"Компрессор К-1",d:5,s:4,q:3},
+ {id:2,name:"Насос Н-2",d:1,s:1,q:1},
+ {id:3,name:"Резервуар Р-5",d:5,s:5,q:4}
+];
+function ix(x){return x.d*x.s*x.q}
+function st(i){return i>=50?["Высокий","hi"]:i>=20?["Средний","mi"]:["Низкий","lo"]}
+function esc(v){return String(v).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function render(){
+ var t=document.getElementById("t");t.innerHTML="";
+ if(!L.length){t.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:16px">Список пуст</td></tr>';return}
+ var S=L.slice().sort(function(a,b){return ix(b)-ix(a)}),M=ix(S[0]);
+ S.forEach(function(x){
+  var i=ix(x),s=st(i),r=document.createElement("tr");
+  if(i===M&&i>0)r.className="max";
+  r.innerHTML='<td><b>'+esc(x.name)+'</b></td><td><span class="b b'+x.d+'">'+x.d+'</span></td><td><span class="b b'+x.s+'">'+x.s+'</span></td><td><span class="b b'+x.q+'">'+x.q+'</span></td><td class="i">'+i+'</td><td><span class="s '+s[1]+'">'+s[0]+'</span></td><td><button class="d" onclick="del('+x.id+')">×</button></td>';
+  t.appendChild(r);
+ });
+}
+function add(){
+ var n=document.getElementById("n"),e=document.getElementById("e"),v=n.value.replace(/^\s+|\s+$/g,"");
+ if(!v){e.textContent="Введите название.";n.focus();return}
+ for(var k=0;k<L.length;k++)if(L[k].name.toLowerCase()===v.toLowerCase()){e.textContent="Такое оборудование уже есть.";n.focus();return}
+ e.textContent="";
+ L.push({id:Date.now(),name:v,d:+document.getElementById("d").value,s:+document.getElementById("s").value,q:+document.getElementById("q").value});
+ n.value="";n.focus();render();
+}
+function del(id){L=L.filter(function(x){return x.id!==id});render()}
+render();
+</script>
+</body>
+</html>
