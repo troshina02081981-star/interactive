@@ -1,250 +1,138 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Контроль освидетельствований: Сценарии</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --bg-white: #ffffff;
-            --text: #333333;
-            --border: #e2e8f0;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --gray: #94a3b8;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер: Изоляция контуров</title>
+<style>
+  body { font-family: sans-serif; padding: 15px; background: #fff; color: #333; margin: 0; display: flex; flex-direction: column; align-items: center; }
+  .header { text-align: center; margin-bottom: 20px; }
+  .header h1 { font-size: 16px; margin: 0 0 5px; text-transform: uppercase; }
+  .header p { font-size: 13px; color: #666; margin: 0; max-width: 500px; line-height: 1.4; }
+  
+  .game-board { display: flex; justify-content: space-between; gap: 15px; width: 100%; max-width: 650px; margin-bottom: 20px; }
+  .column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  
+  .item {
+    background: #f9f9f9; border: 2px solid #e0e0e0; border-radius: 6px; padding: 12px;
+    font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s;
+    min-height: 40px; display: flex; align-items: center; justify-content: center;
+  }
+  .item:hover { border-color: #4a90e2; background: #f0f7ff; }
+  .item.selected { border-color: #4a90e2; background: #eef5ff; transform: scale(1.02); }
+  
+  /* Зеленый при правильном ответе */
+  .item.correct { border-color: #27ae60; background: #e8f8f5; color: #27ae60; cursor: default; pointer-events: none; font-weight: bold; }
+  
+  /* Красный при неправильном ответе */
+  .item.wrong { border-color: #d32f2f; background: #fdedec; color: #d32f2f; animation: shake 0.3s; }
+  
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .interactive-wrapper {
-            background-color: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 560px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .title {
-            text-align: center;
-            color: var(--primary);
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* Переключатель */
-        .toggle-container {
-            display: flex;
-            background-color: #f1f5f9;
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 20px;
-        }
-
-        .toggle-btn {
-            flex: 1;
-            padding: 8px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--gray);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-
-        .toggle-btn.active {
-            background-color: #ffffff;
-            color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        /* Сценарий */
-        .scenario-content {
-            animation: fadeIn 0.3s ease;
-        }
-
-        .scenario-step {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        /* Вертикальная линия между шагами */
-        .scenario-step:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            left: 17px;
-            top: 30px;
-            bottom: -15px;
-            width: 2px;
-            background-color: var(--border);
-            z-index: 1;
-        }
-
-        .step-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-            z-index: 2;
-            background-color: #f8fafc;
-            border: 2px solid var(--border);
-        }
-
-        .step-text {
-            padding-top: 6px;
-            font-size: 13px;
-            line-height: 1.5;
-            color: #475569;
-        }
-
-        .step-text strong {
-            color: var(--primary);
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        /* Стили для "плохого" сценария */
-        .bad-scenario .step-icon { border-color: var(--danger); color: var(--danger); }
-        .bad-scenario .step-text strong { color: var(--danger); }
-        
-        /* Стили для "хорошего" сценария */
-        .good-scenario .step-icon { border-color: var(--success); color: var(--success); }
-        .good-scenario .step-text strong { color: var(--success); }
-
-        .highlight-box {
-            background-color: #f8fafc;
-            border-left: 4px solid var(--accent);
-            padding: 12px 15px;
-            border-radius: 0 8px 8px 0;
-            margin-top: 15px;
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .bad-scenario .highlight-box { border-left-color: var(--danger); background-color: #fdedec; }
-        .good-scenario .highlight-box { border-left-color: var(--success); background-color: #e8f8f5; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+  .msg { font-size: 14px; font-weight: bold; text-align: center; min-height: 20px; margin-top: 10px; }
+  .msg.ok { color: #27ae60; }
+  .msg.err { color: #d32f2f; }
+</style>
 </head>
 <body>
 
-<div class="interactive-wrapper">
-    <h2 class="title">⏱️ Что будет, если...</h2>
-
-    <!-- Переключатель сценариев -->
-    <div class="toggle-container">
-        <div class="toggle-btn active" onclick="setScenario('paper')" id="btnPaper">Без системы</div>
-        <div class="toggle-btn" onclick="setScenario('digital')" id="btnDigital">С системой</div>
-    </div>
-
-    <!-- СЦЕНАРИЙ 1: БЕЗ СИСТЕМЫ -->
-    <div class="scenario-content bad-scenario" id="scenarioPaper">
-        <div class="scenario-step">
-            <div class="step-icon">📅</div>
-            <div class="step-text">
-                <strong>Срок подходит незаметно</strong>
-                Даты освидетельствования записаны в бумажном журнале или в голове механика. Завал на производстве — и про срок никто не вспомнил.
-            </div>
-        </div>
-        <div class="scenario-step">
-            <div class="step-icon">❌</div>
-            <div class="step-text">
-                <strong>Срок просрочен</strong>
-                Оборудование продолжает работать. Визуально оно выглядит нормально, поэтому никто не бьет тревогу.
-            </div>
-        </div>
-        <div class="scenario-step">
-            <div class="step-icon">👮</div>
-            <div class="step-text">
-                <strong>Приходит инспектор</strong>
-                Проверка выявляет просрочку. Вы получаете предписание, штраф и требование остановить эксплуатацию до устранения.
-            </div>
-        </div>
-        <div class="highlight-box">
-            ⚠️ <strong>Итог:</strong> Вы узнаете о проблеме от инспектора, когда исправлять уже поздно. Оборудование останавливается, производство несет убытки.
-        </div>
-    </div>
-
-    <!-- СЦЕНАРИЙ 2: С СИСТЕМОЙ -->
-    <div class="scenario-content good-scenario" id="scenarioDigital" style="display: none;">
-        <div class="scenario-step">
-            <div class="step-icon">🔔</div>
-            <div class="step-text">
-                <strong>Заблаговременное уведомление</strong>
-                За 30 дней система автоматически формирует задачу ответственному: «Подготовить насос НА-2045 к освидетельствованию».
-            </div>
-        </div>
-        <div class="scenario-step">
-            <div class="step-icon">✅</div>
-            <div class="step-text">
-                <strong>Работа выполнена в срок</strong>
-                Специалист проводит проверку, вносит результаты в электронный паспорт. Система фиксирует дату и закрывает задачу.
-            </div>
-        </div>
-        <div class="scenario-step">
-            <div class="step-icon">😌</div>
-            <div class="step-text">
-                <strong>Инспектор приходит впустую</strong>
-                Все документы в порядке. Оборудование работает, сроки соблюдены. Никаких предписаний и штрафов.
-            </div>
-        </div>
-        <div class="highlight-box">
-            💡 <strong>Итог:</strong> Вы управляете сроками, а не они вами. Просрочка исключена, потому что система напомнила заранее.
-        </div>
-    </div>
-
+<div class="header">
+  <h1>Что будет, если…</h1>
+  <p>Нажмите на ошибку в левой колонке, а затем на ее последствие в правой.</p>
 </div>
 
+<div class="game-board">
+  <!-- Причины (ошибки) -->
+  <div class="column" id="colLeft">
+    <div class="item" data-id="1">Нет диода данных</div>
+    <div class="item" data-id="2">Двойник связан с контуром управления</div>
+    <div class="item" data-id="3">Телеметрия идёт в обе стороны</div>
+  </div>
+  
+  <!-- Последствия -->
+  <div class="column" id="colRight">
+    <div class="item" data-id="3">Уязвимость для кибератаки извне</div>
+    <div class="item" data-id="1">Риск несанкционированного вмешательства</div>
+    <div class="item" data-id="2">Отказ в согласовании с ФСТЭК</div>
+  </div>
+</div>
+
+<div class="msg" id="msg"></div>
+
 <script>
-    function setScenario(type) {
-        const paper = document.getElementById('scenarioPaper');
-        const digital = document.getElementById('scenarioDigital');
-        const btnPaper = document.getElementById('btnPaper');
-        const btnDigital = document.getElementById('btnDigital');
+  let selectedLeft = null;
+  let matches = 0;
+  let isAnimating = false; // Блокировка кликов во время анимации
+  
+  const leftItems = document.querySelectorAll('#colLeft .item');
+  const rightItems = document.querySelectorAll('#colRight .item');
+  const msg = document.getElementById('msg');
 
-        if (type === 'paper') {
-            paper.style.display = 'block';
-            digital.style.display = 'none';
-            btnPaper.classList.add('active');
-            btnDigital.classList.remove('active');
-        } else {
-            paper.style.display = 'none';
-            digital.style.display = 'block';
-            btnDigital.classList.add('active');
-            btnPaper.classList.remove('active');
+  // Выбор ошибки слева
+  leftItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (isAnimating) return;
+      leftItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      selectedLeft = item;
+      msg.textContent = '';
+    });
+  });
+
+  // Выбор последствия справа
+  rightItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (isAnimating) return;
+      
+      if (!selectedLeft) {
+        msg.textContent = 'Сначала выберите ошибку слева.';
+        msg.className = 'msg err';
+        return;
+      }
+
+      const leftId = selectedLeft.dataset.id;
+      const rightId = item.dataset.id;
+
+      if (leftId === rightId) {
+        // Верно
+        selectedLeft.classList.remove('selected');
+        selectedLeft.classList.add('correct');
+        item.classList.add('correct');
+        matches++;
+        selectedLeft = null;
+        msg.textContent = 'Верно!';
+        msg.className = 'msg ok';
+        
+        if (matches === 3) {
+          msg.textContent = 'Отлично! Все три ошибки изоляции найдены.';
         }
-    }
+      } else {
+        // Ошибка
+        isAnimating = true;
+        const currentLeft = selectedLeft;
+        
+        currentLeft.classList.remove('selected');
+        currentLeft.classList.add('wrong');
+        item.classList.add('wrong');
+        
+        msg.textContent = 'Неверно, попробуйте еще раз.';
+        msg.className = 'msg err';
+        
+        setTimeout(() => {
+          currentLeft.classList.remove('wrong');
+          item.classList.remove('wrong');
+          isAnimating = false;
+          selectedLeft = null; // Сбрасываем выбор, чтобы не тянуть старую карточку
+        }, 600);
+      }
+    });
+  });
 </script>
-
 </body>
 </html>
