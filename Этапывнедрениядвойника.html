@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер</title>
+<style>
+  body { font-family: sans-serif; padding: 10px; background: #fff; color: #333; margin: 0; display: flex; flex-direction: column; align-items: center; }
+  .header { text-align: center; margin-bottom: 15px; }
+  .header h1 { font-size: 16px; margin: 0 0 5px; text-transform: uppercase; }
+  .header p { font-size: 12px; color: #666; margin: 0; }
+  
+  .card-area { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 450px; justify-content: center; }
+  .arrow { background: none; border: none; font-size: 20px; color: #ccc; cursor: pointer; padding: 5px; }
+  .arrow:hover { color: #666; }
+  .main-card { 
+    background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; min-height: 60px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: 13px; font-weight: 500; cursor: grab; transition: opacity 0.2s;
+  }
+  
+  .columns { display: flex; gap: 8px; width: 100%; max-width: 650px; margin-bottom: 15px; }
+  .col { flex: 1; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 130px; display: flex; flex-direction: column; }
+  .col-h { text-align: center; padding: 6px; font-weight: bold; font-size: 11px; border-bottom: 1px solid #e0e0e0; border-radius: 6px 6px 0 0; color: #fff; }
+  
+  /* Цвета шагов */
+  .col:nth-child(1) .col-h { background: #2980b9; }
+  .col:nth-child(2) .col-h { background: #27ae60; }
+  .col:nth-child(3) .col-h { background: #d4ac0d; }
+  .col:nth-child(4) .col-h { background: #c0392b; }
+
+  .col-c { padding: 5px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .active { background: #eef5ff !important; border-color: #4a90e2 !important; }
+  
+  .mini { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 6px; font-size: 11px; position: relative; line-height: 1.3; }
+  .mini.ok { border-left: 3px solid #27ae60; }
+  .mini.err { border-left: 3px solid #d32f2f; }
+  
+  .del { position: absolute; right: 4px; top: 2px; background: none; border: none; color: #999; font-size: 14px; cursor: pointer; display: none; }
+  .mini:hover .del { display: block; }
+  
+  .check { background: #eee; color: #888; border: none; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: bold; width: 100%; max-width: 650px; cursor: not-allowed; }
+  .check.active { background: #4a90e2; color: #fff; cursor: pointer; }
+  .msg { font-size: 12px; font-weight: bold; margin-top: 10px; text-align: center; min-height: 15px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Этапы внедрения двойника</h1>
+  <p>Распределите действия по шагам (1-4). Перетащите карточку или используйте стрелки.</p>
+</div>
+
+<div class="card-area">
+  <button class="arrow" onclick="send(1)">‹</button>
+  <div class="main-card" id="mainCard" draggable="true">Загрузка...</div>
+  <button class="arrow" onclick="send(4)">›</button>
+</div>
+
+<div class="columns">
+  <div class="col" ondragover="event.preventDefault()" ondrop="drop(event,1)" ondragenter="this.classList.add('active')" ondragleave="this.classList.remove('active')"><div class="col-h">ШАГ 1</div><div class="col-c" id="list1"></div></div>
+  <div class="col" ondragover="event.preventDefault()" ondrop="drop(event,2)" ondragenter="this.classList.add('active')" ondragleave="this.classList.remove('active')"><div class="col-h">ШАГ 2</div><div class="col-c" id="list2"></div></div>
+  <div class="col" ondragover="event.preventDefault()" ondrop="drop(event,3)" ondragenter="this.classList.add('active')" ondragleave="this.classList.remove('active')"><div class="col-h">ШАГ 3</div><div class="col-c" id="list3"></div></div>
+  <div class="col" ondragover="event.preventDefault()" ondrop="drop(event,4)" ondragenter="this.classList.add('active')" ondragleave="this.classList.remove('active')"><div class="col-h">ШАГ 4</div><div class="col-c" id="list4"></div></div>
+</div>
+
+<button class="check" id="btn" onclick="check()">Проверить</button>
+<div class="msg" id="msg"></div>
+
+<script>
+  // Карточки перемешаны
+  let data = [
+    { id: 3, text: "Интеграция контуров и диоды данных", target: 3 },
+    { id: 1, text: "Сбор данных и аудит телеметрии", target: 1 },
+    { id: 4, text: "Запуск пилота и обучение", target: 4 },
+    { id: 2, text: "Построение прототипа и калибровка", target: 2 }
+  ];
+  let idx = 0, ans = {};
+  let mCard = document.getElementById('mainCard');
+
+  mCard.addEventListener('dragstart', e => { e.dataTransfer.setData('text', 'x'); setTimeout(() => mCard.style.opacity = '0.5', 0); });
+  mCard.addEventListener('dragend', () => { mCard.style.opacity = '1'; document.querySelectorAll('.col').forEach(c => c.classList.remove('active')); });
+  
+  function drop(e, step) { e.preventDefault(); e.currentTarget.classList.remove('active'); send(step); }
+
+  function send(step) {
+    if (idx >= data.length) return;
+    let c = data[idx]; ans[c.id] = step;
+    let m = document.createElement('div');
+    m.className = 'mini ' + (c.target === step ? 'ok' : 'err');
+    m.innerHTML = `${c.text} <button class="del" onclick="undo(${c.id})">×</button>`;
+    document.getElementById('list' + step).appendChild(m);
+    idx++; update();
+  }
+
+  function undo(id) {
+    delete ans[id];
+    document.querySelectorAll('.mini').forEach(el => { if (el.innerHTML.includes(data.find(d => d.id === id).text)) el.remove(); });
+    idx = Math.min(idx, id - 1); update();
+    document.getElementById('btn').classList.remove('active');
+    document.getElementById('msg').textContent = '';
+  }
+
+  function update() {
+    if (idx < data.length) { mCard.style.display = 'flex'; mCard.textContent = data[idx].text; mCard.draggable = true; }
+    else { mCard.style.display = 'none'; document.getElementById('btn').classList.add('active'); }
+  }
+
+  function check() {
+    if (Object.keys(ans).length < data.length) return;
+    let ok = data.filter(c => ans[c.id] === c.target).length;
+    let msg = document.getElementById('msg');
+    msg.style.color = ok === data.length ? '#27ae60' : '#d32f2f';
+    msg.textContent = ok === data.length ? 'Отлично! Все верно.' : `Верно ${ok} из ${data.length}. Красная полоска = ошибка.`;
+  }
+
+  update();
+</script>
+</body>
+</html>
