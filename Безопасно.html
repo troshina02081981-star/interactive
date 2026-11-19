@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Безопасное использование нейросетей</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            color: #222;
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 560px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .block {
+            border: 1px solid #d0d7e2;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* Цветные заголовки */
+        .block-header {
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .number-badge {
+            background-color: #fff;
+            color: #000;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+
+        .block-1 .block-header { background-color: #3b82f6; }
+        .block-2 .block-header { background-color: #f97316; }
+        .block-3 .block-header { background-color: #22c55e; }
+
+        /* Внутренний контент */
+        .block-content {
+            padding: 10px 12px;
+        }
+
+        .description {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        /* Сетка таблицы */
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .grid-header {
+            font-size: 10px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+            padding-top: 6px;
+        }
+
+        .data-left {
+            font-weight: 600;
+            color: #111;
+        }
+
+        .data-right {
+            color: #333;
+        }
+
+        .data-left div, .data-right div {
+            margin-bottom: 3px;
+        }
+        .data-left div:last-child, .data-right div:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight-red {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        @media (max-width: 500px) {
+            .grid-row, .data-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .grid-header { display: none; }
+            .data-left {
+                margin-top: 6px;
+                color: #3b82f6;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- БЛОК 1 -->
+    <div class="block block-1">
+        <div class="block-header">
+            <span class="number-badge">1</span>
+            Локальные нейросети (полная приватность)
+        </div>
+        <div class="block-content">
+            <div class="description">
+                Модели скачиваются на ваш компьютер и работают без интернета. Никто не видит переписку.
+            </div>
+            <div class="grid-row">
+                <div class="grid-header">ПРОГРАММЫ</div>
+                <div class="grid-header">ДЛЯ ЧЕГО</div>
+            </div>
+            <div class="data-row">
+                <div class="data-left">Ollama, LM Studio, Jan, GPT4All</div>
+                <div class="data-right">Личные документы, коммерческие договоры, медицина, приватный код.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- БЛОК 2 -->
+    <div class="block block-2">
+        <div class="block-header">
+            <span class="number-badge">2</span>
+            Корпоративные версии ИИ (для бизнеса)
+        </div>
+        <div class="block-content">
+            <div class="description">
+                Платные тарифы, где данные шифруются и не используются для обучения.
+            </div>
+            <div class="grid-row">
+                <div class="grid-header">ВАРИАНТЫ</div>
+                <div class="grid-header">ДЛЯ ЧЕГО</div>
+            </div>
+            <div class="data-row">
+                <div class="data-left">
+                    <div>ChatGPT Enterprise / Team</div>
+                    <div>Claude for Enterprise</div>
+                    <div>Microsoft Copilot</div>
+                    <div>YandexGPT (Yandex Cloud)</div>
+                    <div>GigaChat для бизнеса</div>
+                </div>
+                <div class="data-right">
+                    Внутренние отчеты, рабочая переписка, база знаний, корпоративный код.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- БЛОК 3 -->
+    <div class="block block-3">
+        <div class="block-header">
+            <span class="number-badge">3</span>
+            Временные чаты (с отключенным обучением)
+        </div>
+        <div class="block-content">
+            <div class="description">
+                Быстрая обработка некритичных данных без установки программ.
+            </div>
+            <div class="grid-row">
+                <div class="grid-header">КАК НАСТРОИТЬ</div>
+                <div class="grid-header">ВАЖНО</div>
+            </div>
+            <div class="data-row">
+                <div class="data-left">
+                    <div>В ChatGPT включить «Временный чат» (Temporary Chat) или отключить <em>Improve the model for everyone</em>.</div>
+                    <div style="margin-top: 6px;">В Claude и Gemini — настроить отказ от обучения.</div>
+                </div>
+                <div class="data-right">
+                    Данные проходят через серверы разработчика. <span class="highlight-red">Пароли, карты и гостайну загружать нельзя.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
