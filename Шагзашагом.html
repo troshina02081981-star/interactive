@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С чего начать автоматизацию</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.4;
+            margin: 0;
+            padding: 16px;
+            font-size: 13px;
+        }
+        .container { max-width: 560px; margin: 0 auto; }
+
+        .formula-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #f4f8fd;
+            border: 1px solid #dce9f5;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            color: #1b4f8a;
+            font-weight: 700;
+            font-size: 12.5px;
+            text-align: center;
+        }
+        .formula-header svg { width: 16px; height: 16px; }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .step-item {
+            border: 1.5px solid #c5dcef;
+            border-radius: 6px;
+            background: #ffffff;
+            padding: 8px 10px;
+        }
+        .step-item.active { border-color: #2a6db0; }
+
+        .step-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .step-label {
+            display: inline-block;
+            background: #2a6db0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        .step-arrow {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .step-item.active .step-arrow { transform: rotate(180deg); }
+
+        .step-body {
+            display: none;
+            margin-top: 6px;
+            font-size: 10.5px;
+            line-height: 1.4;
+            color: #23394d;
+        }
+        .step-item.active .step-body {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-result {
+            margin-top: 6px;
+            padding: 8px 10px;
+            background: #eef6fd;
+            border: 1px solid #b9d3ea;
+            border-left: 4px solid #2a6db0;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #1b4f8a;
+            line-height: 1.4;
+        }
+        .step-result strong { font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="formula-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4a8bc2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>
+        </svg>
+        С чего начать автоматизацию
+    </div>
+
+    <div class="steps-list" id="stepsList"></div>
+</div>
+
+<script>
+    const steps = [
+        {
+            body: `Несколько дней понаблюдайте за своей работой и работой службы. Запишите регулярные операции: поиск документов, проверка сроков, перенос сведений между таблицами, сбор данных у подразделений, подготовка отчётов, напоминания ответственным. По каждому ответьте: как часто, сколько времени, что будет при ошибке или пропуске.`,
+            result: `перечень рутинных операций для оптимизации.`
+        },
+        {
+            body: `Учитывайте два фактора: сколько времени сэкономите и насколько серьёзны последствия ошибки или пропуска срока. Учёт сроков освидетельствований может быть важнее поиска внутренних документов. Начните с одного-двух процессов с наиболее заметным результатом.`,
+            result: `первые задачи для внедрения.`
+        },
+        {
+            body: `Прежде чем выбирать программу, разберитесь в текущем порядке. На примере контроля сроков освидетельствования: где хранится перечень оборудования, кто вносит данные, кто контролирует сроки, как узнают о дате, где фиксируются результаты, кому передаётся информация. Затем опишите идеал: данные в системе, дата следующего освидетельствования, автоматическое напоминание, уведомление ответственному, внесение результатов и новой даты, актуальный статус для руководителя.`,
+            result: `схема работы до и после автоматизации.`
+        },
+        {
+            body: `Только теперь переходите к программному решению: таблицы и облачные сервисы, СЭД, специализированные программы учёта, корпоративные системы, системы мониторинга. Учитывайте интеграцию, информационную безопасность, права доступа и требования к хранению данных. Не покупайте сложную программу, если задачу решает простой инструмент.`,
+            result: `инструмент под конкретную задачу.`
+        },
+        {
+            body: `Не внедряйте сразу на всём предприятии. Выберите один участок или процесс. Определите: кто пользуется системой, кто вносит данные, кто проверяет корректность, как обрабатываются уведомления, что делать при просрочке. Дайте сотрудникам поработать, соберите обратную связь и уберите неудобства.`,
+            result: `работающий пилот, который вы видите в деле, а не на слайдах.`
+        },
+        {
+            body: `Сравните показатели до и после: время на процесс, пропущенные сроки, ошибки при передаче информации, скорость отчётов. Если эффект есть — назначьте ответственных, зафиксируйте правила внесения и проверки данных, обновите регламенты, обучите сотрудников.`,
+            result: `не эксперимент, а рабочая норма.`
+        },
+        {
+            body: `Когда один процесс работает стабильно, переходите к следующему: учёт оборудования и сроков → персонал, аттестации и инструктажи → документооборот и отчётность → объединение данных и аналитика.`,
+            result: `разрозненные инструменты складываются в единую систему управления процессами промбезопасности — и вы управляете ею, а не она вами.`
+        }
+    ];
+
+    const list = document.getElementById('stepsList');
+
+    steps.forEach((step, index) => {
+        const item = document.createElement('div');
+        item.className = 'step-item';
+        item.innerHTML = `
+            <div class="step-head">
+                <span class="step-label">Шаг ${index + 1}</span>
+                <svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="#2a6db0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </div>
+            <div class="step-body">${step.body}</div>
+            <div class="step-result"><strong>Результат:</strong> ${step.result}</div>
+        `;
+        const head = item.querySelector('.step-head');
+        head.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
+        });
+        list.appendChild(item);
+    });
+</script>
+
+</body>
+</html>
