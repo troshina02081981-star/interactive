@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Что автоматизировать в учете на ОПО</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a2b3c;
+            line-height: 1.35;
+            margin: 0;
+            padding: 16px;
+            font-size: 12px;
+        }
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1b4f8a;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 0 4px;
+            line-height: 1.35;
+        }
+        .subtitle {
+            text-align: center;
+            color: #5a7590;
+            font-size: 11px;
+            margin: 0 0 14px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .row-bottom {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .row-bottom .flip-card {
+            width: calc((100% - 18px) / 4);
+        }
+        .flip-card {
+            perspective: 900px;
+            height: 200px;
+            cursor: pointer;
+        }
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 8px;
+            padding: 8px 7px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 6px rgba(30, 80, 140, 0.1);
+            overflow: hidden;
+        }
+        .flip-front {
+            background: #ffffff;
+            border: 1px solid #d6e4f0;
+            justify-content: space-between;
+        }
+        .flip-back {
+            background: #1b4f8a;
+            color: #ffffff;
+            transform: rotateY(180deg);
+            border: 1px solid #164272;
+        }
+        .card-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4a8bc2;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .flip-front .card-title {
+            color: #1b4f8a;
+            font-weight: 600;
+            font-size: 10.5px;
+            line-height: 1.25;
+            margin: 6px 0 auto;
+        }
+        .flip-front .card-hint {
+            font-size: 9px;
+            color: #7a95ad;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .flip-front .card-hint::after {
+            content: "↻";
+            font-size: 11px;
+            color: #4a8bc2;
+        }
+        .flip-back .back-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 700;
+            color: #a9cdf0;
+            margin-bottom: 2px;
+        }
+        .flip-back .back-text {
+            font-size: 9px;
+            line-height: 1.3;
+            margin: 0 0 5px;
+        }
+        .flip-back .back-text:last-child {
+            margin-bottom: 0;
+        }
+        .flip-back .back-highlight {
+            color: #ffe08a;
+            font-weight: 600;
+        }
+        .flip-back .result {
+            margin-top: auto;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .reset-btn {
+            display: block;
+            margin: 14px auto 0;
+            padding: 8px 18px;
+            background: #4a8bc2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+        .reset-btn:hover {
+            background: #3a76a8;
+        }
+        @media (max-width: 500px) {
+            .row { grid-template-columns: repeat(2, 1fr); }
+            .row-bottom { flex-wrap: wrap; }
+            .row-bottom .flip-card { width: calc((100% - 6px) / 2); }
+            .flip-card { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Что автоматизировать в учете на ОПО</h1>
+    <p class="subtitle">Нажмите на карточку — она перевернется</p>
+
+    <div class="row">
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">1</span>
+                    <div class="card-title">Реестр ОПО</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">Карточки объектов: номер, наименование, адрес, класс опасности, характеристики.</p>
+                    <p class="back-text">Отдельно — <span class="back-highlight">масса опасных веществ</span>: ошибка в знаке меняет класс.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Перечень ОПО с датой актуализации.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">2</span>
+                    <div class="card-title">Техустройства, здания, сооружения</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">Карточка единицы: заводской номер, место установки, срок службы, паспорт.</p>
+                    <p class="back-text">Блок ПБ: требования, экспертизы, <span class="back-highlight">план и факт раздельно</span>.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Вся история единицы.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">3</span>
+                    <div class="card-title">Контроль сроков</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">Плановая дата, ответственный, статус, <span class="back-highlight">уведомление за 30 дней</span>.</p>
+                    <p class="back-text">После — факт, результат, документ; просрочка видна до закрытия.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Нет внеплановой ЭПБ из-за пропуска.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">4</span>
+                    <div class="card-title">Ремонты и ТО</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">ТО, ремонты, неисправности, замененные узлы, результаты техконтроля.</p>
+                    <p class="back-text">Отметка <span class="back-highlight">повторяющихся дефектов</span> и история устройства.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Состояние доступно тем, кто оценивает риски.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-bottom">
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">5</span>
+                    <div class="card-title">Персонал и аттестация</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">Карточка работника: должность, функции, области аттестации, сроки.</p>
+                    <p class="back-text">Календарь с напоминаниями и <span class="back-highlight">сверка с кадрами</span> при переводе.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Перевод запускает проверку; просрочка блокирует допуск.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">6</span>
+                    <div class="card-title">Производственный контроль</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">План проверок: вид, объект, дата, ответственный, вопросы, статус.</p>
+                    <p class="back-text">Нарушения, сроки, <span class="back-highlight">подтверждение и закрытие</span>.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Акт — часть данных, а не файл в архиве.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <span class="card-num">7</span>
+                    <div class="card-title">Годовая отчетность</div>
+                    <div class="card-hint">Что автоматизировать</div>
+                </div>
+                <div class="flip-back">
+                    <div class="back-label">Автоматизировать</div>
+                    <p class="back-text">Накопление данных за год: обходы, ремонты, аттестации в одном контуре.</p>
+                    <p class="back-text">Формирование отчетности и <span class="back-highlight">проверка логических ошибок</span>.</p>
+                    <div class="result">
+                        <div class="back-label">Результат</div>
+                        <p class="back-text">Отчет — итог года, а не сбор в марте.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Перевернуть все обратно</button>
+</div>
+
+<script>
+    document.querySelectorAll('.flip-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+            card.classList.toggle('flipped');
+        });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function () {
+        document.querySelectorAll('.flip-card').forEach(function (card) {
+            card.classList.remove('flipped');
+        });
+    });
+</script>
+
+</body>
+</html>
