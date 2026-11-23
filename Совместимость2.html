@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Схема 560px: Автоматизация · Цифровизация · ИИ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .card {
+            width: 560px;
+            max-width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2eaf1;
+            padding: 20px 18px 16px;
+        }
+
+        .card h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0b2b3c;
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: -0.01em;
+        }
+
+        /* --- Три блока в ряд --- */
+        .chain {
+            display: flex;
+            gap: 6px;
+            align-items: stretch;
+            margin-bottom: 8px;
+        }
+
+        .node {
+            flex: 1 1 0;
+            min-width: 0;
+            border-radius: 12px;
+            padding: 10px 6px 9px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .node-automation {
+            background: #f4f8ff;
+            border: 1.5px solid #a0c0e8;
+        }
+
+        .node-digital {
+            background: #f2faf2;
+            border: 1.5px solid #86b886;
+        }
+
+        .node-ai {
+            background: #faf4ff;
+            border: 1.5px solid #b88ed0;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .node h2 {
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+        }
+
+        .node-automation h2 { color: #1a3e6b; }
+        .node-digital h2    { color: #1e5a1e; }
+        .node-ai h2         { color: #4f1f6b; }
+
+        .node p {
+            font-size: 0.62rem;
+            line-height: 1.25;
+            color: #1f2e3a;
+            opacity: 0.88;
+            padding: 0 1px;
+        }
+
+        /* стрелки между блоками */
+        .link {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #2a6b8f;
+            font-weight: 700;
+            padding: 0 1px;
+        }
+
+        .link small {
+            font-size: 0.48rem;
+            font-weight: 500;
+            color: #2c4b5e;
+            text-align: center;
+            line-height: 1.1;
+            display: block;
+            margin-top: 2px;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+
+        /* --- Блок взаимных зависимостей --- */
+        .deps {
+            background: #ffffff;
+            border: 1px solid #e2eaf1;
+            border-radius: 12px;
+            padding: 9px 12px;
+            margin: 10px 0 8px;
+            font-size: 0.64rem;
+            line-height: 1.5;
+            color: #1f3e52;
+        }
+
+        .deps div {
+            display: flex;
+            gap: 5px;
+            align-items: baseline;
+        }
+
+        .deps .dot {
+            flex: 0 0 auto;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #2a6b8f;
+            margin-top: 5px;
+        }
+
+        .deps strong {
+            font-weight: 600;
+            color: #0b2b3c;
+        }
+
+        /* --- Мини-пример --- */
+        .example {
+            background: #ffffff;
+            border: 1px solid #e2eaf1;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.62rem;
+            line-height: 1.45;
+            color: #1f3e52;
+            margin-bottom: 10px;
+        }
+
+        .example .ex-title {
+            font-weight: 600;
+            color: #0b2b3c;
+            font-size: 0.68rem;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Вывод --- */
+        .footer {
+            text-align: center;
+            font-size: 0.62rem;
+            color: #3a5f73;
+            line-height: 1.4;
+            padding: 0 4px;
+        }
+
+        .footer strong {
+            color: #0b2b3c;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Единый механизм: автоматизация · цифровизация · ИИ</h1>
+
+        <!-- Цепочка из трёх блоков -->
+        <div class="chain">
+            <!-- Автоматизация -->
+            <div class="node node-automation">
+                <span class="icon">⚙️</span>
+                <h2>Автоматизация</h2>
+                <p>Датчики, задвижки, ПАЗ. Сбор данных и команды по сети.</p>
+            </div>
+
+            <div class="link">
+                ⇄
+                <small>без автоматики<br>цифровизация<br>буксует</small>
+            </div>
+
+            <!-- Цифровизация -->
+            <div class="node node-digital">
+                <span class="icon">📊</span>
+                <h2>Цифровизация</h2>
+                <p>Единый центр, цифровая модель, все данные.</p>
+            </div>
+
+            <div class="link">
+                ⇄
+                <small>без данных<br>нейросети<br>бесполезны</small>
+            </div>
+
+            <!-- Нейросети -->
+            <div class="node node-ai">
+                <span class="icon">🧠</span>
+                <h2>Нейросети (ИИ)</h2>
+                <p>Прогноз износа, аномалии, интеллект.</p>
+            </div>
+        </div>
+
+        <!-- Ключевые зависимости -->
+        <div class="deps">
+            <div><span class="dot"></span><span><strong>Цифровизация</strong> — фундамент: без данных ИИ нечем «питаться»</span></div>
+            <div><span class="dot"></span><span><strong>Автоматизация</strong> — процессы: без неё цифровизация буксует</span></div>
+            <div><span class="dot"></span><span><strong>Нейросети</strong> — интеллект: без них автоматика упирается в потолок жёсткой логики</span></div>
+        </div>
+
+        <!-- Мини-пример -->
+        <div class="example">
+            <div class="ex-title">🛢️ Пример: нефтеперекачивающая станция</div>
+            <strong>Автоматизация:</strong> ПАЗ мгновенно перекрывает клапан при превышении давления.
+            <strong>Цифровизация:</strong> данные всех датчиков — в диспетчерском центре, цифровая модель.
+            <strong>ИИ:</strong> предсказывает износ подшипника за 3 дня, отслеживает утечки и маршруты эвакуации.
+        </div>
+
+        <!-- Вывод -->
+        <div class="footer">
+            <strong>Узкое место?</strong> Проверьте уровень: «плохая нейросеть» часто = нет данных или автоматики.
+        </div>
+    </div>
+</body>
+</html>
