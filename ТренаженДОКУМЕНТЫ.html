@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Определи механизм</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 6px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:4px;margin-bottom:12px}
+  .st{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .st.done{background:#38a169}
+  .st.active{background:#2b6cb0}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card .step-num{font-size:12px;color:#7a8a9a;margin:0 0 6px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card .sit{font-size:13px;color:#5b6b7c;margin:0 0 10px}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:44px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+  .fb b{display:block;margin-bottom:2px}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4;font-size:13px}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Определи механизм</h1>
+  <p class="lead">Коллеги приходят с жалобами. Определите, какой механизм автоматизации документооборота закрывает проблему.</p>
+
+  <div class="stepper" id="stepper"></div>
+
+  <div class="card" id="card">
+    <div class="step-num" id="stepNum"></div>
+    <h2 id="sit"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="fb" id="fb">Выберите механизм.</div>
+
+  <div class="actions">
+    <button class="primary" id="next" disabled>Дальше</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Готово: вы научились узнавать механизм</h3>
+    <ul>
+      <li><b>Разработка документации</b> — создать документ с нуля по шаблону.</li>
+      <li><b>Актуализация документов</b> — найти устаревшее и обновить.</li>
+      <li><b>Информирование сотрудников</b> — донести и зафиксировать ознакомление.</li>
+      <li><b>Визуализация правил и изменений</b> — показать, что изменилось, наглядно.</li>
+    </ul>
+    <p style="margin:10px 0 0">Главное правило: сначала назовите проблему, потом выбирайте механизм. И помните — автоматизация снимает рутину, но не заменяет ответственность.</p>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    sit:'«Ищу последнюю версию Положения о производственном контроле, а нахожу три разных. Какая из них действующая — непонятно».',
+    opts:[
+      {t:'Разработка документации', ok:false, why:'Документ уже есть, проблема не в создании, а в том, что версии расходятся.'},
+      {t:'Актуализация документов', ok:true, why:'Верно: система хранит актуальную версию и показывает, что устарело.'},
+      {t:'Информирование сотрудников', ok:false, why:'Проблема не в том, что не донесли, а в том, что нет единой актуальной версии.'}
+    ]
+  },
+  {
+    sit:'«Мастера участков каждый день спрашивают одно и то же про новый приказ Ростехнадзора. Я отвечаю, но через час спрашивают снова».',
+    opts:[
+      {t:'Информирование сотрудников', ok:true, why:'Верно: система доносит информацию и фиксирует, кто ознакомился, — повторные вопросы снижаются.'},
+      {t:'Разработка документации', ok:false, why:'Приказ уже есть, создавать новый не нужно.'},
+      {t:'Визуализация правил и изменений', ok:false, why:'Визуализация помогает, но сначала нужно донести и зафиксировать ознакомление.'}
+    ]
+  },
+  {
+    sit:'«Нужно с нуля написать положение о производственном контроле по корпоративному шаблону. Времени — день».',
+    opts:[
+      {t:'Актуализация документов', ok:false, why:'Актуализация — это обновление существующего. Здесь документа ещё нет.'},
+      {t:'Разработка документации', ok:true, why:'Верно: система берет шаблон и помогает собрать проект, а вы проверяете и утверждаете.'},
+      {t:'Визуализация правил и изменений', ok:false, why:'Визуализация — про наглядность, а не про создание документа с нуля.'}
+    ]
+  },
+  {
+    sit:'«Инспектор не понимает, что изменилось в регламенте по промышленной безопасности. Объясняю на пальцах, но он всё равно путается».',
+    opts:[
+      {t:'Информирование сотрудников', ok:false, why:'Информирование — про донесение, а здесь нужна наглядность изменений.'},
+      {t:'Визуализация правил и изменений', ok:true, why:'Верно: сравнение «было — стало» и схемы показывают изменения наглядно.'},
+      {t:'Разработка документации', ok:false, why:'Документ уже есть, проблема в том, как показать изменения.'}
+    ]
+  },
+  {
+    sit:'«Пропала папка с подписанными оригиналами приказов по промбезопасности. Нужно срочно найти».',
+    opts:[
+      {t:'Разработка документации', ok:false, why:'Это не создание документа.'},
+      {t:'Хранение и ответственность', ok:true, why:'Верно: это не механизм автоматизации, а хранение и ответственность. Система помогает с архивом, но подлинники — на вас.'},
+      {t:'Актуализация документов', ok:false, why:'Актуализация — про версии, а не про физическое хранение оригиналов.'}
+    ]
+  },
+  {
+    sit:'«Хочу, чтобы новый приказ по промышленной безопасности утвердился автоматически — без подписи руководителя».',
+    opts:[
+      {t:'Разработка документации', ok:false, why:'Разработка — это подготовка проекта, а не утверждение.'},
+      {t:'Это ошибка: утверждение — решение человека', ok:true, why:'Верно: система готовит проект, но утверждает и подписывает человек. Это не автоматизируется.'},
+      {t:'Информирование сотрудников', ok:false, why:'Информирование тут ни при чём.'}
+    ]
+  }
+];
+
+let idx = 0;
+let answered = false;
+
+const stepper = document.getElementById('stepper');
+const stepNum = document.getElementById('stepNum');
+const sitEl = document.getElementById('sit');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('fb');
+const nextBtn = document.getElementById('next');
+const final = document.getElementById('final');
+
+function buildStepper(){
+  stepper.innerHTML = '';
+  TASKS.forEach(()=>{
+    const d = document.createElement('div');
+    d.className = 'st';
+    stepper.appendChild(d);
+  });
+}
+function updateStepper(){
+  [...stepper.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function render(){
+  answered = false;
+  const t = TASKS[idx];
+  stepNum.textContent = `Ситуация ${idx + 1} из ${TASKS.length}`;
+  sitEl.textContent = t.sit;
+  optsEl.innerHTML = '';
+  fb.className = 'fb';
+  fb.textContent = 'Выберите механизм или отметьте ошибку.';
+  nextBtn.disabled = true;
+  nextBtn.textContent = idx === TASKS.length - 1 ? 'Завершить' : 'Дальше';
+
+  const order = t.opts.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  order.forEach(i=>{
+    const o = t.opts[i];
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.textContent = o.t;
+    d.addEventListener('click', ()=> choose(d, o));
+    optsEl.appendChild(d);
+  });
+  updateStepper();
+}
+
+function choose(el, o){
+  if(answered) return;
+  answered = true;
+  [...optsEl.children].forEach(c=> c.classList.add('dis'));
+
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'fb ok';
+    fb.innerHTML = `<b>Верно.</b>${o.why}`;
+  } else {
+    el.classList.add('wrong');
+    [...optsEl.children].forEach(c=>{
+      const real = TASKS[idx].opts.find(x=> x.t === c.textContent);
+      if(real && real.ok) c.classList.add('right');
+    });
+    fb.className = 'fb bad';
+    fb.innerHTML = `<b>Не совсем.</b>${o.why}<br><br><b>Правильно:</b> ${TASKS[idx].opts.find(x=>x.ok).why}`;
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < TASKS.length - 1){
+    idx++;
+    render();
+  } else {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('fb').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+    final.classList.add('show');
+    updateStepper();
+  }
+});
+
+function resetAll(){
+  idx = 0;
+  document.getElementById('card').style.display = '';
+  document.getElementById('fb').style.display = '';
+  document.querySelector('.actions').style.display = '';
+  final.classList.remove('show');
+  render();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+buildStepper();
+render();
+</script>
+</body>
+</html>
