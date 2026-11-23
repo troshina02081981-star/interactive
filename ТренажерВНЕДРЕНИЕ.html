@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ситуационный тренажер: автоматизация промбезопасности</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:6px;margin-bottom:12px}
+  .st{flex:1;border:1px solid #dde5ec;border-radius:8px;padding:7px 8px;font-size:12px;background:#f8fafc;color:#7a8a9a}
+  .st b{display:block;font-size:11px}
+  .st.active{border-color:#2b6cb0;background:#eef5fc;color:#1a2330;font-weight:600}
+  .st.done{border-color:#38a169;background:#f0f9f4;color:#1a2330}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card h2{font-size:15px;margin:0 0 6px}
+  .card p{margin:0 0 10px;font-size:13px;color:#5b6b7c}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s;display:flex;gap:8px;align-items:flex-start}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt .mark{width:18px;height:18px;border:2px solid #c9d4df;border-radius:4px;flex:none;margin-top:1px}
+  .opt.sel .mark{background:#2b6cb0;border-color:#2b6cb0}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:40px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px;font-size:13px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ситуационный тренажер</h1>
+
+  <div class="stepper">
+    <div class="st active" data-s="1"><b>Этап 1</b>Критерии</div>
+    <div class="st" data-s="2"><b>Этап 2</b>Подготовка</div>
+    <div class="st" data-s="3"><b>Этап 3</b>Реализация</div>
+  </div>
+
+  <div class="card" id="stage1">
+    <h2>Этап 1. Критерии выбора процесса</h2>
+    <p>Отметьте <b>три</b> критерия, по которым выбирают процесс-кандидат на автоматизацию. Потом нажмите «Проверить».</p>
+    <div class="opts" id="opts1"></div>
+  </div>
+
+  <div class="card" id="stage2" style="display:none">
+    <h2>Этап 2. Подготовка: что отдаем системе</h2>
+    <p>Из списка реальных задач специалиста по промбезопасности отметьте <b>те, что можно автоматизировать</b>. Не все задачи стоит отдавать системе.</p>
+    <div class="opts" id="opts2"></div>
+  </div>
+
+  <div class="card" id="stage3" style="display:none">
+    <h2>Этап 3. Реализация: шаги плана</h2>
+    <p>Отметьте <b>правильные шаги</b> — как пройти путь от наблюдения за работой до единой системы управления процессами.</p>
+    <div class="opts" id="opts3"></div>
+  </div>
+
+  <div class="fb" id="fb">Начните с этапа 1: отметьте три критерия.</div>
+
+  <div class="actions">
+    <button class="primary" id="check" disabled>Проверить</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Тренажер пройден</h3>
+    <ul>
+      <li><b>Критерии:</b> массовость, повторяемость, измеримость потерь времени — плюс понятная логика передачи информации.</li>
+      <li><b>Подготовка:</b> автоматизируют рутину с четкими правилами; анализ рисков и решения об остановке — за человеком.</li>
+      <li><b>Реализация:</b> наблюдение за работой → выбор первых задач → описание процесса до и после → подбор инструмента → пилот → закрепление нормы → развитие к единой системе.</li>
+    </ul>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+/* ЭТАП 1 — критерии выбора процесса */
+const S1 = [
+  {t:'Операция повторяется каждый день и занимает много времени', ok:true},
+  {t:'У процесса есть четкие правила: что, когда и кому передавать', ok:true},
+  {t:'Потери времени можно измерить и показать в деньгах', ok:true},
+  {t:'Процесс сложный, творческий, каждый раз новый', ok:false},
+  {t:'Процесс связан с принятием решения об остановке опасного объекта', ok:false},
+  {t:'Руководитель давно просит купить любую программу', ok:false}
+];
+
+/* ЭТАП 2 — подготовка: какие задачи отдаем системе */
+const S2 = [
+  {t:'Сбор и хранение документов в едином хранилище с быстрым поиском', ok:true},
+  {t:'Автоматическое напоминание об окончании срока аттестации', ok:true},
+  {t:'Фиксация замечаний по оборудованию и передача между сменами', ok:true},
+  {t:'Автоматическая передача сигнала ответственному при отклонении', ok:true},
+  {t:'Решение о допуске работника к опасным работам', ok:false},
+  {t:'Анализ рисков и выбор мер по предотвращению аварии', ok:false},
+  {t:'Оценка достаточности глубины проведенной проверки', ok:false}
+];
+
+/* ЭТАП 3 — реализация: шаги плана «Автоматизация шаг за шагом» */
+const S3 = [
+  {t:'Понаблюдать за своей работой и записать регулярные операции', ok:true},
+  {t:'Выбрать первые задачи с наибольшим эффектом по времени и последствиям', ok:true},
+  {t:'Описать процесс до и после: где хранятся данные, кто вносит, кто контролирует', ok:true},
+  {t:'Подобрать инструмент под конкретную задачу', ok:true},
+  {t:'Запустить пилот на одном участке и собрать обратную связь', ok:true},
+  {t:'Закрепить норму: ответственные, правила, регламенты, обучение', ok:true},
+  {t:'Развивать дальше — переходить к следующему процессу и объединять в единую систему', ok:true},
+  {t:'Сначала купить программу, потом разобраться в процессе', ok:false},
+  {t:'Сразу автоматизировать все процессы на предприятии', ok:false},
+  {t:'Внедрить сложную систему, даже если задачу решает простая таблица', ok:false}
+];
+
+let stage = 1;
+let sel1 = new Set(), sel2 = new Set(), sel3 = new Set();
+
+/* Перемешивание */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const S1M = shuffle(S1);
+const S2M = shuffle(S2);
+const S3M = shuffle(S3);
+
+const fb = document.getElementById('fb');
+const checkBtn = document.getElementById('check');
+const final = document.getElementById('final');
+const stepper = [...document.querySelectorAll('.st')];
+
+function setFb(t, c){ fb.textContent = t; fb.className = 'fb' + (c ? ' ' + c : ''); }
+function setStage(n){
+  stage = n;
+  stepper.forEach(s=>{
+    const i = +s.dataset.s;
+    s.classList.toggle('active', i === n);
+    s.classList.toggle('done', i < n);
+  });
+  document.getElementById('stage1').style.display = n === 1 ? '' : 'none';
+  document.getElementById('stage2').style.display = n === 2 ? '' : 'none';
+  document.getElementById('stage3').style.display = n === 3 ? '' : 'none';
+  checkBtn.textContent = n === 1 ? 'Проверить критерии' : n === 2 ? 'Проверить задачи' : 'Проверить шаги';
+}
+
+function buildOpts(boxId, data, sel, onToggle){
+  const box = document.getElementById(boxId);
+  box.innerHTML = '';
+  data.forEach((o,i)=>{
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.innerHTML = `<span class="mark"></span><span>${o.t}</span>`;
+    d.addEventListener('click', ()=>{
+      if(d.classList.contains('dis')) return;
+      d.classList.toggle('sel');
+      sel.has(i) ? sel.delete(i) : sel.add(i);
+      onToggle();
+    });
+    box.appendChild(d);
+  });
+}
+
+function render1(){
+  buildOpts('opts1', S1M, sel1, ()=> checkBtn.disabled = sel1.size !== 3);
+  checkBtn.disabled = sel1.size !== 3;
+}
+function render2(){
+  buildOpts('opts2', S2M, sel2, ()=> checkBtn.disabled = sel2.size === 0);
+  checkBtn.disabled = sel2.size === 0;
+}
+function render3(){
+  buildOpts('opts3', S3M, sel3, ()=> checkBtn.disabled = sel3.size === 0);
+  checkBtn.disabled = sel3.size === 0;
+}
+
+function grade(boxId, data, sel){
+  let wrong = 0;
+  [...document.getElementById(boxId).children].forEach((el,i)=>{
+    el.classList.add('dis');
+    if(data[i].ok && !sel.has(i)){ el.classList.add('wrong'); wrong++; }
+    if(!data[i].ok && sel.has(i)){ el.classList.add('wrong'); wrong++; }
+    if(data[i].ok) el.classList.add('right');
+  });
+  return wrong;
+}
+
+checkBtn.addEventListener('click', ()=>{
+  if(stage === 1){
+    const wrong = grade('opts1', S1M, sel1);
+    if(wrong === 0){
+      setFb('✅ Все три критерия верны. Переходите к этапу 2 — подготовке.','ok');
+      setTimeout(()=>{ setStage(2); render2(); setFb('Отметьте задачи, которые можно автоматизировать.',''); }, 1200);
+    } else {
+      setFb(`❌ Есть неверные критерии (${wrong}). Зеленым — правильные: массовая, повторяемая рутина с четкими правилами и измеримыми потерями.`,'bad');
+    }
+  } else if(stage === 2){
+    const wrong = grade('opts2', S2M, sel2);
+    if(wrong === 0){
+      setFb('✅ Верно. Рутина уходит системе, решения об допуске и анализе рисков остаются человеку. Переходите к этапу 3.','ok');
+      setTimeout(()=>{ setStage(3); render3(); setFb('Отметьте правильные шаги плана «Автоматизация шаг за шагом».',''); }, 1200);
+    } else {
+      setFb(`❌ Есть спорные задачи (${wrong}). Зеленым — что можно автоматизировать; красным — что должно остаться за человеком.`,'bad');
+    }
+  } else {
+    const wrong = grade('opts3', S3M, sel3);
+    if(wrong === 0){
+      setFb('✅ План верен: от наблюдения и пилота к закрепленной норме и развитию, а не от покупки программы.','ok');
+      final.classList.add('show');
+      checkBtn.disabled = true;
+    } else {
+      setFb(`❌ В плане есть ошибки (${wrong}). Зеленым — шаги «Автоматизации шаг за шагом»; красным — типичные ошибки.`,'bad');
+    }
+  }
+});
+
+function resetAll(){
+  sel1.clear(); sel2.clear(); sel3.clear();
+  final.classList.remove('show');
+  S1M.splice(0, S1M.length, ...shuffle(S1));
+  S2M.splice(0, S2M.length, ...shuffle(S2));
+  S3M.splice(0, S3M.length, ...shuffle(S3));
+  setStage(1); render1();
+  setFb('Начните с этапа 1: отметьте три критерия.','');
+  checkBtn.disabled = true;
+}
+
+document.getElementById('reset').addEventListener('click', resetAll);
+
+setStage(1); render1();
+</script>
+</body>
+</html>
