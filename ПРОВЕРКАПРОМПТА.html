@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактив: как работает промпт</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 24px 12px;
+        }
+
+        .card {
+            width: 560px;
+            max-width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2eaf1;
+            padding: 22px 20px 20px;
+        }
+
+        .card h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0b2b3c;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.72rem;
+            color: #3a5f73;
+            margin-bottom: 18px;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #0b2b3c;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label .hint { font-weight: 400; font-size: 0.6rem; color: #6b8a9e; }
+
+        textarea {
+            width: 100%;
+            min-height: 90px;
+            resize: vertical;
+            border: 1.5px solid #cddde9;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: #1f2e3a;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus { border-color: #2a6b8f; }
+        textarea::placeholder { color: #9bb2c2; }
+
+        .buttons { display: flex; gap: 8px; margin: 12px 0 16px; }
+
+        button {
+            flex: 1;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.05s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .btn-primary { background: #2a6b8f; color: #ffffff; }
+        .btn-primary:hover { background: #1f5472; }
+
+        .btn-secondary { background: #eef4f9; color: #1a3e6b; border: 1px solid #cddde9; }
+        .btn-secondary:hover { background: #e2ecf4; }
+
+        .result {
+            border-radius: 12px;
+            border: 1px solid #e2eaf1;
+            padding: 14px;
+            background: #fafcfe;
+        }
+
+        .result h2 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #0b2b3c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+        .score-bar {
+            flex: 1;
+            height: 10px;
+            background: #e6eef5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #e07b39, #e6c33a, #5db35d);
+            transition: width 0.4s ease;
+        }
+
+        .score-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #0b2b3c;
+            min-width: 38px;
+            text-align: right;
+        }
+
+        .criteria { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+
+        .criterion {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: 0.68rem;
+            line-height: 1.35;
+            color: #1f3e52;
+        }
+
+        .mark {
+            flex: 0 0 auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            font-size: 0.55rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 1px;
+        }
+
+        .mark.ok { background: #5db35d; }
+        .mark.fail { background: #d95c5c; }
+
+        .tip {
+            font-size: 0.66rem;
+            line-height: 1.45;
+            color: #3a5f73;
+            background: #eef4f9;
+            border-radius: 8px;
+            padding: 8px 10px;
+            border-left: 3px solid #2a6b8f;
+        }
+
+        .tip strong { color: #0b2b3c; }
+
+        @media (max-width: 520px) {
+            .buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🧪 Интерактив: собери хороший промпт</h1>
+        <div class="subtitle">Введите промпт — тренажер оценит его по четырем критериям</div>
+
+        <div class="label">
+            <span>Ваш промпт</span>
+            <span class="hint">чем конкретнее — тем выше балл</span>
+        </div>
+        <textarea id="promptInput" placeholder="Например: Ты — эксперт по промышленной безопасности. Составь чек-лист из 5 пунктов для проверки датчиков давления на нефтеперекачивающей станции. Ответ дай в виде таблицы."></textarea>
+
+        <div class="buttons">
+            <button class="btn-primary" onclick="analyzePrompt()">Проверить промпт</button>
+            <button class="btn-secondary" onclick="loadExample()">Загрузить пример</button>
+        </div>
+
+        <div class="result">
+            <h2>📋 Результат анализа</h2>
+            <div class="score-row">
+                <div class="score-bar"><div class="score-fill" id="scoreFill"></div></div>
+                <div class="score-value" id="scoreValue">0%</div>
+            </div>
+
+            <div class="criteria" id="criteriaList">
+                <div class="criterion"><span class="mark fail" id="m1">✕</span><span><strong>Роль</strong> — указано, кем должен быть ИИ (эксперт, аналитик, инженер)</span></div>
+                <div class="criterion"><span class="mark fail" id="m2">✕</span><span><strong>Задача</strong> — четко сформулировано, что нужно сделать</span></div>
+                <div class="criterion"><span class="mark fail" id="m3">✕</span><span><strong>Контекст</strong> — есть детали: объект, отрасль, ограничения</span></div>
+                <div class="criterion"><span class="mark fail" id="m4">✕</span><span><strong>Формат ответа</strong> — указано, как именно должен выглядеть результат</span></div>
+            </div>
+
+            <div class="tip" id="tipBox">
+                <strong>Совет:</strong> начните с роли («Ты — эксперт…»), затем задайте задачу и контекст, а в конце укажите формат ответа.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('promptInput');
+        const scoreFill = document.getElementById('scoreFill');
+        const scoreValue = document.getElementById('scoreValue');
+        const tipBox = document.getElementById('tipBox');
+
+        const marks = {
+            m1: document.getElementById('m1'),
+            m2: document.getElementById('m2'),
+            m3: document.getElementById('m3'),
+            m4: document.getElementById('m4')
+        };
+
+        // --- Более терпимые регулярки ---
+
+        // Роль: ловим «ты …», «вы …», «как …», «в роли …», «представь …», «выступай …»,
+        // а также английские «you are …», «act as …», «as an expert …».
+        const rolePattern = /(^|[^а-яе])(ты|вы)\b[\s\S]{0,25}?(эксперт|аналитик|инженер|специалист|консультант|профессор|разработчик|юрист|врач|ученый|учитель|переводчик|редактор|маркетолог|менеджер|архитектор|дизайнер|тренер|наставник|куратор|исследователь|data\s*scientist|программист|системный\s+администратор)|как\s+(эксперт|аналитик|инженер|специалист|консультант|профессор|разработчик|юрист|врач|ученый|учитель|переводчик|редактор|маркетолог|менеджер|архитектор|дизайнер|тренер|наставник|куратор|исследователь|программист)|в\s+роли\s+\w+|представь\s+(себя|что\s+ты)|вообрази\s+себя|выступай\s+(в\s+роли|как)|acting\s+as|you\s+are\s+(an?\s+)?\w+|as\s+an?\s+(expert|analyst|engineer|specialist)/i;
+
+        // Задача: глаголы действия в любой форме
+        const taskPattern = /(составь|составить|напиши|написать|создай|создать|разработай|разработать|проанализируй|проанализировать|объясни|объяснить|перечисли|перечислить|сравни|сравнить|оцени|оценить|сформулируй|сформулировать|подготовь|подготовить|сделай|сделать|найди|найти|определи|определить|рассчитай|рассчитать|опиши|описать|сгенерируй|сгенерировать|придумай|придумать|предложи|предложить|дай|дать|generate|write|create|analyze|explain|list|compare|evaluate|prepare|make|find|determine|calculate|describe|provide|suggest)/i;
+
+        // Контекст: объект/отрасль/ограничения/аудитория
+        const contextPattern = /(для|на\s+объекте|в\s+отрасли|в\s+компании|на\s+заводе|на\s+станции|в\s+нефтегазовой|в\s+энергетике|в\s+промышленности|с\s+учетом|учитывая|ограничени|бюджет|срок|аудитори|для\s+новичков|для\s+руководител|в\s+формате|context|for\s+a|in\s+the|considering|taking\s+into\s+account|given|based\s+on)/i;
+
+        // Формат: как должен выглядеть ответ
+        const formatPattern = /(в\s+виде|формат|таблиц|списк|пункт|абзац|схем|json|markdown|html|pdf|презентаци|отчет|резюме|пошагов|шаг\s+за\s+шагом|структур|заголовк|нумерованн|маркированн|колонк|столбц|format|table|list|bullet|step-by-step|json|markdown|report|summary|structure|heading|numbered|column)/i;
+
+        function checkCriterion(text, pattern) {
+            return pattern.test(text);
+        }
+
+        function analyzePrompt() {
+            const text = input.value.trim();
+
+            if (!text) {
+                resetResult();
+                tipBox.innerHTML = '<strong>Совет:</strong> введите промпт или нажмите «Загрузить пример», чтобы увидеть, как работает анализ.';
+                return;
+            }
+
+            const results = {
+                role: checkCriterion(text, rolePattern),
+                task: checkCriterion(text, taskPattern),
+                context: checkCriterion(text, contextPattern),
+                format: checkCriterion(text, formatPattern)
+            };
+
+            updateMark(marks.m1, results.role);
+            updateMark(marks.m2, results.task);
+            updateMark(marks.m3, results.context);
+            updateMark(marks.m4, results.format);
+
+            const passed = Object.values(results).filter(Boolean).length;
+            const percent = Math.round((passed / 4) * 100);
+
+            scoreFill.style.width = percent + '%';
+            scoreValue.textContent = percent + '%';
+
+            if (percent >= 75) scoreValue.style.color = '#2e7d32';
+            else if (percent >= 50) scoreValue.style.color = '#b26a00';
+            else scoreValue.style.color = '#c62828';
+
+            const missing = [];
+            if (!results.role) missing.push('роль');
+            if (!results.task) missing.push('задача');
+            if (!results.context) missing.push('контекст');
+            if (!results.format) missing.push('формат ответа');
+
+            if (missing.length === 0) {
+                tipBox.innerHTML = '<strong>Отлично!</strong> Промпт содержит все четыре компонента. Такой запрос дает ИИ максимум информации для точного ответа.';
+            } else if (missing.length === 1) {
+                tipBox.innerHTML = '<strong>Почти готово.</strong> Не хватает: <strong>' + missing[0] + '</strong>. Добавьте этот элемент — и промпт станет значительно сильнее.';
+            } else {
+                tipBox.innerHTML = '<strong>Совет:</strong> добавьте в промпт: <strong>' + missing.join(', ') + '</strong>. Чем больше компонентов — тем предсказуемее результат.';
+            }
+        }
+
+        function updateMark(el, ok) {
+            if (ok) {
+                el.className = 'mark ok';
+                el.textContent = '✓';
+            } else {
+                el.className = 'mark fail';
+                el.textContent = '✕';
+            }
+        }
+
+        function resetResult() {
+            scoreFill.style.width = '0%';
+            scoreValue.textContent = '0%';
+            scoreValue.style.color = '#0b2b3c';
+            ['m1', 'm2', 'm3', 'm4'].forEach(id => {
+                marks[id].className = 'mark fail';
+                marks[id].textContent = '✕';
+            });
+        }
+
+        function loadExample() {
+            input.value = 'Ты — эксперт по промышленной безопасности. Составь чек-лист из 5 пунктов для проверки датчиков давления на нефтеперекачивающей станции. Ответ дай в виде таблицы с колонками: пункт проверки, норматив, комментарий.';
+            input.focus();
+            analyzePrompt();
+        }
+
+        let debounceTimer;
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(analyzePrompt, 500);
+        });
+
+        if (input.value.trim()) analyzePrompt();
+    </script>
+</body>
+</html>
