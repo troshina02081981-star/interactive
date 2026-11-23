@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сними возражение</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 6px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:4px;margin-bottom:12px}
+  .st{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .st.done{background:#38a169}
+  .st.active{background:#2b6cb0}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card .step-num{font-size:12px;color:#7a8a9a;margin:0 0 6px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card .sit{font-size:13px;color:#5b6b7c;margin:0 0 10px}
+  .card .who{font-size:12px;color:#1b4f8a;font-weight:600;margin:0 0 6px}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:44px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+  .fb b{display:block;margin-bottom:2px}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4;font-size:13px}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Сними возражение</h1>
+  <p class="lead">Возражения против цифровизации идут по цепочке: деньги → люди → данные → техника. Подберите аргумент, который снимает возражение, а не усиливает его.</p>
+
+  <div class="stepper" id="stepper"></div>
+
+  <div class="card" id="card">
+    <div class="step-num" id="stepNum"></div>
+    <div class="who" id="who"></div>
+    <h2 id="sit"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="fb" id="fb">Выберите аргумент.</div>
+
+  <div class="actions">
+    <button class="primary" id="next" disabled>Дальше</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Готово: вы видите, что работает</h3>
+    <ul>
+      <li><b>Деньги:</b> считайте стоимость бездействия — выплаты, простои, штрафы, а не только смету внедрения.</li>
+      <li><b>Люди:</b> цифровизация — чтобы защитить, а не наказать. Это нужно проговорить прямо.</li>
+      <li><b>Данные:</b> начинайте с аудита данных, а не с покупки системы.</li>
+      <li><b>Техника:</b> интеграция поэтапно, а не одним куском.</li>
+    </ul>
+    <p style="margin:10px 0 0">Сопротивление не исчезает само. Его снимает правильный аргумент на нужном уровне.</p>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    who:'Возражение от руководства',
+    sit:'«Дорого и сложно. Смета на внедрение выглядит неподъемной».',
+    opts:[
+      {t:'Посчитать стоимость бездействия: выплаты по травматизму, простои, штрафы — они окупают инвестиции', ok:true, why:'Верно: аргумент для бюджета — не только стоимость внедрения, но и стоимость бездействия.'},
+      {t:'Согласиться и отложить внедрение', ok:false, why:'Проблема останется. Отсрочка не снижает ни риски, ни будущие затраты.'},
+      {t:'Сказать, что «так положено»', ok:false, why:'Это не аргумент для бюджета. Руководству нужен расчет, а не ссылка на требование.'}
+    ]
+  },
+  {
+    who:'Возражение от линейного персонала',
+    sit:'«Датчики будут следить за нами. Нас будут наказывать».',
+    opts:[
+      {t:'Объяснить, что цифровизация — чтобы защитить, а не наказать, и проговорить это прямо', ok:true, why:'Верно: пока это не проговорено, сопротивление будет тихим, но стойким.'},
+      {t:'Не обращать внимания — привыкнут', ok:false, why:'Сопротивление никуда не денется, а станет скрытым и более опасным.'},
+      {t:'Пригрозить дисциплинарной ответственностью', ok:false, why:'Это усилит страх и сопротивление, а не снимет возражение.'}
+    ]
+  },
+  {
+    who:'Возражение по данным',
+    sit:'«Данные грязные. Выяснилось, когда деньги уже выделены».',
+    opts:[
+      {t:'Начать с аудита данных: какие реестры ведутся, где дубли, какие поля пустые, кто отвечает за актуальность', ok:true, why:'Верно: без чистой и структурированной информации никакие нейросети не заработают.'},
+      {t:'Сначала купить систему, потом разобраться с данными', ok:false, why:'Нейросети не заработают на грязных данных. Система лишь покажет, что данные не готовы.'},
+      {t:'Почистить данные потом, по ходу внедрения', ok:false, why:'По ходу не получится: грязные данные сорвут запуск.'}
+    ]
+  },
+  {
+    who:'Техническое возражение',
+    sit:'«Интеграция дорогая, а каналы связи уязвимы».',
+    opts:[
+      {t:'Планировать интеграцию поэтапно, а не одним куском, с повышенной защитой', ok:true, why:'Верно: это не повод отказываться, а повод планировать поэтапно.'},
+      {t:'Отказаться от интеграции', ok:false, why:'Без интеграции не будет цифровизации надзора: данные не свяжутся с государственными платформами.'},
+      {t:'Сделать всё сразу, чтобы не растягивать', ok:false, why:'Это дорого и рискованно: один сбой сорвет весь проект.'}
+    ]
+  },
+  {
+    who:'Проверка на понимание',
+    sit:'«Коллега говорит: раз возражение про деньги, значит, остальные возражения можно не учитывать».',
+    opts:[
+      {t:'Верно, деньги — главное', ok:false, why:'Ошибка: возражения идут по цепочке — деньги, люди, данные, техника. Каждое нужно снимать.'},
+      {t:'Неверно: возражения идут по цепочке, и на каждое нужен свой аргумент', ok:true, why:'Верно: сняли деньги — всплывут люди, потом данные, потом техника.'}
+    ]
+  }
+];
+
+let idx = 0;
+let answered = false;
+
+const stepper = document.getElementById('stepper');
+const stepNum = document.getElementById('stepNum');
+const whoEl = document.getElementById('who');
+const sitEl = document.getElementById('sit');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('fb');
+const nextBtn = document.getElementById('next');
+const final = document.getElementById('final');
+
+function buildStepper(){
+  stepper.innerHTML = '';
+  TASKS.forEach(()=>{
+    const d = document.createElement('div');
+    d.className = 'st';
+    stepper.appendChild(d);
+  });
+}
+function updateStepper(){
+  [...stepper.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function render(){
+  answered = false;
+  const t = TASKS[idx];
+  stepNum.textContent = `Возражение ${idx + 1} из ${TASKS.length}`;
+  whoEl.textContent = t.who;
+  sitEl.textContent = t.sit;
+  optsEl.innerHTML = '';
+  fb.className = 'fb';
+  fb.textContent = 'Выберите аргумент.';
+  nextBtn.disabled = true;
+  nextBtn.textContent = idx === TASKS.length - 1 ? 'Завершить' : 'Дальше';
+
+  const order = t.opts.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  order.forEach(i=>{
+    const o = t.opts[i];
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.textContent = o.t;
+    d.addEventListener('click', ()=> choose(d, o));
+    optsEl.appendChild(d);
+  });
+  updateStepper();
+}
+
+function choose(el, o){
+  if(answered) return;
+  answered = true;
+  [...optsEl.children].forEach(c=> c.classList.add('dis'));
+
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'fb ok';
+    fb.innerHTML = `<b>Верно.</b>${o.why}`;
+  } else {
+    el.classList.add('wrong');
+    [...optsEl.children].forEach(c=>{
+      const real = TASKS[idx].opts.find(x=> x.t === c.textContent);
+      if(real && real.ok) c.classList.add('right');
+    });
+    fb.className = 'fb bad';
+    fb.innerHTML = `<b>Не совсем.</b>${o.why}<br><br><b>Правильно:</b> ${TASKS[idx].opts.find(x=>x.ok).why}`;
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < TASKS.length - 1){
+    idx++;
+    render();
+  } else {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('fb').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+    final.classList.add('show');
+    updateStepper();
+  }
+});
+
+function resetAll(){
+  idx = 0;
+  document.getElementById('card').style.display = '';
+  document.getElementById('fb').style.display = '';
+  document.querySelector('.actions').style.display = '';
+  final.classList.remove('show');
+  render();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+buildStepper();
+render();
+</script>
+</body>
+</html>
