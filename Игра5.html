@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Собери работающую систему</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 4px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .task{border:1px solid #dde5ec;border-radius:12px;padding:12px;margin-bottom:12px;background:#fafcfe}
+  .task .q{font-size:14px;font-weight:600;margin-bottom:8px}
+  .task .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+
+  .progress{display:flex;gap:6px;margin-bottom:10px}
+  .dot{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .dot.done{background:#38a169}
+
+  .feedback{border-radius:10px;padding:10px 12px;font-size:13px;min-height:40px;background:#f8fafc;border-left:4px solid #9aa9b8}
+  .feedback.ok{border-left-color:#38a169;background:#f0f9f4}
+  .feedback.bad{border-left-color:#c53030;background:#fdf2f2}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px;font-size:13px}
+  .final li{margin-bottom:6px}
+  .final button{margin-top:10px;font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #2b6cb0;background:#2b6cb0;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Собери работающую систему</h1>
+  <p class="lead">Четыре ситуации с объекта. В каждой выберите, чего не хватает — и сразу увидите, почему одно без другого не работает.</p>
+
+  <div class="progress">
+    <div class="dot" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+    <div class="dot" data-i="3"></div>
+  </div>
+
+  <div class="task" id="task">
+    <div class="q" id="q"></div>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="feedback" id="feedback">Выберите вариант ответа.</div>
+
+  <div class="final" id="final">
+    <h3>✅ Навык получен: с чего начинать</h3>
+    <ul>
+      <li><b>Нет данных?</b> Начинайте с цифровизации — иначе ИИ нечем питаться.</li>
+      <li><b>Оборудование не собирает показатели?</b> Сначала автоматизация.</li>
+      <li><b>Есть данные и автоматика?</b> Тогда подключайте нейросети.</li>
+      <li><b>Правило:</b> каждый следующий уровень включается только поверх предыдущего.</li>
+    </ul>
+    <button onclick="restart()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const LEVELS = {
+  auto:'Автоматизация',
+  digi:'Цифровизация',
+  ai:'Нейросети'
+};
+
+const TASKS = [
+  {
+    q:'На заводе учет ведут в бумажных журналах. Хотят внедрить ИИ для прогноза поломок. Чего не хватает в первую очередь?',
+    opts:[
+      {t:'Нейросетей — без ИИ прогноза не будет', ok:false},
+      {t:'Цифровизации — ИИ нечем питаться без данных', ok:true},
+      {t:'Автоматизации — пусть датчики сами пишут в журнал', ok:false}
+    ],
+    why:'ИИ учится на данных. Пока учет в бумаге, нейросети бесполезны — сначала нужен фундамент данных.'
+  },
+  {
+    q:'Данные со всех датчиков уже стекаются в единый центр. Но оборудование не умеет само передавать показатели — инженеры вносят вручную. Чего не хватает?',
+    opts:[
+      {t:'Автоматизации — оборудование должно собирать показатели само', ok:true},
+      {t:'Нейросетей — пусть ИИ заполняет данные', ok:false},
+      {t:'Ничего, ручной ввод — это нормально', ok:false}
+    ],
+    why:'Цифровизация буксует без автоматизации: гибкая цифровая экосистема не построится, если нижний уровень не собирает данные сам.'
+  },
+  {
+    q:'Автоматика работает по порогу: «температура выше 100 — включи вентилятор». Но нужно учитывать износ, погоду и качество сырья одновременно. Чего не хватает?',
+    opts:[
+      {t:'Еще датчиков — чем больше, тем лучше', ok:false},
+      {t:'Нейросетей — жесткая логика не видит тысячу факторов', ok:true},
+      {t:'Цифровизации — надо свести все в один центр', ok:false}
+    ],
+    why:'Автоматизация упирается в потолок без ИИ: обычная автоматика работает по жесткой логике и не учитывает сразу много неочевидных факторов.'
+  },
+  {
+    q:'Все три уровня включены. Что произойдет, если выключить цифровизацию (средний уровень)?',
+    opts:[
+      {t:'Ничего — автоматизация и ИИ продолжат работать', ok:false},
+      {t:'Нейросети погаснут: данные останутся в локальных пультах', ok:true},
+      {t:'Автоматизация сломается первой', ok:false}
+    ],
+    why:'Нейросети бесполезны без цифровизации: нет единого потока данных — нечем питаться ИИ. Верхний уровень гаснет.'
+  }
+];
+
+let idx = 0;
+
+const qEl = document.getElementById('q');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('feedback');
+const final = document.getElementById('final');
+const dots = [...document.querySelectorAll('.dot')];
+
+function render(){
+  const t = TASKS[idx];
+  qEl.textContent = t.q;
+  optsEl.innerHTML = '';
+  fb.className = 'feedback';
+  fb.textContent = 'Выберите вариант ответа.';
+  t.opts.forEach(o=>{
+    const b = document.createElement('div');
+    b.className = 'opt';
+    b.textContent = o.t;
+    b.addEventListener('click', ()=> choose(b, o));
+    optsEl.appendChild(b);
+  });
+  dots.forEach((d,i)=> d.classList.toggle('done', i < idx));
+}
+
+function choose(el, o){
+  [...optsEl.children].forEach(c=> c.style.pointerEvents='none');
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'feedback ok';
+    fb.textContent = '✅ Верно. ' + TASKS[idx].why;
+    dots[idx].classList.add('done');
+  } else {
+    el.classList.add('wrong');
+    fb.className = 'feedback bad';
+    fb.textContent = '❌ Не совсем. ' + TASKS[idx].why;
+    [...optsEl.children].forEach((c,i)=> { if(TASKS[idx].opts[i].ok) c.classList.add('right'); });
+  }
+  setTimeout(()=>{
+    idx++;
+    if(idx < TASKS.length) render();
+    else {
+      final.classList.add('show');
+      dots.forEach(d=> d.classList.add('done'));
+      qEl.textContent = 'Готово!';
+      optsEl.innerHTML = '';
+      fb.className = 'feedback ok';
+      fb.textContent = 'Вы прошли все ситуации. Ниже — итоговый навык.';
+    }
+  }, 1600);
+}
+
+function restart(){
+  idx = 0;
+  final.classList.remove('show');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
