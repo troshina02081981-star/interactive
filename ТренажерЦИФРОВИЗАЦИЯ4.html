@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что цифровизируют во взаимодействии с Ростехнадзором</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 6px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:4px;margin-bottom:12px}
+  .st{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .st.done{background:#38a169}
+  .st.active{background:#2b6cb0}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card .step-num{font-size:12px;color:#7a8a9a;margin:0 0 6px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card .sit{font-size:13px;color:#5b6b7c;margin:0 0 10px}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:44px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+  .fb b{display:block;margin-bottom:2px}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4;font-size:13px}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Что цифровизируют во взаимодействии с Ростехнадзором</h1>
+  <p class="lead">Определите, какой процесс в первую очередь переводят в цифру при взаимодействии с надзором и в ЭДО.</p>
+
+  <div class="stepper" id="stepper"></div>
+
+  <div class="card" id="card">
+    <div class="step-num" id="stepNum"></div>
+    <h2 id="sit"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="fb" id="fb">Выберите вариант.</div>
+
+  <div class="actions">
+    <button class="primary" id="next" disabled>Дальше</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Готово: вы видите, что цифровизируют в первую очередь</h3>
+    <ul>
+      <li><b>Подача отчетности</b> через личный кабинет на Госуслугах.</li>
+      <li><b>Получение уведомлений и предписаний</b> в электронном виде.</li>
+      <li><b>Отслеживание сроков</b> по документам в личном кабинете.</li>
+      <li><b>Подача заключений ЭПБ</b> через ЕПГУ с КЭП — с 1 сентября 2026 года.</li>
+      <li><b>Электронный документооборот</b> с подрядчиками и ведомством.</li>
+    </ul>
+    <p style="margin:10px 0 0">В первую очередь цифровизируют то, что связано с обязательной подачей и получением документов. Бумажная подача заключений ЭПБ уходит в прошлое — исключение только документы с гостайной.</p>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    sit:'Подача отчетности в Ростехнадзор.',
+    opts:[
+      {t:'Цифровизируется в первую очередь — через личный кабинет на Госуслугах', ok:true, why:'Верно: это обязательная подача, и она уже идет через цифровой канал.'},
+      {t:'Подается только на бумаге', ok:false, why:'Нет: отчетность подается в цифровом формате через ЛК.'},
+      {t:'Цифровизируется позже, после остальных процессов', ok:false, why:'Нет: подача отчетности — один из первых процессов.'}
+    ]
+  },
+  {
+    sit:'Получение уведомлений и предписаний от Ростехнадзора.',
+    opts:[
+      {t:'Цифровизируется — приходит в личный кабинет в электронном виде', ok:true, why:'Верно: электронный документ имеет равную силу с бумажным, его нужно отслеживать в ЛК.'},
+      {t:'Приходит только по почте', ok:false, why:'Нет: уведомления и предписания приходят в ЛК, и их легко пропустить, если не заходить.'},
+      {t:'Не относится к цифровизации', ok:false, why:'Относится: это один из ключевых цифровых процессов взаимодействия с надзором.'}
+    ]
+  },
+  {
+    sit:'Отслеживание сроков по документам.',
+    opts:[
+      {t:'Цифровизируется — статус и сроки видны в личном кабинете', ok:true, why:'Верно: ЛК показывает статус документов и сроки, не нужно звонить.'},
+      {t:'Только по звонку инспектору', ok:false, why:'Нет: звонок — не цифровой канал, статус виден в ЛК.'},
+      {t:'Ведется в бумажном журнале', ok:false, why:'Нет: бумажный журнал — не цифровой процесс, он не дает актуального статуса.'}
+    ]
+  },
+  {
+    sit:'Подача заключений ЭПБ.',
+    opts:[
+      {t:'С 1 сентября 2026 — только через ЕПГУ с КЭП, кроме документов с гостайной', ok:true, why:'Верно: бумага осталась в прошлом, исключение — только гостайна.'},
+      {t:'Можно подать на бумаге в любом случае', ok:false, why:'Нет: бумага допустима только для документов с гостайной.'},
+      {t:'Подается простой электронной подписью', ok:false, why:'Нет: нужна квалифицированная электронная подпись (КЭП).'}
+    ]
+  },
+  {
+    sit:'Электронный документооборот с подрядчиками и ведомством.',
+    opts:[
+      {t:'Цифровизируется — документы идут через ЭДО', ok:true, why:'Верно: это часть цифрового взаимодействия, документы не теряются между письмами.'},
+      {t:'Заменяется звонками и бумажными письмами', ok:false, why:'Нет: это откат назад, а не цифровизация.'},
+      {t:'Не относится к взаимодействию с Ростехнадзором', ok:false, why:'Относится: ЭДО — часть цифрового канала взаимодействия.'}
+    ]
+  },
+  {
+    sit:'Проверка статуса документа по телефону у инспектора.',
+    opts:[
+      {t:'Цифровизируется', ok:false, why:'Ошибка: звонок — не цифровой канал. Статус виден в личном кабинете.'},
+      {t:'Не цифровизируется — статус смотрят в ЛК', ok:true, why:'Верно: цифровой канал — это ЛК, а не звонок.'}
+    ]
+  },
+  {
+    sit:'Хранение всех документов только на бумаге.',
+    opts:[
+      {t:'Соответствует цифровизации', ok:false, why:'Ошибка: это противоречит ЭДО. Электронный документ имеет равную силу с бумажным.'},
+      {t:'Противоречит цифровизации — нужен ЭДО', ok:true, why:'Верно: цифровизация предполагает электронный документооборот, а не только бумагу.'}
+    ]
+  }
+];
+
+let idx = 0;
+let answered = false;
+
+const stepper = document.getElementById('stepper');
+const stepNum = document.getElementById('stepNum');
+const sitEl = document.getElementById('sit');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('fb');
+const nextBtn = document.getElementById('next');
+const final = document.getElementById('final');
+
+function buildStepper(){
+  stepper.innerHTML = '';
+  TASKS.forEach(()=>{
+    const d = document.createElement('div');
+    d.className = 'st';
+    stepper.appendChild(d);
+  });
+}
+function updateStepper(){
+  [...stepper.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function render(){
+  answered = false;
+  const t = TASKS[idx];
+  stepNum.textContent = `Процесс ${idx + 1} из ${TASKS.length}`;
+  sitEl.textContent = t.sit;
+  optsEl.innerHTML = '';
+  fb.className = 'fb';
+  fb.textContent = 'Выберите вариант.';
+  nextBtn.disabled = true;
+  nextBtn.textContent = idx === TASKS.length - 1 ? 'Завершить' : 'Дальше';
+
+  const order = t.opts.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  order.forEach(i=>{
+    const o = t.opts[i];
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.textContent = o.t;
+    d.addEventListener('click', ()=> choose(d, o));
+    optsEl.appendChild(d);
+  });
+  updateStepper();
+}
+
+function choose(el, o){
+  if(answered) return;
+  answered = true;
+  [...optsEl.children].forEach(c=> c.classList.add('dis'));
+
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'fb ok';
+    fb.innerHTML = `<b>Верно.</b>${o.why}`;
+  } else {
+    el.classList.add('wrong');
+    [...optsEl.children].forEach(c=>{
+      const real = TASKS[idx].opts.find(x=> x.t === c.textContent);
+      if(real && real.ok) c.classList.add('right');
+    });
+    fb.className = 'fb bad';
+    fb.innerHTML = `<b>Не совсем.</b>${o.why}<br><br><b>Правильно:</b> ${TASKS[idx].opts.find(x=>x.ok).why}`;
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < TASKS.length - 1){
+    idx++;
+    render();
+  } else {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('fb').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+    final.classList.add('show');
+    updateStepper();
+  }
+});
+
+function resetAll(){
+  idx = 0;
+  document.getElementById('card').style.display = '';
+  document.getElementById('fb').style.display = '';
+  document.querySelector('.actions').style.display = '';
+  final.classList.remove('show');
+  render();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+buildStepper();
+render();
+</script>
+</body>
+</html>
