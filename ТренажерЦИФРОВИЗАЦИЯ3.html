@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сдайте документ с первого раза</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 6px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:4px;margin-bottom:12px}
+  .st{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .st.done{background:#38a169}
+  .st.active{background:#2b6cb0}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card .step-num{font-size:12px;color:#7a8a9a;margin:0 0 6px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card .sit{font-size:13px;color:#5b6b7c;margin:0 0 10px}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:44px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+  .fb b{display:block;margin-bottom:2px}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4;font-size:13px}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Сдайте документ с первого раза</h1>
+  <p class="lead">Чтобы отправить документ в Ростехнадзор, нужны подпись, канал и знание процедуры. Определите правильное действие в каждой ситуации.</p>
+
+  <div class="stepper" id="stepper"></div>
+
+  <div class="card" id="card">
+    <div class="step-num" id="stepNum"></div>
+    <h2 id="sit"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="fb" id="fb">Выберите действие.</div>
+
+  <div class="actions">
+    <button class="primary" id="next" disabled>Дальше</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Готово: вы знаете, что нужно для электронной подачи</h3>
+    <ul>
+      <li><b>Подпись:</b> КЭП по юридической силе равна собственноручной подписи с печатью. Если оформлена на руководителя — нужна доверенность на право подписи.</li>
+      <li><b>Канал:</b> личный кабинет на Госуслугах. Проверяйте его не реже раза в неделю — многие уведомления приходят только в электронном виде.</li>
+      <li><b>Процедура:</b> знайте порядок подачи конкретного документа. Для заключений ЭПБ — через ЕПГУ с КЭП, срок проверки — один рабочий день.</li>
+    </ul>
+    <p style="margin:10px 0 0">Если подписи нет, а срок поджимает — заявка в удостоверяющий центр занимает один-два дня. Совсем нет времени — бумага с сопроводительным письмом, а после получения КЭП — переход на электронную подачу.</p>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    sit:'КЭП оформлена на руководителя, а отчеты сдаете вы. Что нужно, чтобы подписать документ?',
+    opts:[
+      {t:'Доверенность на право подписи', ok:true, why:'Верно: без доверенности система не пропустит документ, даже если подпись действующая.'},
+      {t:'Попросить руководителя подписать — и все', ok:false, why:'Не всегда возможно: руководитель может быть недоступен. Нужна доверенность.'},
+      {t:'Использовать подпись руководителя без доверенности', ok:false, why:'Система не пропустит документ, а ответственность будет на вас.'}
+    ]
+  },
+  {
+    sit:'До сдачи отчета три дня, а КЭП нет. Что делать?',
+    opts:[
+      {t:'Подать заявку в удостоверяющий центр — это занимает один-два дня', ok:true, why:'Верно: успеть можно. Заявка в аккредитованный центр — самый быстрый путь.'},
+      {t:'Сдать на бумаге и забыть', ok:false, why:'Допустимо только как временная мера с сопроводительным письмом и с последующим переходом на электронную подачу.'},
+      {t:'Подождать, пока подпись появится сама', ok:false, why:'Сама она не появится — нужна заявка в удостоверяющий центр.'}
+    ]
+  },
+  {
+    sit:'Вы не заходили в личный кабинет две недели. Что делать?',
+    opts:[
+      {t:'Проверить ЛК, прочитать уведомления, посмотреть сроки', ok:true, why:'Верно: многие уведомления приходят только в электронном виде. ЛК нужно проверять не реже раза в неделю.'},
+      {t:'Если бы что-то было важное — позвонили бы', ok:false, why:'Не позвонят: электронный документ имеет равную силу с бумажным, и незнание не освобождает от ответственности.'},
+      {t:'Зайти позже, когда будет время', ok:false, why:'Срок исполнения может истечь, пока вы ждете.'}
+    ]
+  },
+  {
+    sit:'Через личный кабинет пришло предписание. Что делать?',
+    opts:[
+      {t:'Довести до руководителя, оценить риски, организовать устранение, следить за сроком', ok:true, why:'Верно: это полный порядок действий. Главное — не откладывать.'},
+      {t:'Подождать, пока напомнят', ok:false, why:'Срок исполнения уже идет. Ожидание — риск нарушения.'},
+      {t:'Ответить, что все устранено, без проверки', ok:false, why:'Недостоверный ответ — риск и для вас, и для предприятия.'}
+    ]
+  },
+  {
+    sit:'Через личный кабинет пришло предостережение. Что делать?',
+    opts:[
+      {t:'Подготовить ответ', ok:true, why:'Верно: предостережение тоже требует реакции, хотя это не предписание.'},
+      {t:'Игнорировать — это же не предписание', ok:false, why:'Предостережение — тоже документ, на который нужно реагировать.'},
+      {t:'Удалить, чтобы не мешало', ok:false, why:'Электронный документ имеет равную силу с бумажным. Удаление не отменяет его.'}
+    ]
+  }
+];
+
+let idx = 0;
+let answered = false;
+
+const stepper = document.getElementById('stepper');
+const stepNum = document.getElementById('stepNum');
+const sitEl = document.getElementById('sit');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('fb');
+const nextBtn = document.getElementById('next');
+const final = document.getElementById('final');
+
+function buildStepper(){
+  stepper.innerHTML = '';
+  TASKS.forEach(()=>{
+    const d = document.createElement('div');
+    d.className = 'st';
+    stepper.appendChild(d);
+  });
+}
+function updateStepper(){
+  [...stepper.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function render(){
+  answered = false;
+  const t = TASKS[idx];
+  stepNum.textContent = `Ситуация ${idx + 1} из ${TASKS.length}`;
+  sitEl.textContent = t.sit;
+  optsEl.innerHTML = '';
+  fb.className = 'fb';
+  fb.textContent = 'Выберите действие.';
+  nextBtn.disabled = true;
+  nextBtn.textContent = idx === TASKS.length - 1 ? 'Завершить' : 'Дальше';
+
+  const order = t.opts.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  order.forEach(i=>{
+    const o = t.opts[i];
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.textContent = o.t;
+    d.addEventListener('click', ()=> choose(d, o));
+    optsEl.appendChild(d);
+  });
+  updateStepper();
+}
+
+function choose(el, o){
+  if(answered) return;
+  answered = true;
+  [...optsEl.children].forEach(c=> c.classList.add('dis'));
+
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'fb ok';
+    fb.innerHTML = `<b>Верно.</b>${o.why}`;
+  } else {
+    el.classList.add('wrong');
+    [...optsEl.children].forEach(c=>{
+      const real = TASKS[idx].opts.find(x=> x.t === c.textContent);
+      if(real && real.ok) c.classList.add('right');
+    });
+    fb.className = 'fb bad';
+    fb.innerHTML = `<b>Не совсем.</b>${o.why}<br><br><b>Правильно:</b> ${TASKS[idx].opts.find(x=>x.ok).why}`;
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < TASKS.length - 1){
+    idx++;
+    render();
+  } else {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('fb').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+    final.classList.add('show');
+    updateStepper();
+  }
+});
+
+function resetAll(){
+  idx = 0;
+  document.getElementById('card').style.display = '';
+  document.getElementById('fb').style.display = '';
+  document.querySelector('.actions').style.display = '';
+  final.classList.remove('show');
+  render();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+buildStepper();
+render();
+</script>
+</body>
+</html>
