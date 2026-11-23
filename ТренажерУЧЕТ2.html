@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Собери учет от реестра до отчетности</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:14px}
+  h1{font-size:18px;margin:0 0 4px}
+  .lead{color:#5b6b7c;font-size:12px;margin:0 0 10px}
+
+  .howto{border:1px solid #dde5ec;border-radius:9px;padding:8px 10px;background:#f4f8fc;margin-bottom:10px;font-size:12px;color:#1b4f8a}
+  .howto b{color:#1a2330}
+  .howto .live{margin-top:4px;font-size:12px;color:#1a2330}
+
+  .layout{display:grid;grid-template-columns:200px 1fr;gap:10px;margin-bottom:10px}
+
+  .pool{border:2px dashed #c9d4df;border-radius:10px;padding:8px;background:#fafcfe;min-height:120px}
+  .pool h3{margin:0 0 4px;font-size:12px}
+  .pool .hint{color:#7a8a9a;font-size:11px;margin:0 0 6px}
+  .pool .cards{display:flex;flex-direction:column;gap:5px}
+
+  .card{border:1px solid #c9d4df;border-radius:7px;padding:7px 9px;font-size:11.5px;line-height:1.3;cursor:grab;background:#fff;transition:.15s;user-select:none}
+  .card:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .card.dragging{opacity:.4}
+
+  .chain{display:flex;flex-direction:column;gap:5px}
+  .slot{border:1px dashed #c9d4df;border-radius:7px;padding:7px 9px;font-size:11.5px;line-height:1.3;background:#fff;min-height:36px;display:flex;align-items:center;gap:6px;transition:.15s}
+  .slot .num{width:18px;height:18px;border-radius:50%;background:#eef1f4;color:#7a8a9a;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex:none}
+  .slot.filled{border-style:solid;border-color:#2b6cb0}
+  .slot.filled .num{background:#2b6cb0;color:#fff}
+  .slot.hover{border-color:#2b6cb0;background:#eef5fc}
+  .slot .txt{flex:1}
+  .slot .clear{font-size:11px;color:#c53030;cursor:pointer;padding:1px 5px;border-radius:4px;flex:none}
+  .slot .clear:hover{background:#fdf2f2}
+  .slot.placeholder .txt{color:#9aa9b8;font-style:italic}
+  .slot.right{border-color:#38a169;background:#f0f9f4}
+  .slot.wrong{border-color:#c53030;background:#fdf2f2}
+
+  .fb{border-radius:9px;padding:8px 10px;font-size:12px;min-height:38px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:10px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:12.5px;padding:7px 12px;border-radius:7px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:10px;padding:12px;background:#f0f9f4;font-size:12px;margin-top:10px}
+  .final.show{display:block}
+  .final h3{margin:0 0 6px;font-size:14px}
+  .final p{margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Собери учет от реестра до отчетности</h1>
+  <p class="lead">Перетащите карточки из пула в свободные ячейки. Можно ошибаться — проверка покажет, где неверно.</p>
+
+  <div class="howto" id="howto">
+    <b>Как собирать:</b> зажмите карточку в левом пуле и перетащите её в любую свободную ячейку справа. Вернуть карточку в пул — нажать ✕.
+    <div class="live" id="live">Сейчас: перетащите первую карточку в ячейку 1.</div>
+  </div>
+
+  <div class="layout">
+    <div class="pool" id="pool">
+      <h3>Карточки задач учета</h3>
+      <p class="hint">Перетащите в ячейку</p>
+      <div class="cards" id="poolCards"></div>
+    </div>
+    <div class="chain" id="chain"></div>
+  </div>
+
+  <div class="fb" id="fb">Перетащите карточку в свободную ячейку.</div>
+
+  <div class="actions">
+    <button class="primary" id="check" disabled>Проверить</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Цепочка собрана</h3>
+    <p>Учет — это цепочка: реестр ОПО → оборудование → сроки → аттестация → работы → нарушения → отчетность. Отчетность венчает цепочку, а не начинает её.</p>
+    <button onclick="resetAll()" style="margin-top:8px">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const CORRECT = [
+  'Реестр ОПО',
+  'Реестр оборудования',
+  'Сроки освидетельствования',
+  'Аттестация и допуски',
+  'Работы повышенной опасности',
+  'Учет нарушений',
+  'Годовая отчетность'
+];
+
+const CARDS = [
+  ...CORRECT.map(t => ({t, ok:true})),
+  {t:'Сначала сдать годовую отчетность, потом собрать данные', ok:false},
+  {t:'Сразу купить большую систему', ok:false},
+  {t:'Вести учет в блокноте', ok:false}
+];
+
+let slots = new Array(CORRECT.length).fill(null);
+let dragged = null;
+
+const poolCards = document.getElementById('poolCards');
+const chain = document.getElementById('chain');
+const fb = document.getElementById('fb');
+const live = document.getElementById('live');
+const checkBtn = document.getElementById('check');
+const final = document.getElementById('final');
+
+function shuffle(a){
+  const arr = a.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+let deck = shuffle(CARDS);
+
+function makeCard(c){
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.textContent = c.t;
+  d.draggable = true;
+  d.addEventListener('dragstart', e=>{
+    dragged = c;
+    d.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', c.t);
+  });
+  d.addEventListener('dragend', ()=> d.classList.remove('dragging'));
+  return d;
+}
+
+function renderPool(){
+  poolCards.innerHTML = '';
+  const rest = deck.filter(c => !slots.includes(c));
+  if(rest.length === 0){
+    poolCards.innerHTML = '<span style="color:#9aa9b8;font-size:11px">Все карточки разложены.</span>';
+    return;
+  }
+  rest.forEach(c => poolCards.appendChild(makeCard(c)));
+}
+
+function renderChain(){
+  chain.innerHTML = '';
+  slots.forEach((card, i) => {
+    const d = document.createElement('div');
+    d.className = 'slot' + (card ? ' filled' : ' placeholder');
+    d.dataset.index = i;
+    d.innerHTML = `<span class="num">${i+1}</span>`;
+    const txt = document.createElement('span');
+    txt.className = 'txt';
+    txt.textContent = card ? card.t : 'Свободная ячейка';
+    d.appendChild(txt);
+    if(card){
+      const clr = document.createElement('span');
+      clr.className = 'clear';
+      clr.textContent = '✕';
+      clr.title = 'Вернуть в пул';
+      clr.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        slots[i] = null;
+        renderAll();
+      });
+      d.appendChild(clr);
+    }
+    d.addEventListener('dragover', e=>{
+      e.preventDefault();
+      if(!card) d.classList.add('hover');
+    });
+    d.addEventListener('dragleave', ()=> d.classList.remove('hover'));
+    d.addEventListener('drop', e=>{
+      e.preventDefault();
+      d.classList.remove('hover');
+      if(!dragged) return;
+      if(card) return; // ячейка занята
+      slots[i] = dragged;
+      dragged = null;
+      renderAll();
+      setFb('Карточка поставлена. Можно перетащить следующую.','');
+    });
+    chain.appendChild(d);
+  });
+  checkBtn.disabled = slots.some(s => s === null);
+}
+
+function setFb(t, c){ fb.textContent = t; fb.className = 'fb' + (c ? ' ' + c : ''); }
+
+function updateLive(){
+  const empty = slots.filter(s => s === null).length;
+  if(empty === 0){ live.textContent = 'Все ячейки заполнены — нажмите «Проверить».'; return; }
+  live.textContent = `Свободных ячеек: ${empty}. Перетащите карточку в любую из них.`;
+}
+
+function renderAll(){ renderPool(); renderChain(); updateLive(); }
+
+checkBtn.addEventListener('click', ()=>{
+  const slotEls = [...chain.children];
+  let wrong = 0;
+  slots.forEach((card, i)=>{
+    slotEls[i].classList.remove('right','wrong');
+    if(!card) return;
+    if(card.ok && card.t === CORRECT[i]){
+      slotEls[i].classList.add('right');
+    } else {
+      slotEls[i].classList.add('wrong');
+      wrong++;
+    }
+  });
+  if(wrong === 0){
+    setFb('✅ Верно: учет собран от реестра ОПО к годовой отчетности.','ok');
+    final.classList.add('show');
+    checkBtn.disabled = true;
+  } else {
+    setFb(`❌ Неверных ячеек: ${wrong}. Красным — где ошибка. Можно перетащить карточки заново и проверить ещё раз.`,'bad');
+  }
+});
+
+function resetAll(){
+  slots = new Array(CORRECT.length).fill(null);
+  deck = shuffle(CARDS);
+  dragged = null;
+  final.classList.remove('show');
+  setFb('Перетащите карточку в свободную ячейку.','');
+  checkBtn.disabled = true;
+  renderAll();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+renderAll();
+</script>
+</body>
+</html>
