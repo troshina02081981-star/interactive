@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Паспорт, который думает</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1a2330}
+  .wrap{width:560px;max-width:100%;margin:0 auto;padding:16px}
+  h1{font-size:19px;margin:0 0 6px}
+  .lead{color:#5b6b7c;font-size:13px;margin:0 0 14px}
+
+  .stepper{display:flex;gap:4px;margin-bottom:12px}
+  .st{flex:1;height:6px;border-radius:3px;background:#e6ebf0}
+  .st.done{background:#38a169}
+  .st.active{background:#2b6cb0}
+
+  .card{border:1px solid #dde5ec;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafcfe}
+  .card .step-num{font-size:12px;color:#7a8a9a;margin:0 0 6px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .card .sit{font-size:13px;color:#5b6b7c;margin:0 0 10px}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{border:1px solid #c9d4df;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer;background:#fff;transition:.15s}
+  .opt:hover{border-color:#2b6cb0;background:#f4f8fc}
+  .opt.right{border-color:#38a169;background:#f0f9f4}
+  .opt.wrong{border-color:#c53030;background:#fdf2f2}
+  .opt.dis{pointer-events:none;opacity:.75}
+
+  .fb{border-radius:10px;padding:10px 12px;font-size:13px;min-height:44px;background:#f8fafc;border-left:4px solid #9aa9b8;margin-bottom:12px}
+  .fb.ok{border-left-color:#38a169;background:#f0f9f4}
+  .fb.bad{border-left-color:#c53030;background:#fdf2f2}
+  .fb b{display:block;margin-bottom:2px}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #c9d4df;background:#fff;color:#1a2330;cursor:pointer}
+  button:hover{background:#f2f6fa}
+  button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .final{display:none;border:1px solid #38a169;border-radius:12px;padding:14px;background:#f0f9f4;font-size:13px}
+  .final.show{display:block}
+  .final h3{margin:0 0 8px;font-size:15px}
+  .final ul{margin:0;padding-left:18px}
+  .final li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Паспорт, который думает</h1>
+  <p class="lead">Электронный паспорт оборудования и датчики. Выберите, как должна работать система в каждой ситуации.</p>
+
+  <div class="stepper" id="stepper"></div>
+
+  <div class="card" id="card">
+    <div class="step-num" id="stepNum"></div>
+    <h2 id="sit"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+
+  <div class="fb" id="fb">Выберите вариант.</div>
+
+  <div class="actions">
+    <button class="primary" id="next" disabled>Дальше</button>
+    <button id="reset">Сбросить</button>
+  </div>
+
+  <div class="final" id="final">
+    <h3>✅ Готово: вы видите, как работает паспорт, который думает</h3>
+    <ul>
+      <li><b>Электронный паспорт</b> — цифровое досье: регистрационный и заводской номера, допустимые параметры, даты ЭПБ и освидетельствований, история ремонтов от механиков, история нарушений.</li>
+      <li><b>Связка с датчиками и SCADA</b> — система непрерывно считывает параметры и сама фиксирует технологическое отклонение, не дожидаясь оператора.</li>
+      <li><b>Реакция на отклонение</b> — уведомление инженеру промбезопасности и начальнику смены плюс список действий, что сделать сейчас, чтобы предотвратить аварию.</li>
+      <li><b>ОПО I и II классов</b> — дистанционный контроль обязателен: система сама рассчитывает интегральный показатель безопасности и передает его в единую систему дистанционного контроля Ростехнадзора.</li>
+      <li><b>Бонус</b> — при стабильной работе датчиков ведомство снижает частоту плановых проверок. Конкретные сроки и условия перехода уточняйте в действующей редакции ФНП — они меняются.</li>
+    </ul>
+    <p style="margin:10px 0 0">Главное: паспорт не просто хранит данные — он связан с датчиками и действует сам. Решение и проверка остаются за вами.</p>
+    <button onclick="resetAll()">Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    sit:'«Что должно быть в электронном паспорте оборудования?»',
+    opts:[
+      {t:'Только заводской номер и место установки', ok:false, why:'Этого мало: паспорт — цифровое досье, а не бирка.'},
+      {t:'Регистрационный и заводской номера, допустимые параметры, даты ЭПБ и освидетельствований, история ремонтов и нарушений', ok:true, why:'Верно: паспорт собирает данные из смежных служб — от механиков, из истории нарушений, из документов по ЭПБ.'},
+      {t:'Бумажная папка у механика', ok:false, why:'Это архив, а не электронный паспорт: данные не связаны и не обновляются сами.'}
+    ]
+  },
+  {
+    sit:'«Датчик зафиксировал значение за критической границей. Что делает система?»',
+    opts:[
+      {t:'Ждет, пока оператор заметит это на мнемосхеме', ok:false, why:'Пока оператор заметит, может быть поздно. Система не должна ждать.'},
+      {t:'Сама фиксирует отклонение, уведомляет инженера промбезопасности и начальника смены и выдает список действий', ok:true, why:'Верно: система действует сразу — фиксирует технологическое отклонение, шлет уведомления и подсказывает, что сделать сейчас.'},
+      {t:'Записывает значение в журнал до конца смены', ok:false, why:'Запись без реакции — это статистика, а не предотвращение аварии.'}
+    ]
+  },
+  {
+    sit:'«ОПО I класса. Что обязательно?»',
+    opts:[
+      {t:'Только плановые проверки', ok:false, why:'Для I и II классов этого недостаточно: дистанционный контроль обязателен.'},
+      {t:'Система дистанционного контроля: сама рассчитывает интегральный показатель безопасности и передает его в единую систему дистанционного контроля Ростехнадзора', ok:true, why:'Верно: для ОПО I и II классов дистанционный контроль становится обязательным.'},
+      {t:'Достаточно датчиков без передачи данных', ok:false, why:'Датчики без передачи в единую систему не закрывают требование.'}
+    ]
+  },
+  {
+    sit:'«Чем полезен дистанционный контроль при стабильной работе датчиков?»',
+    opts:[
+      {t:'Ничего не меняется', ok:false, why:'Меняется: ведомство снижает частоту плановых проверок.'},
+      {t:'Ведомство снижает частоту плановых проверок', ok:true, why:'Верно. Но конкретные сроки и условия перехода уточняйте в действующей редакции ФНП — они меняются.'},
+      {t:'Датчики можно отключить', ok:false, why:'Нет: стабильная работа датчиков — как раз условие снижения проверок, а не повод их отключать.'}
+    ]
+  },
+  {
+    sit:'«Что связать в первую очередь?»',
+    opts:[
+      {t:'Паспорт с датчиками и SCADA', ok:true, why:'Верно: связка с датчиками и SCADA дает непрерывное считывание параметров и автоматическую фиксацию отклонений.'},
+      {t:'Паспорт с бухгалтерией', ok:false, why:'Полезно для учета основных средств, но не для промбезопасности.'},
+      {t:'Паспорт с отделом кадров', ok:false, why:'Кадры важны для аттестаций, но паспорт оборудования — про технику и параметры.'}
+    ]
+  }
+];
+
+let idx = 0;
+let answered = false;
+
+const stepper = document.getElementById('stepper');
+const stepNum = document.getElementById('stepNum');
+const sitEl = document.getElementById('sit');
+const optsEl = document.getElementById('opts');
+const fb = document.getElementById('fb');
+const nextBtn = document.getElementById('next');
+const final = document.getElementById('final');
+
+function buildStepper(){
+  stepper.innerHTML = '';
+  TASKS.forEach(()=>{
+    const d = document.createElement('div');
+    d.className = 'st';
+    stepper.appendChild(d);
+  });
+}
+function updateStepper(){
+  [...stepper.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function render(){
+  answered = false;
+  const t = TASKS[idx];
+  stepNum.textContent = `Ситуация ${idx + 1} из ${TASKS.length}`;
+  sitEl.textContent = t.sit;
+  optsEl.innerHTML = '';
+  fb.className = 'fb';
+  fb.textContent = 'Выберите вариант.';
+  nextBtn.disabled = true;
+  nextBtn.textContent = idx === TASKS.length - 1 ? 'Завершить' : 'Дальше';
+
+  const order = t.opts.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  order.forEach(i=>{
+    const o = t.opts[i];
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.textContent = o.t;
+    d.addEventListener('click', ()=> choose(d, o));
+    optsEl.appendChild(d);
+  });
+  updateStepper();
+}
+
+function choose(el, o){
+  if(answered) return;
+  answered = true;
+  [...optsEl.children].forEach(c=> c.classList.add('dis'));
+
+  if(o.ok){
+    el.classList.add('right');
+    fb.className = 'fb ok';
+    fb.innerHTML = `<b>Верно.</b>${o.why}`;
+  } else {
+    el.classList.add('wrong');
+    [...optsEl.children].forEach(c=>{
+      const real = TASKS[idx].opts.find(x=> x.t === c.textContent);
+      if(real && real.ok) c.classList.add('right');
+    });
+    fb.className = 'fb bad';
+    fb.innerHTML = `<b>Не совсем.</b>${o.why}<br><br><b>Правильно:</b> ${TASKS[idx].opts.find(x=>x.ok).why}`;
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < TASKS.length - 1){
+    idx++;
+    render();
+  } else {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('fb').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+    final.classList.add('show');
+    updateStepper();
+  }
+});
+
+function resetAll(){
+  idx = 0;
+  document.getElementById('card').style.display = '';
+  document.getElementById('fb').style.display = '';
+  document.querySelector('.actions').style.display = '';
+  final.classList.remove('show');
+  render();
+}
+document.getElementById('reset').addEventListener('click', resetAll);
+
+buildStepper();
+render();
+</script>
+</body>
+</html>
