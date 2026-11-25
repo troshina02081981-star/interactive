@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер: подключение к мониторингу ОПО</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --panel:#ffffff;
+    --panel2:#f1f8fe;
+    --line:#cfe3f5;
+    --accent:#2f8fd6;
+    --accent2:#7cc0ee;
+    --ok:#1e9e6a;
+    --err:#d9534f;
+    --text:#1f3a4d;
+    --muted:#6b8ba3;
+    --soft:#eaf4fc;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px;
+  }
+  .wrap{width:100%;max-width:560px}
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:12px;margin-bottom:16px;flex-wrap:wrap;
+  }
+  h1{font-size:19px;margin:0;line-height:1.3;color:#15496e}
+  .badges{display:flex;gap:6px;flex-wrap:wrap}
+  .badge{
+    background:var(--panel2);border:1px solid var(--line);border-radius:999px;
+    padding:5px 10px;font-size:11px;color:var(--muted);transition:.3s;
+  }
+  .badge.on{background:var(--soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .progress{
+    height:6px;background:var(--soft);border-radius:999px;
+    overflow:hidden;margin-bottom:18px;border:1px solid var(--line);
+  }
+  .progress > div{height:100%;width:0;background:var(--accent);transition:width .4s}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(47,143,214,.07);
+  }
+  .card h2{font-size:16px;margin:0 0 6px;color:#15496e}
+  .card .lead{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.5}
+  .question{
+    font-size:15px;font-weight:600;color:#15496e;
+    margin:0 0 12px;line-height:1.45;
+  }
+  .opt{
+    display:block;width:100%;text-align:left;background:var(--panel2);
+    color:var(--text);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;margin-bottom:9px;cursor:pointer;font-size:14px;
+    line-height:1.45;transition:.15s;
+  }
+  .opt:hover{border-color:var(--accent2);background:#e8f4fd}
+  .opt.correct{border-color:var(--ok);background:#e6f7ef;color:#137a52}
+  .opt.wrong{border-color:var(--err);background:#fdeceb;color:#b23b38}
+  .opt:disabled{cursor:default}
+  .feedback{
+    font-size:13px;margin-top:10px;padding:10px 12px;border-radius:9px;
+    display:none;line-height:1.5;
+  }
+  .feedback.show{display:block}
+  .feedback.ok{background:#e6f7ef;color:#137a52;border:1px solid #b7e4cd}
+  .feedback.err{background:#fdeceb;color:#b23b38;border:1px solid #f3c4c2}
+  .btn{
+    background:var(--accent);color:#fff;border:none;border-radius:9px;
+    padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;
+  }
+  .btn:hover{background:#2478ba}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-reset{
+    background:#fff;color:var(--accent);border:1px solid var(--accent2);
+    border-radius:9px;padding:11px 18px;font-size:14px;font-weight:600;
+    cursor:pointer;transition:.2s;
+  }
+  .btn-reset:hover{background:var(--soft);border-color:var(--accent)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .hidden{display:none}
+
+  /* drag-and-drop */
+  .slots{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+  .slot{
+    min-height:88px;border:2px dashed var(--accent2);border-radius:11px;
+    padding:8px;display:flex;flex-direction:column;justify-content:center;
+    align-items:center;font-size:11px;color:var(--muted);text-align:center;
+    gap:5px;transition:.2s;background:#fbfdff;
+  }
+  .slot.over{border-color:var(--accent);background:var(--soft)}
+  .slot.filled{border-style:solid;border-color:var(--ok);background:#f4fcf8}
+  .slot .chip{
+    background:var(--soft);border:1px solid var(--accent2);color:var(--text);
+    border-radius:7px;padding:5px 8px;font-size:12px;
+  }
+  .pool{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+  .chip{
+    background:var(--panel2);border:1px solid var(--line);border-radius:7px;
+    padding:7px 10px;font-size:12px;cursor:grab;user-select:none;transition:.15s;
+  }
+  .chip:hover{border-color:var(--accent2)}
+  .chip.selected{border-color:var(--accent);background:var(--soft)}
+
+  /* сортировка */
+  .bins{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .bin{
+    border:1px solid var(--line);border-radius:11px;padding:10px;
+    min-height:110px;background:#fbfdff;transition:.2s;
+  }
+  .bin h3{margin:0 0 8px;font-size:12px;color:var(--accent)}
+  .bin .chip{margin-bottom:5px;display:block}
+  .bin.over{border-color:var(--accent);background:var(--soft)}
+  ul{line-height:1.8;color:#3d5a6e;padding-left:20px;margin:10px 0 16px}
+  @media(max-width:420px){
+    .slots{grid-template-columns:1fr}
+    .bins{grid-template-columns:1fr}
+    h1{font-size:17px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Тренажер: подключение к мониторингу ОПО</h1>
+    <div class="badges" id="badges"></div>
+  </header>
+
+  <div class="progress"><div id="bar"></div></div>
+
+  <main id="app"></main>
+  <div id="final" class="hidden"></div>
+
+</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ ТРЕНАЖЕРА
+   ============================================================ */
+const STEPS = ["Знание","СДК ПБ","Аудит","Различение","Ситуация"];
+const badges = new Array(STEPS.length).fill(false);
+let current = 0;
+
+/* ---------- Бейджи и прогресс ---------- */
+function renderBadges(){
+  document.getElementById("badges").innerHTML = STEPS.map((s,i)=>
+    `<span class="badge ${badges[i]?'on':''}">${badges[i]?'✓ ':''}${s}</span>`
+  ).join("");
+  const done = badges.filter(Boolean).length;
+  document.getElementById("bar").style.width = (done/STEPS.length*100)+"%";
+}
+
+function card(title, lead, bodyHTML){
+  return `<section class="card">
+    <h2>${title}</h2>
+    ${lead?`<p class="lead">${lead}</p>`:""}
+    ${bodyHTML}
+  </section>`;
+}
+
+/* ============================================================
+   ЭТАП 1 — КВИЗ
+   ============================================================ */
+const quiz = [
+  {
+    q:"Мониторинг ОПО обязателен для всех организаций?",
+    opts:[
+      {t:"Да, с 10 марта 2026 года его обязаны пройти все", ok:false,
+       fb:"Нет: мониторинг добровольный. Организация сама решает, подключаться ли."},
+      {t:"Нет, это добровольная процедура по инициативе самой организации", ok:true,
+       fb:"Верно. Мониторинг вводится по инициативе эксплуатирующей организации."},
+      {t:"Да, но только для ИП", ok:false,
+       fb:"Нет, режим добровольный и распространяется не только на ИП."}
+    ]
+  },
+  {
+    q:"Кто принимает решение о подключении к мониторингу?",
+    opts:[
+      {t:"Ростехнадзор — по итогам плановой проверки", ok:false,
+       fb:"Неверно: решение принимает сама организация, надзор не обязывает."},
+      {t:"Сама эксплуатирующая организация", ok:true,
+       fb:"Верно. Подключение — инициатива предприятия."},
+      {t:"Правительство РФ отдельным распоряжением", ok:false,
+       fb:"Нет. Постановление лишь закрепило режим, решение — за организацией."}
+    ]
+  },
+  {
+    q:"Что дает заключенное соглашение о мониторинге?",
+    opts:[
+      {t:"Освобождение от всех видов надзора", ok:false,
+       fb:"Нет, полного освобождения нет — это отдельный критерий добросовестности."},
+      {t:"Отдельный критерий оценки добросовестности юрлица или ИП", ok:true,
+       fb:"Верно. Соглашение учитывается при оценке добросовестности."},
+      {t:"Обязательную выездную проверку раз в год", ok:false,
+       fb:"Наоборот: мониторинг заменяет периодические выезды непрерывным наблюдением."}
+    ]
+  }
+];
+let qIndex = 0, qRight = 0;
+
+function renderQuiz(){
+  const item = quiz[qIndex];
+  const opts = item.opts.map((o,i)=>
+    `<button class="opt" data-i="${i}">${o.t}</button>`).join("");
+  document.getElementById("app").innerHTML = card(
+    `Этап 1. Нужно ли нам это? (${qIndex+1}/${quiz.length})`,
+    "Ответьте на вопрос, чтобы перейти дальше.",
+    `<p class="question">${item.q}</p>` +
+    opts +
+    `<div class="feedback" id="fb"></div>
+     <button class="btn hidden" id="nextQ">Далее →</button>`
+  );
+
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.onclick = ()=>{
+      const i = +btn.dataset.i;
+      const chosen = item.opts[i];
+      document.querySelectorAll(".opt").forEach(b=>{
+        b.disabled = true;
+        if(item.opts[+b.dataset.i].ok) b.classList.add("correct");
+      });
+      if(!chosen.ok) btn.classList.add("wrong");
+      const fb = document.getElementById("fb");
+      fb.textContent = chosen.fb;
+      fb.className = "feedback show " + (chosen.ok?"ok":"err");
+      if(chosen.ok) qRight++;
+      document.getElementById("nextQ").classList.remove("hidden");
+    };
+  });
+
+  document.getElementById("nextQ").onclick = ()=>{
+    qIndex++;
+    if(qIndex < quiz.length) renderQuiz();
+    else finishStep(0, qRight >= 2);
+  };
+}
+
+/* ============================================================
+   ЭТАП 2 — СБОРКА СДК ПБ
+   ============================================================ */
+const dndData = {
+  slots:[
+    {id:"sensors", label:"Сбор данных"},
+    {id:"analytics", label:"Обработка и анализ"},
+    {id:"channel", label:"Передача данных"},
+    {id:"protect", label:"Защита информации"}
+  ],
+  items:[
+    /* правильные */
+    {id:"i1", name:"Датчики", slot:"sensors"},
+    {id:"i2", name:"Аналитика рисков", slot:"analytics"},
+    {id:"i3", name:"Канал передачи в Ростехнадзор", slot:"channel"},
+    {id:"i4", name:"Шифрование и защита канала", slot:"protect"},
+    /* лишние */
+    {id:"x1", name:"Принтер", slot:null},
+    {id:"x2", name:"Журнал регистрации", slot:null},
+    {id:"x3", name:"Склад", slot:null},
+    {id:"x4", name:"Бумажный отчет", slot:null},
+    {id:"x5", name:"Выездной инспектор", slot:null},
+    {id:"x6", name:"Архив на бумаге", slot:null}
+  ]
+};
+let dndPlaced = {};
+
+function renderDnd(){
+  const slots = dndData.slots.map(s=>{
+    const placed = dndPlaced[s.id];
+    return `<div class="slot ${placed?'filled':''}" data-slot="${s.id}">
+      <div>${s.label}</div>
+      ${placed?`<div class="chip" data-chip="${placed.id}">${placed.name}</div>`:""}
+    </div>`;
+  }).join("");
+
+  const pool = dndData.items
+    .filter(it=>!Object.values(dndPlaced).some(p=>p.id===it.id))
+    .map(it=>`<div class="chip" draggable="true" data-chip="${it.id}">${it.name}</div>`).join("");
+
+  document.getElementById("app").innerHTML = card(
+    "Этап 2. Собери СДК ПБ",
+    "Перетащите или нажмите на карточку, затем на слот. Распределите правильные компоненты по четырем уровням системы. Лишние карточки оставьте внизу.",
+    `<div class="slots">${slots}</div>
+     <div class="pool" id="pool">${pool}</div>
+     <div class="feedback" id="fb"></div>
+     <div class="btn-row">
+       <button class="btn" id="checkDnd">Проверить</button>
+       <button class="btn-reset" id="restartDnd">Начать сначала</button>
+     </div>`
+  );
+
+  let selectedChip = null;
+  const chips = document.querySelectorAll(".pool .chip");
+  chips.forEach(ch=>{
+    ch.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", ch.dataset.chip);
+      selectedChip = ch.dataset.chip;
+    });
+    ch.addEventListener("click", ()=>{
+      chips.forEach(c=>c.classList.remove("selected"));
+      if(selectedChip === ch.dataset.chip){ selectedChip = null; }
+      else { selectedChip = ch.dataset.chip; ch.classList.add("selected"); }
+    });
+  });
+
+  document.querySelectorAll(".slot").forEach(slot=>{
+    slot.addEventListener("dragover", e=>{ e.preventDefault(); slot.classList.add("over"); });
+    slot.addEventListener("dragleave", ()=> slot.classList.remove("over"));
+    slot.addEventListener("drop", e=>{
+      e.preventDefault(); slot.classList.remove("over");
+      tryPlace(e.dataTransfer.getData("text/plain"), slot.dataset.slot);
+    });
+    slot.addEventListener("click", ()=>{
+      if(selectedChip) tryPlace(selectedChip, slot.dataset.slot);
+    });
+  });
+
+  document.querySelectorAll(".slot .chip").forEach(ch=>{
+    ch.addEventListener("click", e=>{
+      e.stopPropagation();
+      const id = ch.dataset.chip;
+      delete dndPlaced[Object.keys(dndPlaced).find(k=>dndPlaced[k].id===id)];
+      renderDnd();
+    });
+  });
+
+  document.getElementById("checkDnd").onclick = checkDnd;
+  document.getElementById("restartDnd").onclick = ()=>{
+    dndPlaced = {};
+    renderDnd();
+  };
+}
+
+function tryPlace(chipId, slotId){
+  const item = dndData.items.find(i=>i.id===chipId);
+  if(!item) return;
+  if(Object.values(dndPlaced).some(p=>p.id===chipId)) return;
+  delete dndPlaced[slotId];
+  dndPlaced[slotId] = item;
+  renderDnd();
+}
+
+function checkDnd(){
+  const fb = document.getElementById("fb");
+  if(!dndData.slots.every(s=>dndPlaced[s.id])){
+    fb.textContent = "Заполните все четыре уровня системы.";
+    fb.className = "feedback show err";
+    return;
+  }
+  let ok = true; const parts = [];
+  dndData.slots.forEach(s=>{
+    const placed = dndPlaced[s.id];
+    if(placed.slot !== s.id){ ok = false; parts.push(`«${placed.name}» — не «${s.label.toLowerCase()}»`); }
+  });
+  if(ok){
+    fb.textContent = "Верно! СДК ПБ = сбор данных + обработка и анализ + передача данных + защита информации.";
+    fb.className = "feedback show ok";
+    document.getElementById("checkDnd").disabled = true;
+    setTimeout(()=>finishStep(1, true), 900);
+  } else {
+    fb.textContent = "Пока не так: " + parts.join("; ") + ". Попробуйте еще раз.";
+    fb.className = "feedback show err";
+  }
+}
+
+/* ============================================================
+   ЭТАП 3 — АУДИТ
+   ============================================================ */
+const audit = [
+  {t:"Системы дистанционного контроля СДК ПБ", need:true},
+  {t:"Защита информации", need:true},
+  {t:"Автоматическая передача данных в надзор", need:true},
+  {t:"Выездная проверка раз в год", need:false,
+   fb:"Это про традиционные проверки, а не про мониторинг."},
+  {t:"Бумажный отчет инспектору", need:false,
+   fb:"Мониторинг работает автоматически — бумажный отчет не нужен."},
+  {t:"Согласование графика выездов", need:false,
+   fb:"При мониторинге выезды не нужны — контроль непрерывный и дистанционный."}
+];
+let auditChecked = new Set();
+
+function renderAudit(){
+  const rows = audit.map((a,i)=>
+    `<button class="opt" data-i="${i}">${a.t}</button>`).join("");
+  document.getElementById("app").innerHTML = card(
+    "Этап 3. Технический аудит",
+    "Отметьте все, что нужно предприятию для подключения к мониторингу.",
+    rows + `<div class="feedback" id="fb"></div>
+            <div class="btn-row">
+              <button class="btn" id="checkAudit">Проверить</button>
+              <button class="btn-reset" id="restartAudit">Начать сначала</button>
+            </div>`
+  );
+
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.onclick = ()=>{
+      const i = +btn.dataset.i;
+      if(auditChecked.has(i)){ auditChecked.delete(i); btn.classList.remove("correct"); }
+      else { auditChecked.add(i); btn.classList.add("correct"); }
+    };
+  });
+
+  document.getElementById("restartAudit").onclick = ()=>{
+    auditChecked = new Set();
+    renderAudit();
+  };
+
+  document.getElementById("checkAudit").onclick = ()=>{
+    const fb = document.getElementById("fb");
+    const wrongPicked = [...auditChecked].filter(i=>!audit[i].need);
+    const missed = audit.map((a,i)=>i).filter(i=>audit[i].need && !auditChecked.has(i));
+
+    if(wrongPicked.length === 0 && missed.length === 0){
+      fb.textContent = "Верно! Предприятию нужны СДК ПБ, защита информации и автоматическая передача данных.";
+      fb.className = "feedback show ok";
+      document.getElementById("checkAudit").disabled = true;
+      setTimeout(()=>finishStep(2, true), 900);
+    } else {
+      const msgs = [];
+      wrongPicked.forEach(i=>msgs.push(audit[i].fb || "Этот пункт лишний."));
+      if(missed.length) msgs.push("Не отмечены обязательные пункты.");
+      fb.textContent = msgs.join(" ");
+      fb.className = "feedback show err";
+    }
+  };
+}
+
+/* ============================================================
+   ЭТАП 4 — СОРТИРОВКА
+   ============================================================ */
+const sortData = {
+  bins:[
+    {id:"mon", title:"Мониторинг ОПО"},
+    {id:"insp", title:"Приложение «Инспектор»"}
+  ],
+  items:[
+    {id:"a", name:"Автоматический обмен данными", bin:"mon"},
+    {id:"b", name:"Непрерывно, в реальном времени", bin:"mon"},
+    {id:"c", name:"Дистанционная проверка", bin:"insp"},
+    {id:"d", name:"Видео-конференц-связь", bin:"insp"},
+    {id:"e", name:"Осмотры и опросы", bin:"insp"},
+    {id:"f", name:"Фото- и видеосъемка через приложение", bin:"insp"}
+  ]
+};
+let sortPlaced = {};
+
+function renderSort(){
+  const bins = sortData.bins.map(b=>{
+    const items = sortData.items.filter(it=>sortPlaced[it.id]===b.id)
+      .map(it=>`<div class="chip" data-chip="${it.id}">${it.name}</div>`).join("");
+    return `<div class="bin" data-bin="${b.id}"><h3>${b.title}</h3>${items}</div>`;
+  }).join("");
+
+  const pool = sortData.items.filter(it=>!sortPlaced[it.id])
+    .map(it=>`<div class="chip" draggable="true" data-chip="${it.id}">${it.name}</div>`).join("");
+
+  document.getElementById("app").innerHTML = card(
+    "Этап 4. Инспектор против мониторинга",
+    "Перетащите или нажмите на карточку, затем на корзину. Распределите каждую характеристику в нужную корзину.",
+    `<div class="bins">${bins}</div>
+     <div class="pool" style="margin-top:12px">${pool}</div>
+     <div class="feedback" id="fb"></div>
+     <div class="btn-row">
+       <button class="btn" id="checkSort">Проверить</button>
+       <button class="btn-reset" id="restartSort">Начать сначала</button>
+     </div>`
+  );
+
+  let selected = null;
+  document.querySelectorAll(".pool .chip").forEach(ch=>{
+    ch.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", ch.dataset.chip);
+      selected = ch.dataset.chip;
+    });
+    ch.addEventListener("click", ()=>{
+      document.querySelectorAll(".pool .chip").forEach(c=>c.classList.remove("selected"));
+      if(selected === ch.dataset.chip) selected = null;
+      else { selected = ch.dataset.chip; ch.classList.add("selected"); }
+    });
+  });
+
+  document.querySelectorAll(".bin").forEach(bin=>{
+    bin.addEventListener("dragover", e=>{ e.preventDefault(); bin.classList.add("over"); });
+    bin.addEventListener("dragleave", ()=> bin.classList.remove("over"));
+    bin.addEventListener("drop", e=>{
+      e.preventDefault(); bin.classList.remove("over");
+      placeSort(e.dataTransfer.getData("text/plain"), bin.dataset.bin);
+    });
+    bin.addEventListener("click", ()=>{
+      if(selected) placeSort(selected, bin.dataset.bin);
+    });
+  });
+
+  document.querySelectorAll(".bin .chip").forEach(ch=>{
+    ch.addEventListener("click", e=>{
+      e.stopPropagation();
+      delete sortPlaced[ch.dataset.chip];
+      renderSort();
+    });
+  });
+
+  document.getElementById("restartSort").onclick = ()=>{
+    sortPlaced = {};
+    renderSort();
+  };
+
+  document.getElementById("checkSort").onclick = ()=>{
+    const fb = document.getElementById("fb");
+    if(Object.keys(sortPlaced).length < sortData.items.length){
+      fb.textContent = "Разложите все карточки по корзинам.";
+      fb.className = "feedback show err";
+      return;
+    }
+    const wrong = sortData.items.filter(it=>sortPlaced[it.id] !== it.bin);
+    if(wrong.length === 0){
+      fb.textContent = "Отлично! Мониторинг — автоматический обмен данными, «Инспектор» — инструмент дистанционных проверок.";
+      fb.className = "feedback show ok";
+      document.getElementById("checkSort").disabled = true;
+      setTimeout(()=>finishStep(3, true), 900);
+    } else {
+      fb.textContent = "Есть ошибки: " + wrong.map(w=>`«${w.name}»`).join(", ") + ". Попробуйте переложить.";
+      fb.className = "feedback show err";
+    }
+  };
+}
+
+function placeSort(chipId, binId){
+  if(!chipId) return;
+  sortPlaced[chipId] = binId;
+  renderSort();
+}
+
+/* ============================================================
+   ЭТАП 5 — СИТУАЦИЯ
+   ============================================================ */
+const scenario = {
+  q:"СДК ПБ передает сигнал о росте давления на участке. Что делает специалист?",
+  opts:[
+    {t:"Данные автоматически уходят в Ростехнадзор, риск фиксируется в системе", ok:true,
+     fb:"Верно: при мониторинге обмен данными идет автоматически, без ручной передачи."},
+    {t:"Позвонить инспектору и продиктовать показания", ok:false,
+     fb:"Неверно: мониторинг предполагает автоматическую передачу, а не звонок."},
+    {t:"Дождаться плановой выездной проверки", ok:false,
+     fb:"Неверно: режим непрерывный, ждать выезда не нужно."},
+    {t:"Внести показания в бумажный журнал", ok:false,
+     fb:"Неверно: при мониторинге данные передаются автоматически, бумажный журнал не нужен."}
+  ]
+};
+
+function renderScenario(){
+  const opts = scenario.opts.map((o,i)=>
+    `<button class="opt" data-i="${i}">${o.t}</button>`).join("");
+  document.getElementById("app").innerHTML = card(
+    "Этап 5. Реальное время",
+    "Выберите правильную реакцию на сигнал.",
+    `<p class="question">${scenario.q}</p>` +
+    opts + `<div class="feedback" id="fb"></div>`
+  );
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.onclick = ()=>{
+      const i = +btn.dataset.i;
+      const chosen = scenario.opts[i];
+      document.querySelectorAll(".opt").forEach(b=>{
+        b.disabled = true;
+        if(scenario.opts[+b.dataset.i].ok) b.classList.add("correct");
+      });
+      if(!chosen.ok) btn.classList.add("wrong");
+      const fb = document.getElementById("fb");
+      fb.textContent = chosen.fb;
+      fb.className = "feedback show " + (chosen.ok?"ok":"err");
+      setTimeout(()=>finishStep(4, chosen.ok), 1200);
+    };
+  });
+}
+
+/* ============================================================
+   ФИНАЛ
+   ============================================================ */
+function finishStep(index, success){
+  if(success) badges[index] = true;
+  renderBadges();
+  current = index + 1;
+  if(current < STEPS.length){
+    setTimeout(renderStep, 400);
+  } else {
+    renderFinal();
+  }
+}
+
+function renderFinal(){
+  document.getElementById("app").innerHTML = "";
+  const done = badges.filter(Boolean).length;
+  const final = document.getElementById("final");
+  final.classList.remove("hidden");
+  final.innerHTML = card(
+    "Соглашение подписано",
+    `Вы прошли тренажер. Собрано бейджей: ${done} из ${STEPS.length}.`,
+    `<ul>
+       <li>Отличать мониторинг ОПО от приложения «Инспектор»</li>
+       <li>Объяснять добровольность и выгоды мониторинга</li>
+       <li>Собирать контур СДК ПБ по четырем уровням</li>
+       <li>Проверять техническую готовность предприятия</li>
+       <li>Действовать в ситуации с сигналом СДК ПБ</li>
+     </ul>
+     <button class="btn" id="restart">Пройти заново</button>`
+  );
+  document.getElementById("restart").onclick = resetAll;
+}
+
+/* ============================================================
+   СБРОС
+   ============================================================ */
+function resetAll(){
+  badges.fill(false);
+  current = 0; qIndex = 0; qRight = 0;
+  dndPlaced = {}; auditChecked = new Set(); sortPlaced = {};
+  const final = document.getElementById("final");
+  final.classList.add("hidden"); final.innerHTML = "";
+  document.getElementById("app").innerHTML = "";
+  renderBadges(); renderStep();
+}
+
+/* ============================================================
+   МАРШРУТИЗАЦИЯ
+   ============================================================ */
+function renderStep(){
+  document.getElementById("final").classList.add("hidden");
+  if(current === 0) renderQuiz();
+  else if(current === 1) renderDnd();
+  else if(current === 2) renderAudit();
+  else if(current === 3) renderSort();
+  else if(current === 4) renderScenario();
+}
+
+renderBadges();
+renderStep();
+</script>
+</body>
+</html>
